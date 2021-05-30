@@ -16,9 +16,6 @@
                     <th style="width: 20%">
                         Название
                     </th>
-                    <th style="width: 30%">
-                        Привязанные группы товаров
-                    </th>
                     <th>
                         Кол-во товаров
                     </th>
@@ -31,13 +28,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($brands as $brand)
+                @foreach($groups as $group)
                     <tr>
                         <td>
-                            {{ $brand->id }}
+                            {{ $group->id }}
                         </td>
                         <td>
-                            {{ $brand->name }}
+                            {{ $group->name }}
                         </td>
                         <td>
                             <ul class="list-inline">
@@ -50,22 +47,22 @@
                         <td>
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" disabled="disabled"
-                                       {{ $brand->status ? 'checked' : '' }} id="customSwitch{{$brand->id}}">
-                                <label class="custom-control-label" for="customSwitch{{$brand->id}}"></label>
+                                       {{ $group->status ? 'checked' : '' }} id="customSwitch{{$group->id}}">
+                                <label class="custom-control-label" for="customSwitch{{$group->id}}"></label>
                             </div>
                         </td>
                         <td class="project-actions text-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('brand.show', $brand) }}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('group.show', $group) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('brand.edit', $brand) }}">
+                            <a class="btn btn-info btn-sm" href="{{ route('group.edit', $group) }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="confirm('Удалить бренд - {{ $brand->name }}?') ? $(this).next().submit() : '';">
+                                    onclick="confirm('Удалить группу - {{ $group->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <form action="{{ route('brand.destroy', $brand) }}" method="post">
+                            <form action="{{ route('group.destroy', $group) }}" method="post">
                                 @CSRF
                                 @method('DELETE')
                             </form>
@@ -78,10 +75,10 @@
         <div class="card-footer">
             <div class="d-flex justify-content-between align-content-start">
                 <div>
-                    {{ $brands->links() }}
+                    {{ $groups->links() }}
                 </div>
                 <div>
-                    <a href="{{ route('brand.create') }}" class="btn btn-success btn-sm">Создать</a>
+                    <a href="{{ route('group.create') }}" class="btn btn-success btn-sm">Создать</a>
                 </div>
             </div>
         </div>

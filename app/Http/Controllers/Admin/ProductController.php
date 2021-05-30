@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductRequest;
+use App\Models\Brand;
+use App\Models\Group;
+use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class ProductController extends Controller
+{
+    public function index(): View
+    {
+        $products = Product::paginate(20);
+        return view('admin.product.index', compact('products'));
+    }
+
+    public function create(): View
+    {
+        $product = new Product();
+        $groups = Group::get();
+        $brands = Brand::get();
+        return view('admin.product.create_edit', compact('product', 'groups', 'brands'));
+    }
+
+    public function store(ProductRequest $request): RedirectResponse
+    {
+        $product = Product::create([
+            'name' => $request->name,
+            'group_id' => $request->group_id,
+            'brand_id' => $request->brand_id,
+            'status' => isset($request->status) ? 1 : 0,
+        ]);
+
+        return redirect()->route('product.index')->with('success', 'Вы успешно создали товар ' . $product->name);
+    }
+
+    public function show(Product $product): RedirectResponse
+    {
+        return redirect()->route('catalog', $product);
+    }
+
+    public function edit(Product $product): View
+    {
+        $groups = Group::get();
+        $brands = Brand::get();
+        return view('admin.product.create_edit', compact('product', 'groups', 'brands'));
+    }
+
+    public function update(ProductRequest $request, Product $product): RedirectResponse
+    {
+        $product->update([
+            'name' => $request->name,
+            'group_id' => $request->group_id ?: null,
+            'brand_id' => $request->brand_id ?: null,
+            'status' => isset($request->status) ? 1 : 0,
+        ]);
+
+        return redirect()->route('product.index')->with('success', 'Вы успешно обновили товар ' . $product->name);
+    }
+
+    public function destroy(Product $product): RedirectResponse
+    {
+        $product->delete();
+        return redirect()->route('product.index')->with('success', 'Вы успешно удалили товар ' . $product->name);
+    }
+}

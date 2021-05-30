@@ -211,6 +211,22 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('group.index') }}" class="nav-link">
+                            <i class="nav-icon far fa-folder"></i>
+                            <p>
+                                Группы товаров
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('product.index') }}" class="nav-link">
+                            <i class="nav-icon far fa-folder"></i>
+                            <p>
+                                Товары
+                            </p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

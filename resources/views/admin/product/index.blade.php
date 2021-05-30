@@ -17,10 +17,10 @@
                         Название
                     </th>
                     <th style="width: 30%">
-                        Привязанные группы товаров
+                        Группа
                     </th>
-                    <th>
-                        Кол-во товаров
+                    <th style="width: 30%">
+                        Бренд
                     </th>
                     <th style="width: 8%" class="text-center">
                         Статус
@@ -31,41 +31,47 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($brands as $brand)
+                @foreach($products as $product)
                     <tr>
                         <td>
-                            {{ $brand->id }}
+                            {{ $product->id }}
                         </td>
                         <td>
-                            {{ $brand->name }}
+                            {{ $product->name }}
                         </td>
                         <td>
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-
-                                </li>
-                            </ul>
+                            @if($product->group_id)
+                                <a href="{{ route('group.edit', $product->group_id) }}">{{ $product->group->name }}</a>
+                            @else
+                                ---
+                            @endif
                         </td>
-                        <td></td>
+                        <td>
+                            @if($product->brand_id)
+                                <a href="{{ route('brand.edit', $product->brand_id) }}">{{ $product->brand->name }}</a>
+                            @else
+                                ---
+                            @endif
+                        </td>
                         <td>
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" disabled="disabled"
-                                       {{ $brand->status ? 'checked' : '' }} id="customSwitch{{$brand->id}}">
-                                <label class="custom-control-label" for="customSwitch{{$brand->id}}"></label>
+                                       {{ $product->status ? 'checked' : '' }} id="customSwitch{{$product->id}}">
+                                <label class="custom-control-label" for="customSwitch{{$product->id}}"></label>
                             </div>
                         </td>
                         <td class="project-actions text-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('brand.show', $brand) }}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('product.show', $product) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('brand.edit', $brand) }}">
+                            <a class="btn btn-info btn-sm" href="{{ route('product.edit', $product) }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="confirm('Удалить бренд - {{ $brand->name }}?') ? $(this).next().submit() : '';">
+                                    onclick="confirm('Удалить категорию - {{ $product->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <form action="{{ route('brand.destroy', $brand) }}" method="post">
+                            <form action="{{ route('product.destroy', $product) }}" method="post">
                                 @CSRF
                                 @method('DELETE')
                             </form>
@@ -78,10 +84,10 @@
         <div class="card-footer">
             <div class="d-flex justify-content-between align-content-start">
                 <div>
-                    {{ $brands->links() }}
+                    {{ $products->links() }}
                 </div>
                 <div>
-                    <a href="{{ route('brand.create') }}" class="btn btn-success btn-sm">Создать</a>
+                    <a href="{{ route('product.create') }}" class="btn btn-success btn-sm">Создать</a>
                 </div>
             </div>
         </div>
