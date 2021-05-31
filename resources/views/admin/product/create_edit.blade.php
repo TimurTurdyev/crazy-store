@@ -72,6 +72,51 @@
             </div>
         </div>
     </form>
+    @if( !isset($product->id) )
+        Сначала создайте товар, после можно будет создать вариант товара
+    @else
+        <div class="card">
+            <div class="card-body">
+                <a href="{{ route('variant.create', $product->id) }}" class="btn btn-default btn-lg">Добавить
+                    вариант товара</a>
+            </div>
+        </div>
+        @foreach( $product->variants() as $variant)
+            <form action="">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Id: {{ $variant->id }} / Sku: {{ $variant->sku }} /
+                            Наименование: {{ $variant->short_name }} /
+                            Статус: {{ $variant->status ? 'Вкл': 'Выкл' }}</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Закупка</th>
+                                <th>Цена</th>
+                                <th>Кол-во</th>
+                                <th>Скидка %</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach( $variant->prices() as $price )
+                                <tr>
+                                    <td>{{ $price->id }}</td>
+                                    <td>{{ $price->name }}</td>
+                                    <td>{{ $price->cost }}</td>
+                                    <td>{{ $price->price }}</td>
+                                    <td>{{ $price->quantity }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        @endforeach
+    @endif
 @endsection
 
 @push('scripts')
