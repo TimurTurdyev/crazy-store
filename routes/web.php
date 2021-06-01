@@ -25,7 +25,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('brand', BrandController::class);
     Route::resource('group', GroupController::class);
     Route::resource('product', ProductController::class);
-    Route::get('product/{id}/variant/create', [VariantController::class, 'create'])->name('variant.create');
+    Route::get('product/{product}/variant/create', [VariantController::class, 'create'])->name('variant.create');
+    Route::post('product/{product}/variant/store', [VariantController::class, 'store'])->name('variant.store');
+    Route::put('product/{product}/variant/{id}/update', [VariantController::class, 'update'])->name('variant.update');
 });
 
 
