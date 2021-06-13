@@ -220,6 +220,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('size.index') }}" class="nav-link">
+                            <i class="nav-icon far fa-folder"></i>
+                            <p>
+                                Размеры товаров
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('product.index') }}" class="nav-link">
                             <i class="nav-icon far fa-folder"></i>
                             <p>

@@ -2,11 +2,12 @@
 
 @section('content')
     <form class="row"
-          action="@if( isset($variant->id) ) {{ route('variant.update',[0, $variant->id]) }} @else {{ route('variant.store', $product->id) }} @endif"
+          action="@if( isset($variant->id) ) {{ route('variant.update',[$variant->product_id, $variant->id]) }} @else {{ route('variant.store', $product->id) }} @endif"
           method="post">
         @CSRF
         @isset( $variant->id )
             @method('put')
+            <input type="hidden" name="id" value="{{ $variant->id }}">
         @endisset
         <div class="col-md-8">
             <div class="card card-success card-outline">
@@ -26,9 +27,9 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Артикул</label>
-                                <input type="text" name="short_name" class="form-control"
-                                       value="{{ old('short_name', $variant->short_name) }}">
-                                @include('admin.master.message.error', ['name' => 'short_name'])
+                                <input type="text" name="sku" class="form-control"
+                                       value="{{ old('sku', $variant->sku) }}">
+                                @include('admin.master.message.error', ['name' => 'sku'])
                             </div>
                         </div>
                     </div>
@@ -56,14 +57,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach( $variant->prices() as $price )
+                        @foreach( $variant->prices as $price )
                             <tr>
                                 <td>
-                                    <input type="text" name="prices[][id]" value="{{ $price->id }}" class="form-control"
-                                           readonly>
+                                    {{ $price->id }}
+                                    <input type="hidden" name="prices[{{ $loop->index }}][id]" value="{{ $price->id }}">
                                 </td>
                                 <td>
-                                    <select name="prices[][size_id]" class="form-control">
+                                    <select name="prices[{{ $loop->index }}][size_id]" class="form-control">
                                         <option value="">-- Выберите --</option>
                                         @foreach( $sizes as $size )
                                             <option value="{{ $size->id }}"
@@ -73,15 +74,19 @@
                                         @endforeach
                                     </select>
                                 </td>
-                                <td><input type="number" name="prices[][cost]" value="{{ $price->cost }}"
+                                <td><input type="number" name="prices[{{ $loop->index }}][cost]"
+                                           value="{{ $price->cost }}"
                                            class="form-control">
                                 </td>
-                                <td><input type="number" name="prices[][price]" value="{{ $price->price }}"
+                                <td><input type="number" name="prices[{{ $loop->index }}][price]"
+                                           value="{{ $price->price }}"
                                            class="form-control">
                                 </td>
-                                <td><input type="number" name="prices[][quantity]" value="{{ $price->quantity }}"
+                                <td><input type="number" name="prices[{{ $loop->index }}][quantity]"
+                                           value="{{ $price->quantity }}"
                                            class="form-control"></td>
-                                <td><input type="number" name="prices[][discount]" value="{{ $price->discount }}"
+                                <td><input type="number" name="prices[{{ $loop->index }}][discount]"
+                                           value="{{ $price->discount }}"
                                            class="form-control"></td>
                             </tr>
                         @endforeach
@@ -127,17 +132,21 @@
         });
 
         $tablePrices.on('click', '.btn-success', function () {
-            $($tablePrices).children('tbody').append( $('#price_row').html() );
+            var $tBody = $($tablePrices).children('tbody');
+            var count = $tBody.find('tr').length;
+            var row = $('#price_row').html().replace(/\{index\}/gi, count);
+            $tBody.append($(row));
         });
     </script>
     <script type="template/html" id="price_row">
         <tr>
             <td>
-                <input type="text" name="prices[][id]" value="new" class="form-control" readonly>
+                new
+                <input type="hidden" name="prices[{index}][id]" value="">
             </td>
             <td>
                 <select name="size_id" class="form-control">
-                    <option value="">-- Выберите --</option>
+                    <option value="null">-- Выберите --</option>
                     @foreach( $sizes as $size )
                         <option value="{{ $size->id }}">
                             {{ $size->name }}
@@ -145,10 +154,10 @@
                     @endforeach
                 </select>
             </td>
-            <td><input type="number" name="prices[][cost]" value="" class="form-control"></td>
-            <td><input type="number" name="prices[][price]" value="" class="form-control"></td>
-            <td><input type="number" name="prices[][quantity]" value="" class="form-control"></td>
-            <td><input type="number" name="prices[][discount]" value="" class="form-control"></td>
+            <td><input type="number" name="prices[{index}][cost]" value="0" class="form-control"></td>
+            <td><input type="number" name="prices[{index}][price]" value="0" class="form-control"></td>
+            <td><input type="number" name="prices[{index}][quantity]" value="0" class="form-control"></td>
+            <td><input type="number" name="prices[{index}][discount]" value="0" class="form-control"></td>
             <td>
                 <button type="button" class="btn btn-danger btn-block"><i class="fas fa-trash-alt"></i></button>
             </td>

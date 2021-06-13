@@ -81,37 +81,80 @@
                     вариант товара</a>
             </div>
         </div>
-        @foreach( $product->variants() as $variant)
+
+        @foreach( $product->variants as $variant)
             <form action="">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Id: {{ $variant->id }} / Sku: {{ $variant->sku }} /
-                            Наименование: {{ $variant->short_name }} /
-                            Статус: {{ $variant->status ? 'Вкл': 'Выкл' }}</h3>
+                    <div class="card-header py-1 px-3">
+                        <h3 class="card-title">
+                            {{ $variant->short_name }}
+                        </h3>
+                        <div class="card-tools">#{{ $variant->id }}</div>
                     </div>
                     <div class="card-body p-0">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Закупка</th>
-                                <th>Цена</th>
-                                <th>Кол-во</th>
-                                <th>Скидка %</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach( $variant->prices() as $price )
-                                <tr>
-                                    <td>{{ $price->id }}</td>
-                                    <td>{{ $price->name }}</td>
-                                    <td>{{ $price->cost }}</td>
-                                    <td>{{ $price->price }}</td>
-                                    <td>{{ $price->quantity }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-sm-3"><a
+                                            href="https://via.placeholder.com/1200/000000.png?text=2"
+                                            data-toggle="lightbox" data-title="sample 2 - black"
+                                            data-gallery="gallery">
+                                            <img src="https://via.placeholder.com/300/000000?text=2"
+                                                 class="img-fluid mb-2" alt="black sample">
+                                        </a></div>
+                                    <div class="col-sm-3"><a
+                                            href="https://via.placeholder.com/1200/000000.png?text=2"
+                                            data-toggle="lightbox" data-title="sample 2 - black"
+                                            data-gallery="gallery">
+                                            <img src="https://via.placeholder.com/300/000000?text=2"
+                                                 class="img-fluid mb-2" alt="black sample">
+                                        </a></div>
+                                    <div class="col-sm-3"><a
+                                            href="https://via.placeholder.com/1200/000000.png?text=2"
+                                            data-toggle="lightbox" data-title="sample 2 - black"
+                                            data-gallery="gallery">
+                                            <img src="https://via.placeholder.com/300/000000?text=2"
+                                                 class="img-fluid mb-2" alt="black sample">
+                                        </a></div>
+                                    <div class="col-sm-3"><a href="https://via.placeholder.com/1200/000000.png?text=2"
+                                                             data-toggle="lightbox" data-title="sample 2 - black"
+                                                             data-gallery="gallery">
+                                            <img src="https://via.placeholder.com/300/000000?text=2"
+                                                 class="img-fluid mb-2" alt="black sample">
+                                        </a></div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Размер</th>
+                                        <th>Закупка</th>
+                                        <th>Цена на сайте</th>
+                                        <th>Кол-во</th>
+                                        <th>Скидка</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach( $variant->prices as $price )
+                                        <tr>
+                                            <td>{{ $price->id }}</td>
+                                            <td>{{ $price->name ?? '---' }}</td>
+                                            <td>{{ $price->cost }}</td>
+                                            <td>{{ $price->price }}</td>
+                                            <td>{{ $price->quantity }}</td>
+                                            <td>{{ $price->discount }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer py-1 px-3 d-flex justify-content-end">
+                        <a href="{{ route('variant.edit', [$product->id, $variant->id]) }}"
+                           class="btn btn-outline-info btn-xs">Редактировать</a>
                     </div>
                 </div>
             </form>

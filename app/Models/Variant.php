@@ -21,7 +21,8 @@ class Variant extends Model
 
     public function prices(): HasMany
     {
-        return $this->hasMany(VariantPrice::class);
+        return $this->hasMany(VariantPrice::class)
+            ->leftJoin('sizes', 'variant_prices.size_id', '=', 'sizes.id');
     }
 
     public function photos(): HasMany
