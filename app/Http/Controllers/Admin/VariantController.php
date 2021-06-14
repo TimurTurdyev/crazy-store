@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\VariantRequest;
-use App\Models\Price;
 use App\Models\Product;
 use App\Models\Size;
 use App\Models\Variant;
+use App\Models\VariantPhoto;
 use App\Models\VariantPrice;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -38,9 +38,18 @@ class VariantController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
-        foreach ($request->prices as $price) {
-            $price['variant_id'] = $variant->id;
-            $variant->prices()->create($price);
+        if (!empty($request->prices)) {
+            foreach ($request->prices as $price) {
+                $price['variant_id'] = $variant->id;
+                $variant->prices()->create($price);
+            }
+        }
+
+        if (!empty($request->photos)) {
+            foreach ($request->photos as $photos) {
+                $photos['variant_id'] = $variant->id;
+                $variant->photos()->create($photos);
+            }
         }
 
         return redirect()->route('product.edit', $product);
@@ -69,15 +78,29 @@ class VariantController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
-        $price_exist = [];
+        if (!empty($request->prices)) {
+            $price_exist = [];
 
-        foreach ($request->prices as $price) {
-            $price['variant_id'] = $variant->id;
-            $price = VariantPrice::updateOrCreate($price);
-            $price_exist[] = $price->id;
+            foreach ($request->prices as $price) {
+                $price['variant_id'] = $variant->id;
+                $price = VariantPrice::updateOrCreate($price);
+                $price_exist[] = $price->id;
+            }
+
+            VariantPrice::where('variant_id', $variant->id)->whereNotIn('id', $price_exist)->delete();
         }
 
-        VariantPrice::where('variant_id', $variant->id)->whereNotIn('id', $price_exist)->delete();
+        if (!empty($request->photos)) {
+            $photos_exist = [];
+
+            foreach ($request->photos as $photos) {
+                $photos['variant_id'] = $variant->id;
+                $photos = VariantPhoto::updateOrCreate($photos);
+                $photos_exist[] = $photos->id;
+            }
+
+            VariantPhoto::where('variant_id', $variant->id)->whereNotIn('id', $photos_exist)->delete();
+        }
 
         return redirect()->route('product.edit', $product);
     }

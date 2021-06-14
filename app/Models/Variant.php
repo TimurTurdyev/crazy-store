@@ -27,6 +27,6 @@ class Variant extends Model
 
     public function photos(): HasMany
     {
-        return $this->hasMany(VariantPhoto::class);
+        return $this->hasMany(VariantPhoto::class)->orderBy('sort_order');
     }
 }

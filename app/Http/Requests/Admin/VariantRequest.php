@@ -32,6 +32,8 @@ class VariantRequest extends FormRequest
             'variants.*.cost' => 'required|numeric',
             'variants.*.quantity' => 'required|numeric',
             'variants.*.discount' => 'required|numeric',
+            'photos.*.path' => 'required|string',
+            'photos.*.sort_order' => 'required|numeric',
         ];
     }
 }

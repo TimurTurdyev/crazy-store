@@ -68,7 +68,7 @@
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="confirm('Удалить категорию - {{ $product->name }}?') ? $(this).next().submit() : '';">
+                                    onclick="confirm('Удалить товар - {{ $product->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
                             <form action="{{ route('product.destroy', $product) }}" method="post">

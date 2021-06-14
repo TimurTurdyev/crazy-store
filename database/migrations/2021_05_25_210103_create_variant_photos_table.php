@@ -17,6 +17,7 @@ class CreateVariantPhotosTable extends Migration
             $table->id();
             $table->foreignId('variant_id')->references('id')->on('variants')->cascadeOnDelete();
             $table->string('path');
+            $table->smallInteger('sort_order');
         });
     }
 
