@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/daterangepicker/daterangepicker.css') }}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/summernote/summernote-bs4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/colorbox-master/example1/colorbox.css') }}">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -211,6 +212,30 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('group.index') }}" class="nav-link">
+                            <i class="nav-icon far fa-folder"></i>
+                            <p>
+                                Группы товаров
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('size.index') }}" class="nav-link">
+                            <i class="nav-icon far fa-folder"></i>
+                            <p>
+                                Размеры товаров
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('product.index') }}" class="nav-link">
+                            <i class="nav-icon far fa-folder"></i>
+                            <p>
+                                Товары
+                            </p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -274,6 +299,7 @@
 <!-- Bootstrap 4 -->
 <script src="{{ asset('admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
+<script src="{{ asset('admin/plugins/colorbox-master/jquery.colorbox-min.js') }}"></script>
 @stack('scripts')
 <!-- overlayScrollbars -->
 <script src="{{ asset('admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
@@ -281,6 +307,8 @@
 <script src="{{ asset('admin/dist/js/adminlte.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('admin/dist/js/demo.js') }}"></script>
+
+<script src="{{ asset('packages/barryvdh/elfinder/js/standalonepopup.js') }}"></script>
 
 </body>
 </html>
