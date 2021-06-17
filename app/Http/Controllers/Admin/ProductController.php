@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Brand;
 use App\Models\Group;
 use App\Models\Product;
+use App\Models\Size;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -47,7 +48,8 @@ class ProductController extends Controller
     {
         $groups = Group::get();
         $brands = Brand::get();
-        return view('admin.product.create_edit', compact('product', 'groups', 'brands'));
+        $sizes = Size::get();
+        return view('admin.product.create_edit', compact('product', 'groups', 'brands', 'sizes'));
     }
 
     public function update(ProductRequest $request, Product $product): RedirectResponse

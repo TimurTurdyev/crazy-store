@@ -9,7 +9,6 @@ use App\Models\Size;
 use App\Models\Variant;
 use App\Models\VariantPhoto;
 use App\Models\VariantPrice;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -95,6 +94,9 @@ class VariantController extends Controller
 
             foreach ($request->photos as $photos) {
                 $photos['variant_id'] = $variant->id;
+                if (!isset($variant['path'])) {
+                    $variant['path'] = 'images/placeholder.png';
+                }
                 $photos = VariantPhoto::updateOrCreate($photos);
                 $photos_exist[] = $photos->id;
             }

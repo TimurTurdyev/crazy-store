@@ -9,9 +9,6 @@
         @endif
         <div class="col-md-8">
             <div class="card card-success card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">Создание</h3>
-                </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Название</label>
@@ -31,16 +28,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success btn-sm">Выполнить</button>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        @if( $product->id )
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="confirm('Удалить товар?') ? $('#product_destroy').submit() : ''">
+                                Удалить
+                            </button>
+                        @else
+                            <div></div>
+                        @endif
+                        <button type="submit" class="btn btn-success btn-sm">Выполнить</button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card card-success card-outline">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">Связи</h3>
-                </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Группа товара</label>
@@ -72,6 +76,12 @@
             </div>
         </div>
     </form>
+    @if( $product->id )
+        <form id="product_destroy" action="{{ route('product.destroy', $product->id) }}" method="post">
+            @CSRF
+            @method('DELETE')
+        </form>
+    @endif
     @if( !isset($product->id) )
         Сначала создайте товар, после можно будет создать вариант товара
     @else
@@ -81,91 +91,10 @@
                     вариант товара</a>
             </div>
         </div>
-
         @foreach( $product->variants as $variant)
-            <div class="card">
-                <div class="card-header py-1 px-3">
-                    <h3 class="card-title">
-                        {{ $variant->short_name }}
-                    </h3>
-                    <div class="card-tools">#{{ $variant->id }}</div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="row">
-                                @foreach( $variant->photos as $photo )
-                                    <div class="col-sm-3">
-                                        <a
-                                            href="{{ asset($photo->path) }}"
-                                            data-toggle="lightbox"
-                                            data-gallery="gallery">
-                                            <img src="{{ asset($photo->path) }}"
-                                                 class="img-fluid mb-2">
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <table class="table table-bordered table-hover table-sm">
-                                <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th>Размер</th>
-                                    <th>Закупка</th>
-                                    <th>Цена на сайте</th>
-                                    <th>Кол-во</th>
-                                    <th>Скидка</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach( $variant->prices as $price )
-                                    <tr>
-                                        <td>{{ $price->id }}</td>
-                                        <td>{{ $price->name ?? '---' }}</td>
-                                        <td>{{ $price->cost }}</td>
-                                        <td>{{ $price->price }}</td>
-                                        <td>{{ $price->quantity }}</td>
-                                        <td>{{ $price->discount }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer py-1 px-3 d-flex justify-content-end">
-                    <a href="{{ route('variant.edit', [$product->id, $variant->id]) }}"
-                       class="btn btn-outline-info btn-xs">Редактировать</a>
-                    <form action="{{ route('variant.destroy', [$product->id, $variant->id]) }}" method="post">
-                        @csrf
-                        @method('delete')
-                        <button type="submit" class="btn btn-outline-danger btn-xs ml-2">Удалить</button>
-                    </form>
-                </div>
-            </div>
+            @include('admin.variant.index')
         @endforeach
     @endif
 @endsection
 
-@push('scripts')
-    <!-- Ekko Lightbox -->
-    <link rel="stylesheet" href="{{ asset('admin/plugins/ekko-lightbox/ekko-lightbox.css') }}">
-    <script src="{{ asset('admin/plugins/ekko-lightbox/ekko-lightbox.min.js') }}"></script>
-    <!-- Bootstrap Switch -->
-    <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
-    <script>
-
-        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
-            event.preventDefault();
-            $(this).ekkoLightbox({
-                alwaysShowClose: true
-            });
-        });
-
-        $("input[data-bootstrap-switch]").each(function () {
-            $(this).bootstrapSwitch('state', $(this).prop('checked'));
-        })
-    </script>
-@endpush
+@include('admin.variant.scripts')

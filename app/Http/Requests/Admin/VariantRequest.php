@@ -26,14 +26,14 @@ class VariantRequest extends FormRequest
         return [
             'short_name' => 'required|max:64',
             'sku' => 'required|max:32',
-            'variants.*.variant_id' => 'required|numeric',
+            /*'variants.*.variant_id' => 'required|numeric',
             'variants.*.size_id' => 'required|numeric',
             'variants.*.price' => 'required|numeric',
             'variants.*.cost' => 'required|numeric',
             'variants.*.quantity' => 'required|numeric',
             'variants.*.discount' => 'required|numeric',
             'photos.*.path' => 'required|string',
-            'photos.*.sort_order' => 'required|numeric',
+            'photos.*.sort_order' => 'required|numeric',*/
         ];
     }
 }
