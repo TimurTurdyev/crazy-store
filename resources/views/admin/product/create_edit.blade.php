@@ -1,5 +1,11 @@
 @extends('layouts.app')
+@section('header', $product->id ? 'Обновить товар': 'Создать товар')
+@section('breadcrumbs')
+    <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Список товаров</a></li>
+    <li class="breadcrumb-item active">{{ $product->id ? 'Обновить товар': 'Создать товар' }}</li>
+@endsection
 @section('content')
+    @include('admin.master.message.success')
     <form class="row"
           action="@if( $product->id ) {{ route('product.update', $product) }} @else {{ route('product.store') }} @endif"
           method="post">
@@ -83,7 +89,11 @@
         </form>
     @endif
     @if( !isset($product->id) )
-        Сначала создайте товар, после можно будет создать вариант товара
+        <div class="card">
+            <div class="card-body">
+                <p>Сначала создайте товар, после можно будет создать вариант товара...</p>
+            </div>
+        </div>
     @else
         <div class="card">
             <div class="card-body">

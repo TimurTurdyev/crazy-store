@@ -1,5 +1,8 @@
 @extends('layouts.app')
-
+@section('header', 'Список товаров')
+@section('breadcrumbs')
+    <li class="breadcrumb-item active">Список товаров</li>
+@endsection
 @section('content')
     @include('admin.master.message.success')
     <div class="card">

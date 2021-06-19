@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
+use App\Models\Group;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -18,7 +19,8 @@ class CategoryController extends Controller
 
     public function create(): View
     {
-        return view('admin.category.create_edit');
+        $groups = Group::get();
+        return view('admin.category.create_edit', compact('groups'));
     }
 
     public function store(CategoryRequest $request): RedirectResponse
@@ -38,7 +40,8 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        return view('admin.category.create_edit', compact('category'));
+        $groups = Group::get();
+        return view('admin.category.create_edit', compact('category', 'groups'));
     }
 
     public function update(CategoryRequest $request, Category $category): RedirectResponse

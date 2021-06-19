@@ -87,7 +87,7 @@
             <td>
                 <select name="size_id" class="form-control">
                     <option value="null">-- Выберите --</option>
-                    @foreach( $sizes as $size )
+                    @foreach( $sizes ?? [] as $size )
                         <option value="{{ $size->id }}">
                             {{ $size->name }}
                         </option>

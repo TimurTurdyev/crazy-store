@@ -9,12 +9,10 @@ use App\Http\Controllers\Admin\VariantController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('catalog.home.index');
 });
 
-Route::get('catalog/{id}', function () {
-    return view('welcome');
-})->name('catalog');
+Route::get('catalog/{category}', [App\Http\Controllers\Catalog\CategoryController::class, 'index'])->name('catalog');
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
 

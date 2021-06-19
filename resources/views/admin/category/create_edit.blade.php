@@ -10,9 +10,6 @@
         @endisset
         <div class="col-md-8">
             <div class="card card-success card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">Создание</h3>
-                </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Название</label>
@@ -39,11 +36,17 @@
         </div>
         <div class="col-md-4">
             <div class="card card-success card-outline">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">Связи</h3>
-                </div>
-                <div class="card-body p-0">
-
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Группы товаров</label>
+                        @foreach( $groups as $group )
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" name="groups[]" id="checkbox_group{{ $group->id }}"
+                                       value="{{ $group->id }}">
+                                <label for="checkbox_group{{ $group->id }}" class="custom-control-label">{{ $group->name }}</label>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
