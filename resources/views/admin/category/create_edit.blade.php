@@ -41,9 +41,17 @@
                         <label>Группы товаров</label>
                         @foreach( $groups as $group )
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" name="groups[]" id="checkbox_group{{ $group->id }}"
-                                       value="{{ $group->id }}">
-                                <label for="checkbox_group{{ $group->id }}" class="custom-control-label">{{ $group->name }}</label>
+                                @if( in_array($group->id, $group_selected) )
+                                    <input class="custom-control-input" type="checkbox"  checked name="groups[]"
+                                           id="checkbox_group{{ $group->id }}"
+                                           value="{{ $group->id }}">
+                                @else
+                                    <input class="custom-control-input" type="checkbox" name="groups[]"
+                                           id="checkbox_group{{ $group->id }}"
+                                           value="{{ $group->id }}">
+                                @endif
+                                <label for="checkbox_group{{ $group->id }}"
+                                       class="custom-control-label">{{ $group->name }}</label>
                             </div>
                         @endforeach
                     </div>

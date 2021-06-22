@@ -31,7 +31,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($categories as $category)
+                @foreach( $categories as $category )
                     <tr>
                         <td>
                             {{ $category->id }}
@@ -41,9 +41,11 @@
                         </td>
                         <td>
                             <ul class="list-inline">
+                                @foreach( $category->load('groupCategory')->groupCategory as $item )
                                 <li class="list-inline-item">
-
+                                    {{ $item->name }}
                                 </li>
+                                @endforeach
                             </ul>
                         </td>
                         <td></td>

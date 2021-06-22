@@ -16,7 +16,7 @@
 
             <!-- Nav -->
             <ul class="nav nav-divided navbar-nav mr-auto">
-                ё
+
             </ul>
 
             <!-- Nav -->
