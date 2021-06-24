@@ -31,6 +31,8 @@ class CategoryController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
+        $category->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
         return redirect()->route('category.index')->with('success', 'Вы успешно создали категорию ' . $category->name);
     }
 
@@ -57,6 +59,8 @@ class CategoryController extends Controller
             'name' => $request->name,
             'status' => isset($request->status) ? 1 : 0,
         ]);
+
+        $category->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
         if ($request->has('groups')) {
             $category->groupCategory()->sync($request->groups);

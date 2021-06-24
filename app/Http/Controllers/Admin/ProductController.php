@@ -36,6 +36,8 @@ class ProductController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
+        $product->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
         return redirect()->route('product.edit', $product)->with('success', 'Вы успешно создали товар ' . $product->name);
     }
 
@@ -60,6 +62,8 @@ class ProductController extends Controller
             'brand_id' => $request->brand_id ?: null,
             'status' => isset($request->status) ? 1 : 0,
         ]);
+
+        $product->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
         return redirect()->route('product.edit', $product)->with('success', 'Вы успешно обновили товар ' . $product->name);
     }

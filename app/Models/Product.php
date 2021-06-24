@@ -29,4 +29,9 @@ class Product extends Model
     {
         return $this->hasMany(Variant::class);
     }
+
+    public function description(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Description::class, 'entity')->withDefault();
+    }
 }

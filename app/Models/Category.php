@@ -16,4 +16,9 @@ class Category extends Model
     {
         return $this->belongsToMany(Group::class);
     }
+
+    public function description(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Description::class, 'entity')->withDefault();
+    }
 }

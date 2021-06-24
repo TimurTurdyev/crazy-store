@@ -23,10 +23,19 @@ class ProductRequest extends FormRequest
      */
     public function rules()
     {
+        if ($this->request->has('description') && !empty($this->request->get('description')['id'])) {
+            $description = ',' . $this->request->get('description')['id'];
+        } else {
+            $description = '';
+        }
         return [
             'name' => 'required|max:96',
             'group_id' => 'nullable|numeric',
             'brand_id' => 'nullable|numeric',
+            'description.heading' => ['required', 'max:128', 'unique:descriptions,heading' . $description],
+            'description.meta_title' => ['nullable', 'max:255'],
+            'description.preview' => ['nullable', 'max:255'],
+            'description.body' => ['nullable'],
         ];
     }
 }

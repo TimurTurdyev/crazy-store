@@ -17,6 +17,7 @@
                                value="{{ old('name', isset($category) ? $category->name : '') }}">
                         @include('admin.master.message.error', ['name' => 'name'])
                     </div>
+                    @include('admin.description.form', ['description' => $category->description])
                     <div class="form-group">
                         <label>Статус</label>
                         <div>
@@ -60,7 +61,7 @@
         </div>
     </form>
 @endsection
-
+@include('admin.description.scripts')
 @push('scripts')
     <!-- Bootstrap Switch -->
     <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>

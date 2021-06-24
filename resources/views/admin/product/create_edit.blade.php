@@ -22,6 +22,7 @@
                                value="{{ old('name', $product->name) }}">
                         @include('admin.master.message.error', ['name' => 'name'])
                     </div>
+                    @include('admin.description.form', ['description' => $product->description])
                     <div class="form-group">
                         <label>Статус</label>
                         <div>
@@ -106,5 +107,5 @@
         @endforeach
     @endif
 @endsection
-
+@include('admin.description.scripts')
 @include('admin.variant.scripts')

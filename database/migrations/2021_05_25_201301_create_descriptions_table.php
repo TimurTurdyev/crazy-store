@@ -20,7 +20,7 @@ class CreateDescriptionsTable extends Migration
             $table->string('meta_title', 255)->nullable()->unique();
             $table->string('meta_description', 255)->nullable();
             $table->string('preview')->nullable();
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->timestamps();
         });
     }

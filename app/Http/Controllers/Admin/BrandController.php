@@ -28,6 +28,8 @@ class BrandController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
+        $brand->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
         return redirect()->route('brand.index')->with('success', 'Вы успешно создали бренд ' . $brand->name);
     }
 
@@ -47,6 +49,8 @@ class BrandController extends Controller
             'name' => $request->name,
             'status' => isset($request->status) ? 1 : 0,
         ]);
+
+        $brand->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
         return redirect()->route('brand.index')->with('success', 'Вы успешно обновили бренд ' . $brand->name);
     }
