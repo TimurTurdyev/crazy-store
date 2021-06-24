@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 /AdminLTE-3.1.0
+/Shopper
 .env
 .env.backup
 .phpunit.result.cache

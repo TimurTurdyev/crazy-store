@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
+use App\Models\Group;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -18,7 +19,9 @@ class CategoryController extends Controller
 
     public function create(): View
     {
-        return view('admin.category.create_edit');
+        $groups = Group::get();
+        $group_selected['groupCategory'] = [];
+        return view('admin.category.create_edit', compact('groups', 'group_selected'));
     }
 
     public function store(CategoryRequest $request): RedirectResponse
@@ -27,6 +30,8 @@ class CategoryController extends Controller
             'name' => $request->name,
             'status' => isset($request->status) ? 1 : 0,
         ]);
+
+        $category->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
         return redirect()->route('category.index')->with('success', 'Вы успешно создали категорию ' . $category->name);
     }
@@ -38,7 +43,14 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        return view('admin.category.create_edit', compact('category'));
+        $groups = Group::get();
+        $group_selected = $category->load(['groupCategory' => function($query) {
+            $query->select('group_id');
+        }])->getRelation('groupCategory')->map(function ($item) {
+            return $item->group_id;
+        })->toArray();
+
+        return view('admin.category.create_edit', compact('category', 'groups', 'group_selected'));
     }
 
     public function update(CategoryRequest $request, Category $category): RedirectResponse
@@ -47,6 +59,14 @@ class CategoryController extends Controller
             'name' => $request->name,
             'status' => isset($request->status) ? 1 : 0,
         ]);
+
+        $category->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
+        if ($request->has('groups')) {
+            $category->groupCategory()->sync($request->groups);
+        } else {
+            $category->groupCategory()->detach();
+        }
 
         return redirect()->route('category.index')->with('success', 'Вы успешно обновили категорию ' . $category->name);
     }

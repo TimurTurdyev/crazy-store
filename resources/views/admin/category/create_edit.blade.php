@@ -10,9 +10,6 @@
         @endisset
         <div class="col-md-8">
             <div class="card card-success card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">Создание</h3>
-                </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Название</label>
@@ -20,6 +17,7 @@
                                value="{{ old('name', isset($category) ? $category->name : '') }}">
                         @include('admin.master.message.error', ['name' => 'name'])
                     </div>
+                    @include('admin.description.form', ['description' => $category->description])
                     <div class="form-group">
                         <label>Статус</label>
                         <div>
@@ -39,17 +37,31 @@
         </div>
         <div class="col-md-4">
             <div class="card card-success card-outline">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">Связи</h3>
-                </div>
-                <div class="card-body p-0">
-
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Группы товаров</label>
+                        @foreach( $groups as $group )
+                            <div class="custom-control custom-checkbox">
+                                @if( in_array($group->id, $group_selected) )
+                                    <input class="custom-control-input" type="checkbox"  checked name="groups[]"
+                                           id="checkbox_group{{ $group->id }}"
+                                           value="{{ $group->id }}">
+                                @else
+                                    <input class="custom-control-input" type="checkbox" name="groups[]"
+                                           id="checkbox_group{{ $group->id }}"
+                                           value="{{ $group->id }}">
+                                @endif
+                                <label for="checkbox_group{{ $group->id }}"
+                                       class="custom-control-label">{{ $group->name }}</label>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
     </form>
 @endsection
-
+@include('admin.description.scripts')
 @push('scripts')
     <!-- Bootstrap Switch -->
     <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>

@@ -31,12 +31,14 @@ class ProductController extends Controller
     {
         $product = Product::create([
             'name' => $request->name,
-            'group_id' => $request->group_id,
-            'brand_id' => $request->brand_id,
+            'group_id' => $request->group_id ?: null,
+            'brand_id' => $request->brand_id ?: null,
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
-        return redirect()->route('product.index')->with('success', 'Вы успешно создали товар ' . $product->name);
+        $product->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
+        return redirect()->route('product.edit', $product)->with('success', 'Вы успешно создали товар ' . $product->name);
     }
 
     public function show(Product $product): RedirectResponse
@@ -61,7 +63,9 @@ class ProductController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
-        return redirect()->route('product.index')->with('success', 'Вы успешно обновили товар ' . $product->name);
+        $product->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
+        return redirect()->route('product.edit', $product)->with('success', 'Вы успешно обновили товар ' . $product->name);
     }
 
     public function destroy(Product $product): RedirectResponse

@@ -28,6 +28,8 @@ class GroupController extends Controller
             'status' => isset($request->status) ? 1 : 0,
         ]);
 
+        $group->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
+
         return redirect()->route('group.index')->with('success', 'Вы успешно создали группу товаров ' . $group->name);
     }
 
@@ -47,6 +49,8 @@ class GroupController extends Controller
             'name' => $request->name,
             'status' => isset($request->status) ? 1 : 0,
         ]);
+
+        $group->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
         return redirect()->route('group.index')->with('success', 'Вы успешно обновили группу товаров ' . $group->name);
     }
