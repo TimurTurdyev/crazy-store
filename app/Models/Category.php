@@ -12,9 +12,9 @@ class Category extends Model
     protected $guarded = ['id'];
     public $timestamps = false;
 
-    public function groupCategory(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function groups(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Group::class);
+        return $this->belongsToMany(Group::class, 'category_group');
     }
 
     public function description(): \Illuminate\Database\Eloquent\Relations\MorphOne
