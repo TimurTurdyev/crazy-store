@@ -20,7 +20,7 @@ class CategoryController extends Controller
     public function create(): View
     {
         $groups = Group::get();
-        $group_selected['groupCategory'] = [];
+        $group_selected['groups'] = [];
         return view('admin.category.create_edit', compact('groups', 'group_selected'));
     }
 
@@ -44,9 +44,9 @@ class CategoryController extends Controller
     public function edit(Category $category): View
     {
         $groups = Group::get();
-        $group_selected = $category->load(['groupCategory' => function($query) {
+        $group_selected = $category->load(['groups' => function($query) {
             $query->select('group_id');
-        }])->getRelation('groupCategory')->map(function ($item) {
+        }])->getRelation('groups')->map(function ($item) {
             return $item->group_id;
         })->toArray();
 
@@ -63,9 +63,9 @@ class CategoryController extends Controller
         $category->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
         if ($request->has('groups')) {
-            $category->groupCategory()->sync($request->groups);
+            $category->groups()->sync($request->groups);
         } else {
-            $category->groupCategory()->detach();
+            $category->groups()->detach();
         }
 
         return redirect()->route('category.index')->with('success', 'Вы успешно обновили категорию ' . $category->name);

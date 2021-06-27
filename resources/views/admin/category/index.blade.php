@@ -41,7 +41,7 @@
                         </td>
                         <td>
                             <ul class="list-inline">
-                                @foreach( $category->load('groupCategory')->groupCategory as $item )
+                                @foreach( $category->load('groups')->groups as $item )
                                 <li class="list-inline-item">
                                     {{ $item->name }}
                                 </li>

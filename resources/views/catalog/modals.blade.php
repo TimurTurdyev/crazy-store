@@ -13,7 +13,7 @@
                 <div class="col-12 col-lg-5">
 
                     <!-- Image -->
-                    <img class="img-fluid" src="assets/img/covers/cover-25.jpg" alt="...">
+                    <img class="img-fluid" src="{{ asset('catalog') }}/img/covers/cover-25.jpg" alt="...">
 
                 </div>
                 <div class="col-12 col-lg-7 d-flex flex-column px-md-8">
@@ -90,7 +90,7 @@
             </button>
 
             <!-- Body -->
-            <div class="modal-body mt-2 mr-2 ml-2 py-10 bg-cover text-center text-white" style="background-image: url(assets/img/covers/cover-26.jpg);">
+            <div class="modal-body mt-2 mr-2 ml-2 py-10 bg-cover text-center text-white" style="background-image: url({{ asset('catalog') }}/img/covers/cover-26.jpg);">
 
                 <!-- Heading -->
                 <h4>Subscribe to Newsletter and get 15% Discount</h4>
@@ -218,7 +218,7 @@
                     <div class="col-12 col-lg-6 col-xl-5 py-4 py-xl-0 px-xl-0">
 
                         <!-- Image -->
-                        <img class="img-fluid" src="assets/img/products/product-7.jpg" alt="...">
+                        <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-7.jpg" alt="...">
 
                         <!-- Button -->
                         <a class="btn btn-sm btn-block btn-primary" href="https://yevgenysim.github.io/shopper/product.html">
@@ -251,13 +251,13 @@
                                     <div class="custom-control custom-control-inline custom-control-img">
                                         <input type="radio" class="custom-control-input" id="modalProductColorOne" name="modalProductColor" data-toggle="form-caption" data-target="#modalProductColorCaption" value="White" checked>
                                         <label class="custom-control-label" for="modalProductColorOne">
-                                            <span class="embed-responsive embed-responsive-1by1 bg-cover" style="background-image: url(assets/img/products/product-7.jpg);"></span>
+                                            <span class="embed-responsive embed-responsive-1by1 bg-cover" style="background-image: url({{ asset('catalog') }}/img/products/product-7.jpg);"></span>
                                         </label>
                                     </div>
                                     <div class="custom-control custom-control-inline custom-control-img">
                                         <input type="radio" class="custom-control-input" id="modalProductColorTwo" name="modalProductColor" data-toggle="form-caption" data-target="#modalProductColorCaption" value="Black">
                                         <label class="custom-control-label" for="modalProductColorTwo">
-                                            <span class="embed-responsive embed-responsive-1by1 bg-cover" style="background-image: url(assets/img/products/product-49.jpg);"></span>
+                                            <span class="embed-responsive embed-responsive-1by1 bg-cover" style="background-image: url({{ asset('catalog') }}/img/products/product-49.jpg);"></span>
                                         </label>
                                     </div>
                                 </div>
@@ -423,7 +423,7 @@
                     <div class="col-4 col-md-3">
 
                         <!-- Image -->
-                        <img class="img-fluid" src="assets/img/products/product-5.jpg" alt="...">
+                        <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-5.jpg" alt="...">
 
                     </div>
                     <div class="col position-static">
@@ -440,7 +440,7 @@
                     <div class="col-4 col-md-3">
 
                         <!-- Image -->
-                        <img class="img-fluid" src="assets/img/products/product-6.jpg" alt="...">
+                        <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-6.jpg" alt="...">
 
                     </div>
                     <div class="col position-static">
@@ -457,7 +457,7 @@
                     <div class="col-4 col-md-3">
 
                         <!-- Image -->
-                        <img class="img-fluid" src="assets/img/products/product-7.jpg" alt="...">
+                        <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-7.jpg" alt="...">
 
                     </div>
                     <div class="col position-static">
@@ -474,7 +474,7 @@
                     <div class="col-4 col-md-3">
 
                         <!-- Image -->
-                        <img class="img-fluid" src="assets/img/products/product-8.jpg" alt="...">
+                        <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-8.jpg" alt="...">
 
                     </div>
                     <div class="col position-static">
@@ -491,7 +491,7 @@
                     <div class="col-4 col-md-3">
 
                         <!-- Image -->
-                        <img class="img-fluid" src="assets/img/products/product-9.jpg" alt="...">
+                        <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-9.jpg" alt="...">
 
                     </div>
                     <div class="col position-static">
@@ -555,7 +555,7 @@
 
                             <!-- Image -->
                             <a href="https://yevgenysim.github.io/shopper/product.html">
-                                <img class="img-fluid" src="assets/img/products/product-6.jpg" alt="...">
+                                <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-6.jpg" alt="...">
                             </a>
 
                         </div>
@@ -593,7 +593,7 @@
 
                             <!-- Image -->
                             <a href="https://yevgenysim.github.io/shopper/product.html">
-                                <img class="img-fluid" src="assets/img/products/product-10.jpg" alt="...">
+                                <img class="img-fluid" src="{{ asset('catalog') }}/img/products/product-10.jpg" alt="...">
                             </a>
 
                         </div>
@@ -1364,7 +1364,7 @@
 
                         <!-- Image -->
                         <a href="https://yevgenysim.github.io/shopper/product.html">
-                            <img class="img-fluid mb-7 mb-md-0" src="assets/img/products/product-6.jpg" alt="...">
+                            <img class="img-fluid mb-7 mb-md-0" src="{{ asset('catalog') }}/img/products/product-6.jpg" alt="...">
                         </a>
 
                     </div>

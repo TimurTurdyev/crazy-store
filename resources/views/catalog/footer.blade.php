@@ -1,4 +1,4 @@
-<footer class="bg-dark bg-cover @@classList" style="background-image: url(assets/img/patterns/pattern-2.svg)">
+<footer class="bg-dark bg-cover @@classList" style="background-image: url({{ asset('catalog/img/patterns/pattern-2.svg') }})">
     <div class="py-12 border-bottom border-gray-700">
         <div class="container">
             <div class="row">
@@ -147,12 +147,12 @@
                 <div class="col-auto">
 
                     <!-- Payment methods -->
-                    <img class="footer-payment" src="assets/img/payment/mastercard.svg" alt="...">
-                    <img class="footer-payment" src="assets/img/payment/visa.svg" alt="...">
-                    <img class="footer-payment" src="assets/img/payment/amex.svg" alt="...">
-                    <img class="footer-payment" src="assets/img/payment/paypal.svg" alt="...">
-                    <img class="footer-payment" src="assets/img/payment/maestro.svg" alt="...">
-                    <img class="footer-payment" src="assets/img/payment/klarna.svg" alt="...">
+                    <img class="footer-payment" src="{{ asset('catalog/img/payment/mastercard.svg') }}">
+                    <img class="footer-payment" src="{{ asset('catalog/img/payment/visa.svg') }}">
+                    <img class="footer-payment" src="{{ asset('catalog/img/payment/amex.svg') }}">
+                    <img class="footer-payment" src="{{ asset('catalog/img/payment/paypal.svg') }}">
+                    <img class="footer-payment" src="{{ asset('catalog/img/payment/maestro.svg') }}">
+                    <img class="footer-payment" src="{{ asset('catalog/img/payment/klarna.svg') }}">
 
                 </div>
             </div>
