@@ -18,7 +18,8 @@ class BrandController extends Controller
 
     public function create(): View
     {
-        return view('admin.brand.create_edit');
+        $brand = new Brand();
+        return view('admin.brand.create_edit', compact('brand'));
     }
 
     public function store(BrandRequest $request): RedirectResponse

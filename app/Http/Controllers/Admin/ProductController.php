@@ -51,6 +51,7 @@ class ProductController extends Controller
         $groups = Group::get();
         $brands = Brand::get();
         $sizes = Size::get();
+        $product->load('variants.prices', 'variants.photos');
         return view('admin.product.create_edit', compact('product', 'groups', 'brands', 'sizes'));
     }
 

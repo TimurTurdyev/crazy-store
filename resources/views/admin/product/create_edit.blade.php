@@ -16,11 +16,22 @@
         <div class="col-md-8">
             <div class="card card-success card-outline">
                 <div class="card-body">
-                    <div class="form-group">
-                        <label>Название</label>
-                        <input type="text" name="name" class="form-control"
-                               value="{{ old('name', $product->name) }}">
-                        @include('admin.master.message.error', ['name' => 'name'])
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label>Название</label>
+                                <input type="text" name="name" class="form-control"
+                                       value="{{ old('name', $product->name) }}">
+                                @include('admin.master.message.error', ['name' => 'name'])
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Id</label>
+                                <input type="text" name="id" class="form-control" readonly
+                                       value="{{ $product->id }}">
+                            </div>
+                        </div>
                     </div>
                     @include('admin.description.form', ['description' => $product->description])
                     <div class="form-group">

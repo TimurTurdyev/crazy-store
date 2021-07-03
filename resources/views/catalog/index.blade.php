@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <base href="{{ asset('') }}">
-    <!-- Favicons -->
+@stack('canonical')
+<!-- Favicons -->
     <link rel="icon" href="{{ asset('catalog/img/favicons/favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('catalog/libs/@fancyapps/fancybox/dist/jquery.fancybox.min.css') }}">
     <link rel="stylesheet" href="{{ asset('catalog/libs/flickity/dist/flickity.min.css') }}">
@@ -15,9 +16,9 @@
     <link rel="stylesheet" href="{{ asset('catalog/fonts/feather/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('catalog/libs/@fortawesome/fontawesome-free/css/all.min.css') }}">
     <!-- Libs CSS -->
-    @yield('styles')
+@stack('styles')
 
-    <!-- Theme CSS -->
+<!-- Theme CSS -->
     <link rel="stylesheet" href="{{ asset('catalog/css/theme.min.css') }}">
 
     <title>Shopper</title>
@@ -45,9 +46,8 @@
 <script src="{{ asset('catalog/libs/simplebar/dist/simplebar.min.js') }}"></script>
 <script src="{{ asset('catalog/libs/smooth-scroll/dist/smooth-scroll.min.js') }}"></script>
 <script src="{{ asset('catalog/libs/flickity-fade/flickity-fade.js') }}"></script>
-@yield('scripts')
 
-
+@stack('scripts')
 
 </body>
 </html>

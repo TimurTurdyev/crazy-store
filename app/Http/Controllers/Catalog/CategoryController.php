@@ -2,43 +2,37 @@
 
 namespace App\Http\Controllers\Catalog;
 
+use App\Filters\ProductFilters;
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Product;
-use App\Models\Size;
+use App\Models\Variant;
+use App\Repositories\FilterRepository;
 
 class CategoryController extends Controller
 {
-    public function index(Category $category)
+    public function index(Category $category, ProductFilters $productFilter)
     {
         abort_if($category->status === 0, 404);
 
         $groups = $category->load('groups')->getRelation('groups');
 
-        $group_idx = $groups->pluck('id')->all();
+        $group_idx = (request('group') ?? $groups->pluck('id')->join('.'));
 
-        $brands = Brand::select(['brands.id', 'brands.name'])
-            ->join('products', 'brands.id', '=', 'products.brand_id')
-            ->whereIn('products.group_id', $group_idx)
-            ->groupBy(['brands.id', 'brands.name'])
-            ->get();
+        $productFilter->requestMerge(['group' => $group_idx]);
 
-        $sizes = Size::select(['sizes.id', 'sizes.name'])
-            ->join('variant_prices', 'sizes.id', '=', 'variant_prices.size_id')
-            ->join('variants', 'variant_prices.variant_id', '=', 'variants.id')
-            ->join('products', 'variants.product_id', '=', 'products.id')
-            ->whereIn('products.group_id', $group_idx)
-            ->groupBy(['sizes.id', 'sizes.name'])
-            ->get();
+        $filterNav = (new FilterRepository($group_idx));
 
-        $products = Product::with([
-            'group',
-            'variants.photos',
-            'variants.prices'])
-            ->whereIn('products.group_id', $group_idx)
-            ->paginate();
+        $filter = collect([
+            'groups' => $groups,
+            'brands' => $filterNav->brands(),
+            'sizes' => $filterNav->sizes(),
+        ]);
 
-        return view('catalog.category.index', compact('category', 'groups', 'brands', 'sizes', 'products'));
+        $products = Variant::filter($productFilter)
+            ->with(['prices', 'photos'])
+            ->paginate(12)
+            ->withQueryString();;
+
+        return view('catalog.category.index', compact('category', 'filter', 'products'));
     }
 }
