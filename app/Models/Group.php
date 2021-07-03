@@ -17,6 +17,11 @@ class Group extends Model
         return $this->morphOne(Description::class, 'entity')->withDefault();
     }
 
+    public function categories(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_group');
+    }
+
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Product::class);

@@ -19,9 +19,10 @@ class CategoryController extends Controller
 
     public function create(): View
     {
+        $category = new Category();
         $groups = Group::get();
         $group_selected['groups'] = [];
-        return view('admin.category.create_edit', compact('groups', 'group_selected'));
+        return view('admin.category.create_edit', compact('category', 'groups', 'group_selected'));
     }
 
     public function store(CategoryRequest $request): RedirectResponse

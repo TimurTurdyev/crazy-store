@@ -2,19 +2,19 @@
 
 @section('content')
     <form class="row"
-          action="@if( isset($category) ) {{ route('category.update', $category) }} @else {{ route('category.store') }} @endif"
+          action="@if( $category->id ) {{ route('category.update', $category) }} @else {{ route('category.store') }} @endif"
           method="post">
         @CSRF
-        @isset( $category )
+        @if( $category->id )
             @method('put')
-        @endisset
+        @endif
         <div class="col-md-8">
             <div class="card card-success card-outline">
                 <div class="card-body">
                     <div class="form-group">
                         <label>Название</label>
                         <input type="text" name="name" class="form-control"
-                               value="{{ old('name', isset($category) ? $category->name : '') }}">
+                               value="{{ old('name', $category->name) }}">
                         @include('admin.master.message.error', ['name' => 'name'])
                     </div>
                     @include('admin.description.form', ['description' => $category->description])
@@ -22,7 +22,7 @@
                         <label>Статус</label>
                         <div>
                             <input type="checkbox"
-                                   @if( old('status', isset($category) ? $category->status : '') ) checked @endif
+                                   @if( old('status', $category->status) ) checked @endif
                                    name="status"
                                    data-bootstrap-switch data-off-color="danger" data-on-color="success"
                                    id="customSwitchStatus">

@@ -2,12 +2,12 @@
 
 @section('content')
     <form class="row"
-          action="@if( isset($brand) ) {{ route('brand.update', $brand) }} @else {{ route('brand.store') }} @endif"
+          action="@if( $brand->id )  {{ route('brand.update', $brand) }} @else {{ route('brand.store') }} @endif"
           method="post">
         @CSRF
-        @isset( $brand )
+        @if( $brand->id )
             @method('put')
-        @endisset
+        @endif
         <div class="col-md-8">
             <div class="card card-success card-outline">
                 <div class="card-header">
@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <label>Название</label>
                         <input type="text" name="name" class="form-control"
-                               value="{{ old('name', isset($brand) ? $brand->name : '') }}">
+                               value="{{ old('name', $brand->name) }}">
                         @include('admin.master.message.error', ['name' => 'name'])
                     </div>
                     @include('admin.description.form', ['description' => $brand->description])
@@ -25,7 +25,7 @@
                         <label>Статус</label>
                         <div>
                             <input type="checkbox"
-                                   @if( old('status', isset($brand) ? $brand->status : '') ) checked @endif
+                                   @if( old('status', $brand->status) ) checked @endif
                                    name="status"
                                    data-bootstrap-switch data-off-color="danger" data-on-color="success"
                                    id="customSwitchStatus">

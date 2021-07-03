@@ -2,12 +2,12 @@
 
 @section('content')
     <form class="row"
-          action="@if( isset($group) ) {{ route('group.update', $group) }} @else {{ route('group.store') }} @endif"
+          action="@if( $group->id ) {{ route('group.update', $group) }} @else {{ route('group.store') }} @endif"
           method="post">
         @CSRF
-        @isset( $group )
+        @if( $group->id )
             @method('put')
-        @endisset
+        @endif
         <div class="col-md-8">
             <div class="card card-success card-outline">
                 <div class="card-header">
@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <label>Название</label>
                         <input type="text" name="name" class="form-control"
-                               value="{{ old('name', isset($group) ? $group->name : '') }}">
+                               value="{{ old('name', $group->name) }}">
                         @include('admin.master.message.error', ['name' => 'name'])
                     </div>
                     @include('admin.description.form', ['description' => $group->description])
@@ -25,7 +25,7 @@
                         <label>Статус</label>
                         <div>
                             <input type="checkbox"
-                                   @if( old('status', isset($group) ? $group->status : '') ) checked @endif
+                                   @if( old('status', $group->status) ) checked @endif
                                    name="status"
                                    data-bootstrap-switch data-off-color="danger" data-on-color="success"
                                    id="customSwitchStatus">

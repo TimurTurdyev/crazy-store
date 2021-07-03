@@ -18,7 +18,8 @@ class GroupController extends Controller
 
     public function create(): View
     {
-        return view('admin.group.create_edit');
+        $group = new Group();
+        return view('admin.group.create_edit', compact('group'));
     }
 
     public function store(GroupRequest $request): RedirectResponse

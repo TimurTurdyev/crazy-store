@@ -10,7 +10,7 @@
         <div class="card card-success card-outline">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <div class="form-group">
                             <label>Короткое название <small>прим.(белый)</small></label>
                             <input type="text" name="short_name" class="form-control" required
@@ -18,12 +18,19 @@
                             @include('admin.master.message.error', ['name' => 'short_name'])
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Артикул</label>
                             <input type="text" name="sku" class="form-control" required
                                    value="{{ old('sku', $variant->sku) }}">
                             @include('admin.master.message.error', ['name' => 'sku'])
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Id</label>
+                            <input type="text" name="id" class="form-control" readonly
+                                   value="{{ $variant->id }}">
                         </div>
                     </div>
                 </div>
@@ -51,12 +58,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach( old('prices', $variant->prices) as $price )
+                    @foreach( $variant->prices as $price )
                         <tr>
                             <td>
-                                {{ $price['id'] }}
+                                {{ $price->id }}
                                 <input type="hidden" name="prices[{{ $loop->index }}][id]"
-                                       value="{{ $price['id'] }}">
+                                       value="{{ $price->id }}">
                                 @include('admin.master.message.error', ['name' => 'prices.' . $loop->index . '.id'])
                             </td>
                             <td>
@@ -140,7 +147,7 @@
                                          class="image img-fluid img-size-64">
                                 </a>
                                 <input type="hidden" value="{{ $photo['path'] }}"
-                                       name="photos[{{ $loop->index }}][path]" id="input-photos-{{ $loop->index }}"
+                                       name="photos[{{ $loop->index }}][path]" id="input-photos-{{$photo->id}}-{{ $loop->index }}"
                                        class="input_image_hidden">
                                 @include('admin.master.message.error', ['name' => 'photos.' . $loop->index . '.path'])
                             </td>
@@ -151,7 +158,7 @@
                             </td>
                             <td>
                                 <button class="btn btn-success popup_selector"
-                                        data-inputid="input-photos-{{ $loop->index }}">
+                                        data-inputid="input-photos-{{$photo->id}}-{{ $loop->index }}">
                                     +
                                 </button>
                             </td>

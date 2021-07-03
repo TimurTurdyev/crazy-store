@@ -4,24 +4,29 @@ namespace App\Filters;
 
 class ProductFilter extends FilterBase
 {
-    protected function group(array $value)
+    protected function category($categoryIds)
     {
-        if (count($value)) {
-            $this->builder->whereIn('products.group_id', '=', $value);
-        }
+        $this->builder->join('category_group', 'groups.id', '=', 'category_group.group_id');
+        $this->builder->whereIn('category_group.category_id', $this->paramToArray($categoryIds));
     }
 
-    protected function brand(array $value)
+    protected function group($groupIds)
     {
-        if (count($value)) {
-            $this->builder->whereIn('products.brand_id', $value);
-        }
+        $this->builder->whereIn('products.group_id', $this->paramToArray($groupIds));
     }
 
-    protected function size(array $value)
+    protected function brand($brandIds)
     {
-        if (count($value)) {
-            $this->builder->whereIn('variant_prices.size_id', $value);
-        }
+        $this->builder->whereIn('products.brand_id', $this->paramToArray($brandIds));
+    }
+
+    protected function variant($variantIds)
+    {
+        $this->builder->whereIn('variants.id', $this->paramToArray($variantIds));
+    }
+
+    protected function size($sizeIds)
+    {
+        $this->builder->whereIn('variant_prices.size_id', $this->paramToArray($sizeIds));
     }
 }

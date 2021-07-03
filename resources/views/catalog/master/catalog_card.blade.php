@@ -1,17 +1,18 @@
 <div class="card mb-7">
+
     <div class="card-img">
-        @if( $count = ($variant->photos = $variant->photos->take(2))->count() )
+        @if( $count = ($item->photos = $item->photos->take(2))->count() )
             @if( $count > 1 )
-                <a class="card-img-hover" href="https://yevgenysim.github.io/shopper/product.html">
-                    <img class="card-img-top card-img-back" src="{{ asset( $variant->photos->last()->path ) }}"
-                         alt="{{ $product->name }}, {{ $variant->short_name }}">
-                    <img class="card-img-top card-img-front" src="{{ asset( $variant->photos->first()->path ) }}"
-                         alt="{{ $product->name }}, {{ $variant->short_name }}">
+                <a class="card-img-hover" href="{{ route('catalog.product', $item->product_id) }}?variant={{ $item->id }}">
+                    <img class="card-img-top card-img-back" src="{{ asset( $item->photos->last()->path ) }}"
+                         alt="{{ $item->variant_name }}">
+                    <img class="card-img-top card-img-front" src="{{ asset( $item->photos->first()->path ) }}"
+                         alt="{{ $item->variant_name }}">
                 </a>
             @else
-                <a class="card-img" href="https://yevgenysim.github.io/shopper/product.html">
-                    <img class="card-img-top card-img-front" src="{{ asset( $variant->photos->first()->path ) }}"
-                         alt="{{ $product->name }}, {{ $variant->short_name }}">
+                <a class="card-img" href="{{ route('catalog.product', $item->product_id) }}?variant={{ $item->id }}">
+                    <img class="card-img-top card-img-front" src="{{ asset( $item->photos->first()->path ) }}"
+                         alt="{{ $item->variant_name }}">
                 </a>
             @endif
         @endif
@@ -36,16 +37,21 @@
         </div>
     </div>
     <div class="card-body px-0">
-        <div class="font-size-xs">
-            <a class="text-muted" href="shop.html">{{ $product->group_name }}</a>
-        </div>
+        @isset( $category )
+            <div class="font-size-xs">
+                <a class="text-muted"
+                   href="{{ route('catalog', [$category->id, $item->group_id]) }}">{{ $item->group_name }}</a>
+            </div>
+        @endisset
         <div class="font-weight-bold">
-            <a class="text-body" href="https://yevgenysim.github.io/shopper/product.html">
-                {{ $product->name }}, {{ $variant->short_name }}
+            <a class="text-body" href="{{ route('catalog.product', $item->product_id) }}?variant={{ $item->id }}">
+                {{ $item->variant_name }}
             </a>
         </div>
-        <div class="font-weight-bold text-muted">
-            $79.00
-        </div>
+        @if( $item->prices->count() )
+            <div class="font-weight-bold text-muted">
+                {{ $item->prices->first()->price }} Руб
+            </div>
+        @endif
     </div>
 </div>
