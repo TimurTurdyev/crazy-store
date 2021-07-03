@@ -2,7 +2,7 @@
 
 namespace App\Filters;
 
-class ProductFilter extends FilterBase
+class ProductFilters extends QueryFilter
 {
     protected function category($categoryIds)
     {
