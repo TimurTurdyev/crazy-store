@@ -3,13 +3,10 @@
 @push('canonical', '<link rel="canonical" href="' . route('catalog.product', $product->id). '" />')
 
 @section('content')
-    <!-- BREADCRUMB -->
     <nav class="py-5">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-
-                    <!-- Breadcrumb -->
                     <ol class="breadcrumb mb-0 font-size-xs text-gray-400">
                         <li class="breadcrumb-item">
                             <a class="text-gray-400"
@@ -27,7 +24,6 @@
             </div>
         </div>
     </nav>
-    <!-- PRODUCT -->
     <section>
         <div class="container">
             <div class="row">
@@ -35,15 +31,14 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
 
-                            <!-- Card -->
                             <div class="card">
 
-                                <!-- Badge -->
-                                <div class="badge badge-primary card-badge text-uppercase">
-                                    Sale
-                                </div>
+                                @if( $selected_price->discount_price < $selected_price->price )
+                                    <div class="badge badge-primary card-badge text-uppercase">
+                                        Sale
+                                    </div>
+                                @endif
 
-                                <!-- Slider -->
                                 <div class="mb-4" data-flickity='{"draggable": false, "fade": true}' id="productSlider">
                                     @foreach($variant->photos as $photo)
                                         <a href="{{ asset($photo->path) }}" data-fancybox>
@@ -110,14 +105,29 @@
                             <!-- Price -->
 
                             <div class="mb-7">
-                                @if( $selected_price->discount_price )
-                                    <span
-                                        class="font-size-lg font-weight-bold text-gray-350 text-decoration-line-through">{{ $selected_price->price }} RUB</span>
-                                    <span class="ml-1 font-size-h5 font-weight-bolder text-primary">{{ $selected_price->discount_price }} RUB</span>
+                                @if( $selected_price->discount_price < $selected_price->price )
+                                    <div
+                                        class="d-inline-block font-size-lg font-weight-bold text-gray-350 text-decoration-line-through">
+                                        <span id="selected_size_price">
+                                            {{ $selected_price->price }}
+                                        </span>
+                                        RUB
+                                    </div>
+                                    <div class="d-inline-block ml-1 font-size-h5 font-weight-bolder text-primary">
+                                        <span id="selected_size_discount_price">
+                                            {{ $selected_price->discount_price }}
+                                        </span>
+                                        RUB
+                                    </div>
                                 @else
-                                    <span class="ml-1 font-size-h5 font-weight-bolder text-primary">{{ $selected_price->price }} RUB</span>
+                                    <div class="d-inline-block ml-1 font-size-h5 font-weight-bolder text-primary">
+                                        <span id="selected_size_price">
+                                            {{ $selected_price->price }}
+                                        </span>
+                                        RUB
+                                    </div>
                                 @endif
-                                <span class="font-size-sm ml-1">({{ $selected_price->quantity ? 'В наличии': 'Закончился' }})</span>
+                                <div class="d-inline-block font-size-sm ml-1">(<span id="selected_size_stock">{{ $selected_price->stock }}</span>)</div>
                             </div>
 
                             <!-- Form -->
@@ -157,7 +167,7 @@
                                     @if( $variant->prices->count() > 1 )
                                         <p class="mb-5">
                                             Size: <strong><span
-                                                    id="selected_size">{{ $selected_price->name }}</span></strong>
+                                                    id="selected_size_name">{{ $selected_price->name }}</span></strong>
                                         </p>
                                         <div class="mb-2">
                                             @foreach( $variant->prices as $price )
@@ -166,13 +176,13 @@
                                                     @if( $selected_price->id === $price->id )
                                                         <input type="radio" class="custom-control-input" checked
                                                                name="price"
-                                                               id="size_radio_{{ $price->id }}" value="{{ $price->id }}"
+                                                               id="size_radio_{{ $price->id }}"
                                                                data-value="{{ $price->toJson() }}"
                                                                data-toggle="form-caption"
                                                                data-target="#selected_size">
                                                     @else
                                                         <input type="radio" class="custom-control-input" name="price"
-                                                               id="size_radio_{{ $price->id }}" value="{{ $price->id }}"
+                                                               id="size_radio_{{ $price->id }}"
                                                                data-value="{{ $price->toJson() }}"
                                                                data-toggle="form-caption"
                                                                data-target="#selected_size">
@@ -1370,7 +1380,12 @@
         $('[data-toggle=form-caption]').on('change', function () {
             var data = $(this).data();
             console.log(data)
-            $(data.target).html(data.value.name ?? data.value);
+            for (var key in data.value) {
+                var $target = $('#selected_size_' + key);
+                if ($target.length) {
+                    $target.html(data.value[key]);
+                }
+            }
         });
     </script>
 @endpush

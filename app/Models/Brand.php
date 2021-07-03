@@ -21,4 +21,11 @@ class Brand extends Model
     {
         return $this->morphOne(Description::class, 'entity')->withDefault();
     }
+
+    public function groups(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Product::class)
+            ->join('groups', 'products.group_id', '=', 'groups.id')
+            ->groupBy('groups.id');
+    }
 }

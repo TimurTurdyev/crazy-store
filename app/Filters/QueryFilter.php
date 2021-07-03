@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 abstract class QueryFilter
 {
-    private $request;
+    private Request $request;
 
-    protected $builder;
+    protected Builder $builder;
 
     protected string $delimiter = '.';
 
@@ -18,11 +18,9 @@ abstract class QueryFilter
         $this->request = $request;
     }
 
-    public function setRequestValue($name, $params)
+    public function requestMerge($params)
     {
-        if (!$this->request->has($name)) {
-            $this->request->merge($params);
-        }
+        $this->request->merge($params);
     }
 
     public function apply(Builder $builder)
@@ -34,7 +32,6 @@ abstract class QueryFilter
                 call_user_func_array([$this, $name], array_filter([$value]));
             }
         }
-
         return $this->builder;
     }
 

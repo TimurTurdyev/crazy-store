@@ -8,14 +8,14 @@
 
                     <!-- Filters -->
                     <form class="mb-10 mb-md-0">
-                        @include('catalog.master.catalog_filter')
+                        @include('catalog.partials.catalog_filter')
                     </form>
 
                 </div>
                 <div class="col-12 col-md-8 col-lg-9">
 
                     <!-- Slider -->
-                @include('catalog.master.catalog_slider')
+                @include('catalog.partials.catalog_slider')
 
                 <!-- Header -->
                     <div class="row align-items-center mb-7">
@@ -57,7 +57,7 @@
                     <div class="row">
                         @foreach( $products->items() as $item )
                                 <div class="col-6 col-md-4">
-                                    @include('catalog.master.catalog_card')
+                                    @include('catalog.partials.catalog_card')
                                 </div>
                         @endforeach
                     </div>

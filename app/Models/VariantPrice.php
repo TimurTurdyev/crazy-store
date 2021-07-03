@@ -11,11 +11,18 @@ class VariantPrice extends Model
 
     protected $guarded = ['id'];
     public $timestamps = false;
+    protected $hidden = ['cost'];
+
+    protected $appends = ['stock', 'discount_price'];
 
     protected $casts = [
         'quantity' => 'integer',
         'discount' => 'integer',
     ];
+
+    public function getStockAttribute() {
+        return $this->quantity ? 'В наличии' : 'Закончился';
+    }
 
     public function getDiscountPriceAttribute()
     {
@@ -23,6 +30,6 @@ class VariantPrice extends Model
             $discountPrice = $this->price - ($this->price / 100 * $this->discount);
             return ($discountPrice ?: 0) > 100 ? 0 : $discountPrice;
         }
-        return 0;
+        return $this->price;
     }
 }

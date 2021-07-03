@@ -10,7 +10,7 @@ class ProductFilters extends QueryFilter
         $this->builder->whereIn('category_group.category_id', $this->paramToArray($categoryIds));
     }
 
-    protected function group($groupIds)
+    protected function group($groupIds = '')
     {
         $this->builder->whereIn('products.group_id', $this->paramToArray($groupIds));
     }

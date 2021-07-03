@@ -3,7 +3,8 @@
     <div class="card-img">
         @if( $count = ($item->photos = $item->photos->take(2))->count() )
             @if( $count > 1 )
-                <a class="card-img-hover" href="{{ route('catalog.product', $item->product_id) }}?variant={{ $item->id }}">
+                <a class="card-img-hover"
+                   href="{{ route('catalog.product', $item->product_id) }}?variant={{ $item->id }}">
                     <img class="card-img-top card-img-back" src="{{ asset( $item->photos->last()->path ) }}"
                          alt="{{ $item->variant_name }}">
                     <img class="card-img-top card-img-front" src="{{ asset( $item->photos->first()->path ) }}"
@@ -40,7 +41,7 @@
         @isset( $category )
             <div class="font-size-xs">
                 <a class="text-muted"
-                   href="{{ route('catalog', [$category->id, $item->group_id]) }}">{{ $item->group_name }}</a>
+                   href="{{ route('catalog', $category->id) }}?group={{ $item->id }}">{{ $item->group_name }}</a>
             </div>
         @endisset
         <div class="font-weight-bold">
@@ -50,7 +51,7 @@
         </div>
         @if( $item->prices->count() )
             <div class="font-weight-bold text-muted">
-                {{ $item->prices->first()->price }} Руб
+                {{ $item->prices->min('price') }} Руб
             </div>
         @endif
     </div>

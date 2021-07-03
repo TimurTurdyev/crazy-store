@@ -6,7 +6,7 @@
             <div class="row align-items-center mb-7">
                 <div class="col-12 col-md">
                     <!-- Heading -->
-                    <h3 class="mb-1">{{ $category->name }}</h3>
+                    <h3 class="mb-1">{{ $brand->name }}</h3>
 
                     <!-- Breadcrumb -->
                     <ol class="breadcrumb mb-md-0 font-size-xs text-gray-400">
@@ -14,7 +14,7 @@
                             <a class="text-gray-400" href="{{ route('home') }}">Главная</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            {{ $category->name }}
+                            {{ $brand->name }}
                         </li>
                     </ol>
                 </div>
