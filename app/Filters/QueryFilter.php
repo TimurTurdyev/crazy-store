@@ -23,6 +23,11 @@ abstract class QueryFilter
         $this->request->merge($params);
     }
 
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
     public function apply(Builder $builder)
     {
         $this->builder = $builder;

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\ViewComposers\NavigationComposer;
+use Cart;
 use Illuminate\Support\ServiceProvider;
 
 class ComposerServiceProvider extends ServiceProvider

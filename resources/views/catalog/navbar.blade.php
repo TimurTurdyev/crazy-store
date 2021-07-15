@@ -109,9 +109,9 @@
                 </li>
                 <li class="nav-item ml-lg-n4">
                     <a class="nav-link" data-toggle="modal" href="index-fashion.html#modalShoppingCart">
-                <span data-cart-items="2">
-                  <i class="fe fe-shopping-cart"></i>
-                </span>
+                    <span data-cart-items="{{ Cart::getContent()->count() }}">
+                      <i class="fe fe-shopping-cart"></i>
+                    </span>
                     </a>
                 </li>
             </ul>

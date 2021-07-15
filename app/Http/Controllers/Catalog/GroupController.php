@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Catalog;
 
+use App\Filters\BrandFilters;
 use App\Filters\ProductFilter;
 use App\Filters\ProductFilters;
+use App\Filters\SizeFilters;
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Group;
+use App\Models\Size;
 use App\Models\Variant;
 use App\Repositories\FilterRepository;
 
@@ -20,12 +24,14 @@ class GroupController extends Controller
 
         $productFilter->requestMerge(['group' => $group->id]);
 
-        $filterNav = (new FilterRepository($group->id));
-
         $filter = collect([
             'categories' => $categories,
-            'brands' => $filterNav->brands(),
-            'sizes' => $filterNav->sizes(),
+            'brands' => Brand::filter(
+                new BrandFilters($productFilter->getRequest())
+            )->get(),
+            'sizes' => Size::filter(
+                new SizeFilters($productFilter->getRequest())
+            )->get(),
         ]);
 
         $products = Variant::filter($productFilter)

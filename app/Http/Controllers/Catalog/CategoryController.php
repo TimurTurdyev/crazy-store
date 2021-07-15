@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Catalog;
 
+use App\Filters\BrandFilters;
 use App\Filters\ProductFilters;
+use App\Filters\SizeFilters;
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Size;
 use App\Models\Variant;
 use App\Repositories\FilterRepository;
 
@@ -16,16 +20,18 @@ class CategoryController extends Controller
 
         $groups = $category->load('groups')->getRelation('groups');
 
-        $group_idx = (request('group') ?? $groups->pluck('id')->join('.'));
-
-        $productFilter->requestMerge(['group' => $group_idx]);
-
-        $filterNav = (new FilterRepository($group_idx));
+        $productFilter->requestMerge([
+            'group' => (request('group') ?? $groups->pluck('id')->join('.'))
+        ]);
 
         $filter = collect([
             'groups' => $groups,
-            'brands' => $filterNav->brands(),
-            'sizes' => $filterNav->sizes(),
+            'brands' => Brand::filter(
+                new BrandFilters($productFilter->getRequest())
+            )->get(),
+            'sizes' => Size::filter(
+                new SizeFilters($productFilter->getRequest())
+            )->get(),
         ]);
 
         $products = Variant::filter($productFilter)
