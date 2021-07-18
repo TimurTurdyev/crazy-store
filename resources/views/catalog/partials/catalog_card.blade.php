@@ -41,7 +41,7 @@
         @isset( $category )
             <div class="font-size-xs">
                 <a class="text-muted"
-                   href="{{ route('catalog', $category->id) }}?group={{ $item->id }}">{{ $item->group_name }}</a>
+                   href="{{ route('catalog', $category->id) }}?group={{ $item->group_id }}">{{ $item->group_name }}</a>
             </div>
         @endisset
         <div class="font-weight-bold">

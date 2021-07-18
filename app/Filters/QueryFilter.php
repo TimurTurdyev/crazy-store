@@ -7,37 +7,27 @@ use Illuminate\Http\Request;
 
 abstract class QueryFilter
 {
-    private Request $request;
+    private array $params;
 
     protected Builder $builder;
 
     protected string $delimiter = '.';
 
-    public function __construct(Request $request)
+    public function __construct(array $params)
     {
-        $this->request = $request;
-    }
-
-    public function requestMerge($params)
-    {
-        $this->request->merge($params);
+        $this->params = $params;
     }
 
     public function apply(Builder $builder)
     {
         $this->builder = $builder;
 
-        foreach ($this->filters() as $name => $value) {
+        foreach ($this->params as $name => $value) {
             if (method_exists($this, $name)) {
                 call_user_func_array([$this, $name], array_filter([$value]));
             }
         }
         return $this->builder;
-    }
-
-    public function filters()
-    {
-        return $this->request->query();
     }
 
     protected function paramToArray($param)

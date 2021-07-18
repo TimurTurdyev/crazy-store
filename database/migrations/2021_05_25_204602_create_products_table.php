@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->foreignId('group_id')->nullable()->references('id')->on('groups')->onDelete('SET NULL');
             $table->foreignId('brand_id')->nullable()->references('id')->on('brands')->onDelete('SET NULL');
-            $table->string('name', 96);
+            $table->string('name', 128)->index();
             $table->boolean('status');
         });
     }

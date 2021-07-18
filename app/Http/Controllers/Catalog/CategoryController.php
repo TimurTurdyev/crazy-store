@@ -2,33 +2,38 @@
 
 namespace App\Http\Controllers\Catalog;
 
+use App\Filters\BrandFilters;
 use App\Filters\ProductFilters;
+use App\Filters\SizeFilters;
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Size;
 use App\Models\Variant;
 use App\Repositories\FilterRepository;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(Category $category, ProductFilters $productFilter)
+    public function index(Category $category, Request $request)
     {
         abort_if($category->status === 0, 404);
 
         $groups = $category->load('groups')->getRelation('groups');
 
-        $group_idx = (request('group') ?? $groups->pluck('id')->join('.'));
-
-        $productFilter->requestMerge(['group' => $group_idx]);
-
-        $filterNav = (new FilterRepository($group_idx));
+        $params = array_merge(['group' => $groups->pluck('id')->join('.')], $request->all());
 
         $filter = collect([
             'groups' => $groups,
-            'brands' => $filterNav->brands(),
-            'sizes' => $filterNav->sizes(),
+            'brands' => Brand::filter(
+                new BrandFilters($params)
+            )->get(),
+            'sizes' => Size::filter(
+                new SizeFilters($params)
+            )->get(),
         ]);
 
-        $products = Variant::filter($productFilter)
+        $products = Variant::filter(new ProductFilters($params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();;

@@ -9,6 +9,6 @@ class NavigationComposer
 {
     public function compose(View $view)
     {
-        return $view->with('menu', Category::where('status', 1)->with('groups')->get());
+        return $view->with('menu', Category::where('status', 1)->get());
     }
 }

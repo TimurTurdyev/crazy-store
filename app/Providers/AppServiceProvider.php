@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Group;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -31,7 +34,10 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         Relation::morphMap([
-            'categories' => Category::class,
+            'category' => Category::class,
+            'brand' => Brand::class,
+            'group' => Group::class,
+            'product' => Product::class,
         ]);
     }
 }

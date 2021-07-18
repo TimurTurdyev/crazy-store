@@ -127,11 +127,14 @@
                                         RUB
                                     </div>
                                 @endif
-                                <div class="d-inline-block font-size-sm ml-1">(<span id="selected_size_stock">{{ $selected_price->stock }}</span>)</div>
+                                <div class="d-inline-block font-size-sm ml-1">(<span
+                                        id="selected_size_stock">{{ $selected_price->stock }}</span>)
+                                </div>
                             </div>
 
                             <!-- Form -->
-                            <form>
+                            <form action="{{ route('cart.add') }}" method="post">
+                                @CSRF
                                 <div class="form-group">
 
                                     <!-- Label -->
@@ -145,11 +148,12 @@
                                                     <div
                                                         class="custom-control custom-control-inline custom-control-img">
                                                         <input type="radio" class="custom-control-input"
-                                                               id="img_variant_{{ $item->id }}"
-                                                               name="img_variant"
+                                                               id="variant_{{ $item->id }}"
+                                                               name="variant"
+                                                               value="{{ $variant->id }}"
                                                             {{ $item->id === $variant->id ? 'checked' : '' }}>
                                                         <label class="custom-control-label"
-                                                               for="img_variant_{{ $item->id }}">
+                                                               for="variant_{{ $item->id }}">
                                                             <a href="{{ route('catalog.product', $product) }}?variant={{ $item->id }}">
                                                                 <div
                                                                     class="embed-responsive embed-responsive-1by1 bg-cover"
@@ -161,10 +165,12 @@
                                                 @endif
                                             @endforeach
                                         </div>
+                                    @else
+                                        <input type="hidden" name="variant" value="{{ $variant->id }}">
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    @if( $variant->prices->count() > 1 )
+                                    @if( $variant->prices->count() )
                                         <p class="mb-5">
                                             Size: <strong><span
                                                     id="selected_size_name">{{ $selected_price->name }}</span></strong>
@@ -176,16 +182,22 @@
                                                     @if( $selected_price->id === $price->id )
                                                         <input type="radio" class="custom-control-input" checked
                                                                name="price"
+                                                               value="{{ $price->id }}"
                                                                id="size_radio_{{ $price->id }}"
                                                                data-value="{{ $price->toJson() }}"
                                                                data-toggle="form-caption"
-                                                               data-target="#selected_size">
+                                                               data-target="#selected_size"
+                                                               @if($price->quantity < 1) disabled @endif
+                                                        >
                                                     @else
                                                         <input type="radio" class="custom-control-input" name="price"
                                                                id="size_radio_{{ $price->id }}"
+                                                               value="{{ $price->id }}"
                                                                data-value="{{ $price->toJson() }}"
                                                                data-toggle="form-caption"
-                                                               data-target="#selected_size">
+                                                               data-target="#selected_size"
+                                                               @if($price->quantity < 1) disabled @endif
+                                                        >
                                                     @endif
                                                     <label class="custom-control-label"
                                                            for="size_radio_{{ $price->id }}">{{ $price->name }}</label>
@@ -199,26 +211,30 @@
                                                 class="text-reset text-decoration-underline ml-3" data-toggle="modal"
                                                 href="product.html#modalSizeChart">Size chart</a>
                                         </p>
+                                    @else
+                                        <input type="hidden" name="price"
+                                               value="{{ $selected_price->id }}">
                                     @endif
 
 
                                     <div class="form-row mb-7">
                                         <div class="col-12 col-lg-auto">
-
-                                            <!-- Quantity -->
-                                            <select class="custom-select mb-2">
-                                                <option value="1" selected>1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
+                                            <select class="custom-select mb-2" name="quantity"
+                                                    id="selected_size_quantity">
+                                                @for( $i = 1; $i <= ($selected_price->quantity > 10 ? 10 : $selected_price->quantity); $i++ )
+                                                    <option value="{{ $i }}"
+                                                            @if($i === 1) selected @endif
+                                                    >{{ $i }}</option>
+                                                @endfor
                                             </select>
 
                                         </div>
                                         <div class="col-12 col-lg">
 
                                             <!-- Submit -->
-                                            <button type="submit" class="btn btn-block btn-dark mb-2">
+                                            <button type="submit" class="btn btn-block btn-dark mb-2" id="cart-add"
+                                                    @if($selected_price->quantity < 1) disabled @endif
+                                            >
                                                 Add to Cart <i class="fe fe-shopping-cart ml-2"></i>
                                             </button>
 
@@ -1379,13 +1395,33 @@
     <script>
         $('[data-toggle=form-caption]').on('change', function () {
             var data = $(this).data();
-            console.log(data)
             for (var key in data.value) {
                 var $target = $('#selected_size_' + key);
+                var result = data.value[key];
                 if ($target.length) {
-                    $target.html(data.value[key]);
+                    if ($target.is('SELECT')) {
+                        var count = parseInt(result);
+                        result = '';
+                        for (var i = 1; i <= (count > 10 ? 10 : count); i++) {
+                            result += '<option value="' + i + '"' + (i === 1 ? ' selected' : '') + '>' + i + '</option>';
+                        }
+                        if (result == '') {
+                            $('#cart-add').attr('disabled', true);
+                        } else {
+                            $('#cart-add').attr('disabled', false);
+                        }
+                    }
+                    $target.html(result);
                 }
             }
         });
+
+        {{--$('#cart-add').on('click', function (event) {--}}
+        {{--    event.preventDefault();--}}
+        {{--    $form = $(this).closest('form').serialize();--}}
+        {{--    $.post('{{ route('cart.add') }}', $form, function (response) {--}}
+        {{--        console.log(response)--}}
+        {{--    });--}}
+        {{--})--}}
     </script>
 @endpush

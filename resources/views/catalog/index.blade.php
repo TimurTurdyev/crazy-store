@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <base href="{{ asset('') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @stack('canonical')
 <!-- Favicons -->
     <link rel="icon" href="{{ asset('catalog/img/favicons/favicon.ico') }}">
@@ -46,7 +47,13 @@
 <script src="{{ asset('catalog/libs/simplebar/dist/simplebar.min.js') }}"></script>
 <script src="{{ asset('catalog/libs/smooth-scroll/dist/smooth-scroll.min.js') }}"></script>
 <script src="{{ asset('catalog/libs/flickity-fade/flickity-fade.js') }}"></script>
-
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+</script>
 @stack('scripts')
 
 </body>

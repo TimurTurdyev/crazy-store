@@ -13,6 +13,8 @@ class ProductController extends Controller
 {
     public function index(Product $product, Request $request)
     {
+        session()->put('cart_id', uniqid());
+
 
         $variants = Variant::where('product_id', $product->id)
             ->where('status', 1)

@@ -17,7 +17,7 @@ class CreateVariantsTable extends Migration
             $table->id();
             $table->foreignId('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->string('sku', 32);
-            $table->string('short_name', 64);
+            $table->string('short_name', 128)->index();
             $table->boolean('status');
         });
     }

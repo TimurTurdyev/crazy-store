@@ -3,32 +3,30 @@
 namespace App\Http\Controllers\Catalog;
 
 use App\Filters\ProductFilters;
+use App\Filters\SizeFilters;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\Size;
 use App\Models\Variant;
 use App\Repositories\FilterRepository;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-    protected function index(Brand $brand, ProductFilters $productFilter)
+    protected function index(Brand $brand, Request $request)
     {
         abort_if($brand->status === 0, 404);
 
-        $groups = $brand->load('groups')->getRelation('groups');
-
-        $group_idx = request('group') ?? $groups->pluck('id')->join('.');
-
-        $productFilter->requestMerge(['brand' => $brand->id]);
-
-        $filterNav = (new FilterRepository($group_idx));
+        $params = array_merge($request->all(), ['brand' => $brand->id]);
 
         $filter = collect([
-            'groups' => $groups,
-            'sizes' => $filterNav->sizes(),
+            'groups' => $brand->load('groups')->getRelation('groups'),
+            'sizes' => Size::filter(
+                new SizeFilters($params)
+            )->get(),
         ]);
 
-        $products = Variant::filter($productFilter)
+        $products = Variant::filter(new ProductFilters($params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();;

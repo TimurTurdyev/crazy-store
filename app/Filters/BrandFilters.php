@@ -2,7 +2,7 @@
 
 namespace App\Filters;
 
-class ProductFilters extends QueryFilter
+class BrandFilters extends QueryFilter
 {
     protected function category($categoryIds)
     {
@@ -13,16 +13,7 @@ class ProductFilters extends QueryFilter
     protected function group($groupIds = '')
     {
         $this->builder
+            ->where('products.status', '=', 1)
             ->whereIn('products.group_id', $this->paramToArray($groupIds));
-    }
-
-    protected function brand($brandIds)
-    {
-        $this->builder->whereIn('products.brand_id', $this->paramToArray($brandIds));
-    }
-
-    protected function size($sizeIds)
-    {
-        $this->builder->whereIn('variant_prices.size_id', $this->paramToArray($sizeIds));
     }
 }
