@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Contracts;
+namespace App\Repositories;
 
-interface OrderContract
+interface OrderInterface
 {
     public function storeOrderDetails($params);
 }

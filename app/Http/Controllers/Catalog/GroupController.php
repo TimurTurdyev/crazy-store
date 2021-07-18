@@ -12,29 +12,30 @@ use App\Models\Group;
 use App\Models\Size;
 use App\Models\Variant;
 use App\Repositories\FilterRepository;
+use Illuminate\Http\Request;
 
 
 class GroupController extends Controller
 {
-    public function index(Group $group, ProductFilters $productFilter)
+    public function index(Group $group, Request $request)
     {
         abort_if($group->status === 0, 404);
 
         $categories = $group->load('categories')->getRelation('categories');
 
-        $productFilter->requestMerge(['group' => $group->id]);
+        $params = array_merge($request->all(), ['group' => $group->id]);
 
         $filter = collect([
             'categories' => $categories,
             'brands' => Brand::filter(
-                new BrandFilters($productFilter->getRequest())
+                new BrandFilters($params)
             )->get(),
             'sizes' => Size::filter(
-                new SizeFilters($productFilter->getRequest())
+                new SizeFilters($params)
             )->get(),
         ]);
 
-        $products = Variant::filter($productFilter)
+        $products = Variant::filter(new ProductFilters($params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();;

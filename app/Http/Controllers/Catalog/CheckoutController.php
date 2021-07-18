@@ -3,21 +3,24 @@
 namespace App\Http\Controllers\Catalog;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\OrderInterface;
+use Cart;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CheckoutController extends Controller
 {
-    protected OrderContract $orderRepository;
+    protected OrderInterface $orderRepository;
 
-    public function __construct(OrderContract $orderRepository)
+    public function __construct(OrderInterface $orderRepository)
     {
         $this->orderRepository = $orderRepository;
     }
 
-    public function getCheckout(): View
+    public function index(): View
     {
-        return view('site.pages.checkout');
+        $cartCollection = Cart::getContent();
+        return view('catalog.checkout.index', compact('cartCollection'));
     }
 
     public function placeOrder(Request $request)
@@ -43,6 +46,6 @@ class CheckoutController extends Controller
         $order->save();
 
         Cart::clear();
-        return view('site.pages.success', compact('order'));
+        return view('catalog.checkout.success', compact('order'));
     }
 }

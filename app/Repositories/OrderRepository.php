@@ -2,24 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Models\Variant;
 use Cart;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\OrderItem;
-use App\Contracts\OrderContract;
 
-class OrderRepository extends BaseRepository implements OrderContract
+class OrderRepository implements OrderInterface
 {
     public function __construct(Order $model)
     {
-        parent::__construct($model);
         $this->model = $model;
     }
 
     public function storeOrderDetails($params)
     {
-        $order = Order::create([
+        $order = $this->model->create([
             'order_number' => 'ORD-' . strtoupper(uniqid()),
             'user_id' => auth()->user()->id,
             'status' => 'pending',
@@ -46,7 +42,7 @@ class OrderRepository extends BaseRepository implements OrderContract
             foreach ($items as $item) {
                 // A better way will be to bring the product id with the cart items
                 // you can explore the package documentation to send product id with the cart
-                $product = Variant::where($item->id)->firstOrFail();
+                $product = $this->model->where($item->id)->firstOrFail();
 
                 $orderItem = new OrderItem([
                     'product_id' => $product->id,

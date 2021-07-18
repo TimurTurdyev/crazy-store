@@ -17,6 +17,11 @@ class Variant extends Model
     protected $guarded = ['id'];
     public $timestamps = false;
 
+    public function getFullNameAttribute(): string
+    {
+        return $this->short_name ? $this->product->name . ', ' . $this->short_name : $this->product->name;
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

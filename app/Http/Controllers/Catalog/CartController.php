@@ -3,42 +3,48 @@
 namespace App\Http\Controllers\Catalog;
 
 use App\Http\Controllers\Controller;
-use App\Models\Variant;
-use Cart;
+use App\Repositories\CartInterface;
 use Illuminate\Http\Request;
+
 
 class CartController extends Controller
 {
-    public function index()
+    public function index(CartInterface $cartService)
     {
-        return view('site.pages.cart');
+        $cartCollection = $cartService->getItems();
+
+        if (request()->ajax()) {
+            return view('catalog.cart.content', compact('cartCollection'));
+        }
+
+        return view('catalog.cart.index', compact('cartCollection'));
     }
 
-    public function add(Request $request): \Illuminate\Http\RedirectResponse
+    public function add(CartInterface $cartService, Request $request): \Illuminate\Http\RedirectResponse
     {
-        $variant = Variant::where('id', $request->variant)->with('product', 'prices', 'photos')->firstOrFail();
-        $price = $variant->prices->firstWhere('id', $request->price);
-        $product_name = $variant->short_name ? $variant->product->name . ', ' . $variant->short_name : $variant->product->name;
-
-        abort_if(
-            $variant->product->status === 0 ||
-            $variant->status === 0 ||
-            !$price,
-            '404');
-
-        Cart::add($variant->id, $product_name, $price->price, $price->quantity);
+        $message = $cartService->add($request->price, $request->quantity);
 
         return redirect()->back()->with('message', 'Вы успешно добавили товар в корзину.');
     }
 
-    public function destroy($id): \Illuminate\Http\RedirectResponse
+    public function update(CartInterface $cartService, Request $request)
     {
-        Cart::remove($id);
+        abort_if(
+            !$request->cart ||
+            !$request->price || !is_array($request->price) ||
+            !isset($request->price[$request->cart]) ||
+            !$request->quantity, 404);
 
-        if (Cart::isEmpty()) {
-            return redirect('/');
-        }
-        return redirect()->back()->with('message', 'Item removed from cart successfully.');
+        $message = $cartService->update($request->cart, $request->price[$request->cart], $request->quantity);
+
+        return $this->index($cartService);
+    }
+
+    public function destroy(CartInterface $cartService, $id): \Illuminate\Http\RedirectResponse
+    {
+        $cartService->remove($id);
+
+        return redirect()->back()->with('message', 'Вы успешно удалили товар из корзины.');
     }
 
     public function clear(): \Illuminate\Http\RedirectResponse

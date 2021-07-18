@@ -5,10 +5,8 @@
         <div class="container">
             <div class="row align-items-center mb-7">
                 <div class="col-12 col-md">
-                    <!-- Heading -->
                     <h3 class="mb-1">{{ $category->name }}</h3>
 
-                    <!-- Breadcrumb -->
                     <ol class="breadcrumb mb-md-0 font-size-xs text-gray-400">
                         <li class="breadcrumb-item">
                             <a class="text-gray-400" href="{{ route('home') }}">Главная</a>
@@ -22,7 +20,6 @@
             <div class="row">
                 <div class="col-12 col-md-4 col-lg-3">
 
-                    <!-- Filters -->
                     <form class="mb-10 mb-md-0">
                         @include('catalog.partials.catalog_filter')
                     </form>
@@ -30,7 +27,6 @@
                 </div>
                 <div class="col-12 col-md-8 col-lg-9">
 
-                    <!-- Products -->
                     <div class="row">
                         @foreach( $products->items() as $item )
                             <div class="col-6 col-md-4">

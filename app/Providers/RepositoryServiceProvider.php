@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Contracts\OrderContract;
+use App\Repositories\OrderInterface;
 use App\Repositories\OrderRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,7 +13,7 @@ class RepositoryServiceProvider extends ServiceProvider
 //        AttributeContract::class => AttributeRepository::class,
 //        BrandContract::class => BrandRepository::class,
 //        ProductContract::class => ProductRepository::class,
-        OrderContract::class => OrderRepository::class,
+        OrderInterface::class => OrderRepository::class,
     ];
 
     /**

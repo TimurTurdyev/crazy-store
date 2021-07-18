@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
-use App\Http\ViewComposers\NavigationComposer;
+use App\Repositories\CartRepository;
+use App\Repositories\CartInterface;
 use Illuminate\Support\ServiceProvider;
 
-class ComposerServiceProvider extends ServiceProvider
+class CartServiceProvider extends ServiceProvider
 {
+    protected bool $defer = true;
     /**
      * Register services.
      *
@@ -14,7 +16,7 @@ class ComposerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+
     }
 
     /**
@@ -24,6 +26,6 @@ class ComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->composer('catalog.partials.menu', NavigationComposer::class);
+        $this->app->singleton(CartInterface::class, CartRepository::class);
     }
 }

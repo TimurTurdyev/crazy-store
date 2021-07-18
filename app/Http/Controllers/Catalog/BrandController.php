@@ -13,20 +13,20 @@ use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-    protected function index(Brand $brand, ProductFilters $productFilter)
+    protected function index(Brand $brand, Request $request)
     {
         abort_if($brand->status === 0, 404);
 
-        $productFilter->requestMerge(['brand' => $brand->id]);
+        $params = array_merge($request->all(), ['brand' => $brand->id]);
 
         $filter = collect([
             'groups' => $brand->load('groups')->getRelation('groups'),
             'sizes' => Size::filter(
-                new SizeFilters($productFilter->getRequest())
+                new SizeFilters($params)
             )->get(),
         ]);
 
-        $products = Variant::filter($productFilter)
+        $products = Variant::filter(new ProductFilters($params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();;
