@@ -1,14 +1,14 @@
 <div class="col-12 col-md-7">
     <ul class="list-group list-group-lg list-group-flush-x mb-6">
-        @foreach( $cartCollection as $cart)
+        @foreach( $cart->getItems() as $cart_item)
             <li class="list-group-item">
                 <form class="row align-items-center">
-                    <input type="hidden" name="cart" value="{{ $cart['cart_id'] }}">
+                    <input type="hidden" name="cart" value="{{ $cart_item->cart_id }}">
                     <div class="col-3">
 
-                        <a href="{{ route('catalog.product', $cart['product_id']) }}?variant={{ $cart['variant_id'] }}">
-                            <img src="{{ $cart['photo'] }}"
-                                 alt="{{ $cart['name'] }}"
+                        <a href="{{ route('catalog.product', $cart_item->product_id) }}?variant={{ $cart_item->variant_id }}">
+                            <img src="{{ $cart_item->photo }}"
+                                 alt="{{ $cart_item->name }}"
                                  class="img-fluid">
                         </a>
 
@@ -16,58 +16,58 @@
                     <div class="col">
                         <div class="d-flex mb-2 font-weight-bold">
                             <a class="text-body"
-                               href="{{ route('catalog.product', $cart['product_id']) }}?variant={{ $cart['variant_id'] }}">
-                                {{ $cart['name'] }}
+                               href="{{ route('catalog.product', $cart_item->product_id) }}?variant={{ $cart_item->variant_id }}">
+                                {{ $cart_item->name }}
                             </a>
-                            <span class="ml-auto">{{ $cart['price']->discount_price }} р.</span>
+                            <span class="ml-auto">{{ $cart_item->price->discount_price }} р.</span>
                         </div>
                         <p class="mb-3 font-size-sm text-muted">
                             На складе:
                             <strong>
-                                {{ $cart['price']->quantity > 10 ? 'достаточно' : $cart['price']->quantity }}
+                                {{ $cart_item->price->quantity > 10 ? 'достаточно' : $cart_item->price->quantity }}
                                 шт.
                             </strong>
                             <br>
-                            @if( $size_name = $cart['price']->size?->name )
+                            @if( $size_name = $cart_item->price->name )
                                 Размер: <strong>{{ $size_name }}</strong>
                             @endif
                         </p>
-                        @if( $cart['prices']->count() )
+                        @if( $cart_item->prices->count() )
                             <div class="mb-2">
-                                @foreach( $cart['prices'] as $item_price )
+                                @foreach( $cart_item->prices as $item_price )
                                     <div
                                         class="custom-control custom-control-inline custom-control-size mb-2">
-                                        @if( (int)$item_price->id === (int)$cart['price_id'])
+                                        @if( (int)$item_price->id === (int)$cart_item->price_id)
                                             <input type="radio" class="custom-control-input"
-                                                   name="price[{{ $cart['cart_id'] }}]"
+                                                   name="price[{{ $cart_item->cart_id }}]"
                                                    value="{{ $item_price->id }}"
-                                                   id="size_radio_{{ $cart['cart_id'] }}-{{ $item_price->id }}"
-                                                   onchange="cartUpdate($(this))"
+                                                   id="size_radio_{{ $cart_item->cart_id }}-{{ $item_price->id }}"
                                                    checked
                                                    @if( $item_price->quantity < 1 ) disabled @endif
                                             >
                                         @else
                                             <input type="radio" class="custom-control-input"
-                                                   name="price[{{ $cart['cart_id'] }}]"
+                                                   name="price[{{ $cart_item->cart_id }}]"
                                                    value="{{ $item_price->id }}"
-                                                   id="size_radio_{{ $cart['cart_id'] }}-{{ $item_price->id }}"
-                                                   onchange="cartUpdate($(this))"
+                                                   id="size_radio_{{ $cart_item->cart_id }}-{{ $item_price->id }}"
                                                    @if( $item_price->quantity < 1 ) disabled @endif
                                             >
                                         @endif
                                         <label class="custom-control-label"
-                                               for="size_radio_{{ $cart['cart_id'] }}-{{ $item_price->id }}">{{ $item_price->size->name }}</label>
+                                               for="size_radio_{{ $cart_item->cart_id }}-{{ $item_price->id }}">{{ $item_price->name }}</label>
                                     </div>
                                 @endforeach
                             </div>
                         @endif
                         <div class="d-flex align-items-center">
 
-                            <select class="custom-select custom-select-xxs w-auto" name="quantity"
-                                    onchange="cartUpdate($(this))">
-                                @for( $i = 1; $i <= ($cart['price']->quantity > 10 ? 10 : $cart['price']->quantity); $i++ )
+                            <select class="custom-select custom-select-xxs w-auto" name="quantity">
+                                    <option value="{{ $cart_item->quantity }}" selected
+                                    >
+                                        Выбрано {{ $cart_item->quantity }} шт.
+                                    </option>
+                                @for( $i = 1; $i <= ($cart_item->price->quantity > 10 ? 10 : $cart_item->price->quantity); $i++ )
                                     <option value="{{ $i }}"
-                                            @if($cart['quantity'] === $i) selected @endif
                                     >
                                         {{ $i }}
                                     </option>
@@ -75,16 +75,17 @@
                             </select>
 
                             <a class="font-size-xs text-gray-400 ml-auto"
-                               href="{{ route('cart.destroy', $cart['cart_id']) }}">
+                               href="{{ route('cart.destroy', $cart_item->cart_id) }}">
                                 <i class="fe fe-x"></i> Удалить
                             </a>
 
                         </div>
-                        @isset( $message )
+
+                        @if( $cart_item->message )
                             <div
                                 class="alert alert-warning alert-dismissible fade show small py-1 px-2 mt-1"
                                 role="alert">
-                                {!! $message !!}
+                                {!! $cart_item->message !!}
                                 <button type="button" class="close py-0 px-1" data-dismiss="alert"
                                         aria-label="Close">
                                     <span aria-hidden="true">×</span>
@@ -125,7 +126,7 @@
         </div>
         <div class="col-12 col-md-auto">
 
-            <button class="btn btn-sm btn-outline-dark">Update Cart</button>
+            {{--            <button class="btn btn-sm btn-outline-dark">Update Cart</button>--}}
 
         </div>
     </div>
@@ -138,7 +139,7 @@
             <div class="card-body">
                 <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
                     <li class="list-group-item d-flex">
-                        <span>Subtotal</span> <span class="ml-auto font-size-sm">$89.00</span>
+                        <span>Subtotal</span> <span class="ml-auto font-size-sm">{{ $cart->getTotal() }}</span>
                     </li>
                     <li class="list-group-item d-flex">
                         <span>Tax</span> <span class="ml-auto font-size-sm">$00.00</span>
