@@ -20,13 +20,22 @@ class CreateOrdersTable extends Migration
             $table->string('order_number')->unique();
 
             $table->enum('status', ['pending', 'processing', 'completed', 'decline'])->default('pending');
-            $table->decimal('total', 10, 2);
-            $table->unsignedInteger('item_count');
 
-            $table->boolean('payment_status')->default(1);
-            $table->string('payment_method')->nullable();
-            $table->boolean('shipping_status')->default(1);
-            $table->string('shipping_method')->nullable();
+            $table->integer('item_count');
+            $table->integer('sub_total');
+
+            $table->string('coupon_code')->nullable();
+            $table->tinyInteger('coupon_value')->nullable();
+
+            $table->boolean('shipping_status')->default(0);
+            $table->string('shipping_name')->nullable();
+            $table->integer('shipping_value');
+
+            $table->integer('total');
+
+            $table->boolean('payment_status')->default(0);
+            $table->string('payment_name')->nullable();
+
 
             $table->string('firstname', 64);
             $table->string('lastname', 64);

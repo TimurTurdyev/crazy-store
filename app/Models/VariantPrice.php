@@ -29,7 +29,7 @@ class VariantPrice extends Model
     {
         if ($this->discount && $this->price) {
             $discountPrice = $this->price - ($this->price / 100 * $this->discount);
-            return ($discountPrice ?: 0) > 100 ? 0 : $discountPrice;
+            return ($discountPrice ?: 0) > $this->price ? $this->price : $discountPrice;
         }
 
         return $this->price;

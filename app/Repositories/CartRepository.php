@@ -3,8 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Cart;
+use App\Models\Coupon;
 use App\Models\VariantPrice;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +14,7 @@ class CartRepository implements CartInterface
     private string $cart_session;
     private int|null $user_id;
     private static Collection $items;
+    private array $message = [];
 
     public function __construct()
     {
@@ -34,10 +35,25 @@ class CartRepository implements CartInterface
         }
     }
 
-    public function getTotal(): int
+    public function getProductPriceTotal(): int
     {
         return $this->getItems()->sum(function ($cart) {
-            return $cart->price->discount_price;
+            return $cart->price->price * $cart->quantity;
+        });
+    }
+
+    public function getProductDiscountTotal(): int
+    {
+        return $this->getItems()->sum(function ($cart) {
+            return $cart->price->discount_price * $cart->quantity;
+        });
+    }
+
+    public function getProductSumIfNotDiscount()
+    {
+        return $this->getItems()->sum(function ($cart) {
+            if ($cart->price->discount_price < $cart->price->price) return 0;
+            return $cart->price->price * $cart->quantity;
         });
     }
 
@@ -143,6 +159,44 @@ class CartRepository implements CartInterface
         return $this->getItems()->filter(function ($cart) {
             return $cart->message !== '';
         });
+    }
+
+    public function setCoupon($code): void
+    {
+        $coupon = Coupon::where('code', $code)->firstOrNew();
+        $message = $coupon->validateMessage($code);
+
+        if ($message) {
+            $this->message['coupon_error'] = $message;
+            return;
+        }
+
+        $this->message['coupon_success'] = sprintf('Вы успешно добавили код купона %s!', $coupon->code);
+
+        session()->put('coupon', (object)[
+            'id' => $coupon->id,
+            'code' => $coupon->code,
+            'discount' => $coupon->discountPrice($this->getProductSumIfNotDiscount())
+        ]);
+    }
+
+    public function __get($name)
+    {
+        return $this->message[$name] ?? '';
+    }
+
+    public function couponRemove()
+    {
+        $coupon = $this->getCoupon();
+        if ($coupon) {
+            $this->message['coupon_success'] = sprintf('Вы успешно удалили код купона %s!', $coupon->code);
+        }
+        session()->pull('coupon');
+    }
+
+    public function getCoupon()
+    {
+        return session('coupon');
     }
 
     public function remove($id): void

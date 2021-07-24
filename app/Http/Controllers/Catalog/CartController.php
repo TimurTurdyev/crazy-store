@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+
     public function index(CartInterface $cart)
     {
-
         if (request()->ajax()) {
             return response()->view('catalog.cart.content', compact('cart'))
                 ->header('Cache-Control', 'nocache, no-store, max-age=0, must-revalidate');
@@ -35,9 +35,21 @@ class CartController extends Controller
 //            !isset($request->price[$request->cart]) ||
 //            !$request->quantity, 404);
 
-        $cart = $cart->update($request->cart, $request->price[$request->cart], $request->quantity);
+        $cart->update($request->cart, $request->price[$request->cart], $request->quantity);
 
-        return ['data' => $cart];
+        return $this->index($cart);
+    }
+
+    public function couponAdd(CartInterface $cart, Request $request)
+    {
+        $cart->setCoupon($request->coupon_code);
+        return $this->index($cart);
+    }
+
+    public function couponRemove(CartInterface $cart)
+    {
+        $cart->couponRemove();
+        return $this->index($cart);
     }
 
     public function destroy(CartInterface $cart, $id): \Illuminate\Http\RedirectResponse
