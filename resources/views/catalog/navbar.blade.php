@@ -109,7 +109,7 @@
                 </li>
                 <li class="nav-item ml-lg-n4">
                     <a class="nav-link" href="{{ route('cart.index') }}">
-                            <span data-cart-items="0">
+                            <span data-cart-items="{{ $cart_count }}">
                               <i class="fe fe-shopping-cart"></i>
                             </span>
                     </a>

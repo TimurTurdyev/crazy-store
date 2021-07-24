@@ -9,40 +9,52 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function index(CartInterface $cartService)
+
+    public function index(CartInterface $cart)
     {
-        $cartCollection = $cartService->getItems();
-
         if (request()->ajax()) {
-            return view('catalog.cart.content', compact('cartCollection'));
+            return response()->view('catalog.cart.content', compact('cart'))
+                ->header('Cache-Control', 'nocache, no-store, max-age=0, must-revalidate');
         }
-
-        return view('catalog.cart.index', compact('cartCollection'));
+        return response()->view('catalog.cart.index', compact('cart'))
+            ->header('Cache-Control', 'nocache, no-store, max-age=0, must-revalidate');
     }
 
-    public function add(CartInterface $cartService, Request $request): \Illuminate\Http\RedirectResponse
+    public function add(CartInterface $cart, Request $request): \Illuminate\Http\RedirectResponse
     {
-        $message = $cartService->add($request->price, $request->quantity);
+        $message = $cart->add($request->price, $request->quantity);
 
         return redirect()->back()->with('message', 'Вы успешно добавили товар в корзину.');
     }
 
-    public function update(CartInterface $cartService, Request $request)
+    public function update(CartInterface $cart, Request $request)
     {
-        abort_if(
-            !$request->cart ||
-            !$request->price || !is_array($request->price) ||
-            !isset($request->price[$request->cart]) ||
-            !$request->quantity, 404);
+//        abort_if(
+//            !$request->cart ||
+//            !$request->price || !is_array($request->price) ||
+//            !isset($request->price[$request->cart]) ||
+//            !$request->quantity, 404);
 
-        $message = $cartService->update($request->cart, $request->price[$request->cart], $request->quantity);
+        $cart->update($request->cart, $request->price[$request->cart], $request->quantity);
 
-        return $this->index($cartService);
+        return $this->index($cart);
     }
 
-    public function destroy(CartInterface $cartService, $id): \Illuminate\Http\RedirectResponse
+    public function couponAdd(CartInterface $cart, Request $request)
     {
-        $cartService->remove($id);
+        $cart->setCoupon($request->coupon_code);
+        return $this->index($cart);
+    }
+
+    public function couponRemove(CartInterface $cart)
+    {
+        $cart->couponRemove();
+        return $this->index($cart);
+    }
+
+    public function destroy(CartInterface $cart, $id): \Illuminate\Http\RedirectResponse
+    {
+        $cart->remove($id);
 
         return redirect()->back()->with('message', 'Вы успешно удалили товар из корзины.');
     }

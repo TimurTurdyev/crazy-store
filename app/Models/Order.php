@@ -10,12 +10,8 @@ class Order extends Model
     use HasFactory;
 
     protected $table = 'orders';
+    protected $guarded = ['id'];
 
-    protected $fillable = [
-        'user_id', 'order_number', 'status', 'total', 'item_count',
-        'payment_status', 'payment_method', 'shipping_status', 'shipping_method',
-        'firstname', 'lastname', 'address', 'city', 'country', 'post_code', 'phone', 'notes'
-    ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
