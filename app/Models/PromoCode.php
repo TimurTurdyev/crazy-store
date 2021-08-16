@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Coupon extends Model
+class PromoCode extends Model
 {
     use HasFactory;
 
-    protected $table = 'coupons';
+    protected $table = 'promo_codes';
     protected $guarded = ['id'];
 
     public function discountPrice(int $value = 0): int
@@ -21,29 +21,29 @@ class Coupon extends Model
         }
 
         if ($this->type === 'P') {
-            return $value / 100 * $this->discount;
+            return -(int)($value / 100 * $this->discount);
         }
 
-        return $value - $this->discount;
+        return -(int)($value - $this->discount);
     }
 
     public function validateMessage($code = ''): string
     {
         if (!is_string($code)) {
-            return 'Не валидный код купона!';
+            return 'Промокод не валиден!';
         }
 
         $code = $code ? ' ' . $code : $code;
 
         if ($this->id === null) {
-            return sprintf('Код купона%s. Не действителен!', $code);
+            return sprintf('Промокод%s. Не действителен!', $code);
         }
         if ($this->logged && Auth::id()) {
-            return sprintf('Что-бы применить код купона%s. Авторизуйтесь!', $code);
+            return sprintf('Что-бы применить промокод%s. Авторизуйтесь!', $code);
         }
 
         if (!$this->dateStartValidate() || !$this->dateEndValidate()) {
-            return sprintf('Истек срок использования купона%s', $code);
+            return sprintf('Истек срок использования промокода%s', $code);
         }
         return '';
     }

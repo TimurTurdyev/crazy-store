@@ -109,11 +109,11 @@
             </li>
         @endforeach
     </ul>
-    @if($cart->coupon_error)
+    @if($cart->promo_error)
         <div
             class="alert alert-warning alert-dismissible fade show small py-1 px-2 mt-1"
             role="alert">
-            {{ $cart->coupon_error }}
+            {{ $cart->promo_error }}
             <button type="button" class="close py-0 px-1" data-dismiss="alert"
                     aria-label="Close">
                 <span aria-hidden="true">×</span>
@@ -121,11 +121,11 @@
         </div>
     @endif
 
-    @if($cart->coupon_success)
+    @if($cart->promo_success)
         <div
             class="alert alert-success alert-dismissible fade show small py-1 px-2 mt-1"
             role="alert">
-            {{ $cart->coupon_success }}
+            {{ $cart->promo_success }}
             <button type="button" class="close py-0 px-1" data-dismiss="alert"
                     aria-label="Close">
                 <span aria-hidden="true">×</span>
@@ -137,14 +137,14 @@
         <div class="col-12 col-md-7">
             <form class="mb-7 mb-md-0" id="cartCouponCode">
                 <label class="font-size-sm font-weight-bold" for="cartCouponCode">
-                    Купон на скидку:
+                    Промокод:
                 </label>
                 <div class="row form-row">
                     <div class="col">
 
-                        <input class="form-control form-control-sm" type="text" name="coupon_code"
-                               placeholder="Код купона*"
-                               value="{{ $cart->getCoupon()?->code }}"
+                        <input class="form-control form-control-sm" type="text" name="promo_code"
+                               placeholder="Промокод*"
+                               value="{{ $cart->promoCode()?->code }}"
                         >
 
                     </div>
@@ -159,9 +159,9 @@
             </form>
 
         </div>
-        @if($cart->getCoupon())
+        @if($cart->promoCode())
             <div class="col-12 col-md-auto">
-                <button type="button" class="btn btn-sm btn-outline-dark coupon-remove"><i class="fe fe-trash-2"></i> Удалить купон</button>
+                <button type="button" class="btn btn-sm btn-outline-dark promo-remove"><i class="fe fe-trash-2"></i> Удалить купон</button>
             </div>
         @endif
 
@@ -169,8 +169,9 @@
 
 </div>
 <div class="col-12 col-md-5 col-lg-4 offset-lg-1 position-relative">
-
     <div class="position-sticky" style="top: 1rem;">
+        <h6 class="mb-3">Кол-во ({{ $cart->getCount() }})</h6>
+        <hr class="my-3">
         <div class="card mb-7 bg-light">
             <div class="card-body">
                 <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
@@ -183,11 +184,11 @@
                         @endif
                     </li>
                     <li class="list-group-item d-flex">
-                        <span>Купон</span>
-                        <span class="ml-auto font-size-sm">{{ $cart->getCoupon()?->discount ?? 0 }} руб.</span>
+                        <span>Промокод</span>
+                        <span class="ml-auto font-size-sm">{{ $cart->promoCode()?->discount ?? 0 }} руб.</span>
                     </li>
                     <li class="list-group-item d-flex font-size-lg font-weight-bold">
-                        <span>Итого</span> <span class="ml-auto font-size-sm">{{ $cart->getProductDiscountTotal() - $cart->getCoupon()?->discount ?? 0 }} руб.</span>
+                        <span>Итого</span> <span class="ml-auto font-size-sm">{{ $cart->getProductDiscountTotal() + $cart->promoCode()?->discount ?? 0 }} руб.</span>
                     </li>
                     <li class="list-group-item font-size-sm text-center text-gray-500">
                         Точная стоимость доставки будет рассчитана после оформления заказа *

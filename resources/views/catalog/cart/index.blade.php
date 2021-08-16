@@ -56,7 +56,7 @@
             var $form = $(this).closest('form');
             var data = $form.serialize();
             $.ajax({
-                url: '{{ route('cart.coupon.add') }}',
+                url: '{{ route('cart.promo.add') }}',
                 method: 'POST',
                 cache: false,
                 async: false,
@@ -68,10 +68,10 @@
             })
         });
 
-        $('#cart-content').on('click', '.coupon-remove', function (event) {
+        $('#cart-content').on('click', '.promo-remove', function (event) {
             event.preventDefault();
             $.ajax({
-                url: '{{ route('cart.coupon.remove') }}',
+                url: '{{ route('cart.promo.remove') }}',
                 method: 'GET',
                 cache: false,
                 async: false,
