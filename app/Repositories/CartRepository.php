@@ -3,11 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\Cart;
-use App\Models\Coupon;
+use App\Models\PromoCode;
 use App\Models\VariantPrice;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CartRepository implements CartInterface
 {
@@ -22,7 +23,7 @@ class CartRepository implements CartInterface
         Cart::where('user_id', 'IS NULL')->where('updated_at', '<', 'DATE_SUB(NOW(), INTERVAL 72 HOUR)')->delete();
 
         if (session('cart') === null) {
-            session()->put('cart', uniqid());
+            session()->put('cart', Str::uuid()->toString());
         }
 
         $this->cart_session = session('cart');
@@ -59,7 +60,9 @@ class CartRepository implements CartInterface
 
     public function getCount(): int
     {
-        return $this->getItems()->count();
+        return $this->getItems()->sum(function ($cart) {
+            return $cart->quantity;
+        });
     }
 
     public function add(int $price_id, int $quantity): Cart
@@ -161,22 +164,22 @@ class CartRepository implements CartInterface
         });
     }
 
-    public function setCoupon($code): void
+    public function setPromoCode($code): void
     {
-        $coupon = Coupon::where('code', $code)->firstOrNew();
-        $message = $coupon->validateMessage($code);
+        $promo = PromoCode::where('code', $code)->firstOrNew();
+        $message = $promo->validateMessage($code);
 
         if ($message) {
-            $this->message['coupon_error'] = $message;
+            $this->message['promo_error'] = $message;
             return;
         }
 
-        $this->message['coupon_success'] = sprintf('Вы успешно добавили код купона %s!', $coupon->code);
+        $this->message['promo_success'] = sprintf('Вы успешно добавили код купона %s!', $promo->code);
 
-        session()->put('coupon', (object)[
-            'id' => $coupon->id,
-            'code' => $coupon->code,
-            'discount' => $coupon->discountPrice($this->getProductSumIfNotDiscount())
+        session()->put('promo', (object)[
+            'id' => $promo->id,
+            'code' => $promo->code,
+            'discount' => $promo->discountPrice($this->getProductSumIfNotDiscount())
         ]);
     }
 
@@ -185,18 +188,18 @@ class CartRepository implements CartInterface
         return $this->message[$name] ?? '';
     }
 
-    public function couponRemove()
+    public function promoCodeRemove()
     {
-        $coupon = $this->getCoupon();
-        if ($coupon) {
-            $this->message['coupon_success'] = sprintf('Вы успешно удалили код купона %s!', $coupon->code);
+        $promo = $this->promoCode();
+        if ($promo) {
+            $this->message['promo_success'] = sprintf('Вы успешно удалили код купона %s!', $promo->code);
         }
-        session()->pull('coupon');
+        session()->pull('promo');
     }
 
-    public function getCoupon()
+    public function promoCode()
     {
-        return session('coupon');
+        return session('promo');
     }
 
     public function remove($id): void

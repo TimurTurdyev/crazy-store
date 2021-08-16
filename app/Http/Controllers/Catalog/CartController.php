@@ -22,33 +22,27 @@ class CartController extends Controller
 
     public function add(CartInterface $cart, Request $request): \Illuminate\Http\RedirectResponse
     {
-        $message = $cart->add($request->price, $request->quantity);
+        $cart->add($request->price, $request->quantity);
 
         return redirect()->back()->with('message', 'Вы успешно добавили товар в корзину.');
     }
 
     public function update(CartInterface $cart, Request $request)
     {
-//        abort_if(
-//            !$request->cart ||
-//            !$request->price || !is_array($request->price) ||
-//            !isset($request->price[$request->cart]) ||
-//            !$request->quantity, 404);
-
         $cart->update($request->cart, $request->price[$request->cart], $request->quantity);
 
         return $this->index($cart);
     }
 
-    public function couponAdd(CartInterface $cart, Request $request)
+    public function promoAdd(CartInterface $cart, Request $request)
     {
-        $cart->setCoupon($request->coupon_code);
+        $cart->setPromoCode($request->promo_code);
         return $this->index($cart);
     }
 
-    public function couponRemove(CartInterface $cart)
+    public function promoRemove(CartInterface $cart)
     {
-        $cart->couponRemove();
+        $cart->promoRemove();
         return $this->index($cart);
     }
 
