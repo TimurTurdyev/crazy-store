@@ -56,20 +56,6 @@
                                            placeholder="Адрес" required>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="checkoutBillingTown">Населенный пункт *</label>
-                                    <input class="form-control form-control-sm" id="checkoutBillingTown" type="text"
-                                           placeholder="Город / Село" required>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="checkoutBillingZIP">Индекс</label>
-                                    <input class="form-control form-control-sm" id="checkoutBillingZIP" type="text"
-                                           placeholder="Индекс" required>
-                                </div>
-                            </div>
                         </div>
                         <div id="shipping-block"></div>
                     </form>
@@ -106,7 +92,7 @@
                                             @if( $size_name = $item->price->name )
                                                 Размер: <strong>{{ $size_name }}</strong><br>
                                             @endif
-                                                Кол-во: <strong>{{ $item->quantity }} шт.</strong>
+                                            Кол-во: <strong>{{ $item->quantity }} шт.</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -150,7 +136,48 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/css/suggestions.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <script>
+        function formatSelected(suggestion) {
+            if (suggestion.data.postal_code) {
+                return suggestion.data.postal_code + ', ' + suggestion.value;
+            } else {
+                return suggestion.value;
+            }
+        }
 
+        function delivery(suggestion) {
+            var postal_code = suggestion.data.postal_code ?? '';
+
+            console.log(postal_code, suggestion)
+            $.ajax({
+                method: 'GET',
+                url: '{{ route('order.deliveries') }}/' + postal_code,
+            })
+                .done(function (response) {
+                    console.log(response);
+                    $('#shipping-block').html(response);
+                });
+        }
+
+        $("#checkoutBillingAddress").suggestions({
+            token: "90bccef2f73253efbb4e8418dc8fd2d464d3a07a",
+            type: "ADDRESS",
+            formatSelected: formatSelected,
+            /* Вызывается, когда пользователь выбирает одну из подсказок */
+            onSelect: function (suggestion) {
+                console.log(suggestion);
+                delivery(suggestion);
+            }
+        });
     </script>
 @endpush

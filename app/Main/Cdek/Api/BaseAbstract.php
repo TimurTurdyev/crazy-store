@@ -4,10 +4,13 @@ namespace App\Main\Cdek\Api;
 
 use Illuminate\Support\Facades\Http;
 use App\Main\Cdek\Login;
+use JetBrains\PhpStorm\Pure;
 
 abstract class BaseAbstract
 {
     protected string $api_url = '';
+
+    protected array $params = [];
 
     private array $headers = [
         'Accept' => 'application/json',
@@ -15,16 +18,12 @@ abstract class BaseAbstract
         'Authorization' => ''
     ];
 
-    protected array $params = [];
-
-    public function __construct(Login $login, array $params = [])
+    #[Pure] public function __construct(Login $login, array $params = [])
     {
         $this->params = $params;
 
         $this->api_url = $login->getApiUrl();
         $this->headers['Authorization'] = sprintf('Bearer %s', $login->getAccessToken());
-
-        return $this;
     }
 
     public function getHeaders(): array
@@ -38,36 +37,15 @@ abstract class BaseAbstract
         return $this;
     }
 
-    public function prepareParamsToQueryString(): string
+    public function get(string $uri_path): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        $callback = fn(string $k, string $v): string => "$k=$v";
-        $result = array_map($callback, array_keys($this->params), array_values($this->params));
-
-        if (count($result)) {
-            return '?' . join('&', $result);
-        }
-
-        return '';
+        return Http::withHeaders($this->headers)->get($this->api_url . $uri_path, $this->params);
     }
 
-    public function get(string $api_url): array
+    public function post(string $uri_path): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        return $this->response(Http::with($this->headers)->get($api_url));
+        return Http::withHeaders($this->headers)->post($this->api_url . $uri_path, $this->params);
     }
-
-    public function post(string $api_url): array
-    {
-        return $this->response(Http::withHeaders($this->headers)->post($api_url, $this->params));
-    }
-
-    private function response($response): array
-    {
-        if ($response->ok()) {
-            return $response->json() ?? [];
-        }
-        return [];
-    }
-
 
     abstract public function apply();
 }

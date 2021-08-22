@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\VariantController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix'  =>  'admin', 'middleware' => ['auth', 'admin']], function () {
 
