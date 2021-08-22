@@ -2,7 +2,7 @@
 
 namespace App\Main\Cdek;
 
-final class Login
+class Login
 {
     private string $api_url;
     private string $access_token;

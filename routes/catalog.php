@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Catalog\CartController;
 use App\Http\Controllers\Catalog\CheckoutController;
 use App\Http\Controllers\Catalog\OrderController;
@@ -27,15 +28,17 @@ Route::prefix('cart')->as('cart.')->group(function () {
 
 Route::prefix('order')->as('order.')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('index');
-    Route::get('/shipping/{shipping}', [OrderController::class, 'include'])->name('shipping');
+    Route::get('/deliveries/{postal_code?}', [OrderController::class, 'deliveries'])->name('deliveries');
 });
 
-Route::prefix('cdek-widget')->as('cdek_widget.')->group(function () {
-    Route::get('/', [CdekWidgetController::class, 'index'])->name('index');
-    Route::get('/info', [CdekWidgetController::class, 'info'])->name('info');
-    Route::post('/info', [CdekWidgetController::class, 'info'])->name('info');
-    Route::get('/template', [CdekWidgetController::class, 'template'])->name('template');
-});
+Route::post('cdek-api/{method}', [\App\Http\Controllers\Api\CdekController::class, 'index'])->name('cdek-api');
+
+//Route::prefix('cdek-widget')->as('cdek_widget.')->group(function () {
+//    Route::get('/', [CdekWidgetController::class, 'index'])->name('index');
+//    Route::get('/info', [CdekWidgetController::class, 'info'])->name('info');
+//    Route::post('/info', [CdekWidgetController::class, 'info'])->name('info');
+//    Route::get('/template', [CdekWidgetController::class, 'template'])->name('template');
+//});
 
 Route::prefix('checkout')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('checkout.cart');

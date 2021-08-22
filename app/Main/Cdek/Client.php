@@ -2,18 +2,30 @@
 
 namespace App\Main\Cdek;
 
+use App\Main\Cdek\Api\DeliveryPointsApi;
+use App\Main\Cdek\Api\TariffApi;
 use App\Main\Cdek\Api\TariffsApi;
 
 class Client
 {
     private Login $login;
 
-    public function __construct(Oauth $oauth)
+    public function __construct(Login $login)
     {
-        $this->login = $oauth->authorize();
+        $this->login = $login;
     }
 
-    public function tariffs(array $params): array
+    public function deliverypoints(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
+    {
+        return (new DeliveryPointsApi($this->login, $params))->apply();
+    }
+
+    public function tariff(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
+    {
+        return (new TariffApi($this->login, $params))->apply();
+    }
+
+    public function tariffs(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
         return (new TariffsApi($this->login, $params))->apply();
     }

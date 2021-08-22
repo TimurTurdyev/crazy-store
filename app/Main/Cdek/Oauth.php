@@ -14,8 +14,8 @@ class Oauth
     public function __construct()
     {
         $this->api_url = Constants::API_URL;
-        $this->account = config('cdek_account', '');
-        $this->secure = config('cdek_secure', '');
+        $this->account = config('cdek.account', '');
+        $this->secure = config('cdek.secure', '');
 
         return $this;
     }

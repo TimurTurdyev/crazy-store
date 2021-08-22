@@ -8,17 +8,16 @@
                         <input type="radio"
                                class="custom-control-input"
                                name="shipping"
-                               value="{{ $delivery->code }}"
-                               id="shipping-code-{{ $delivery->code }}"
+                               value="{{ $delivery['type'] }}.{{ $delivery['code'] }}"
+                               id="shipping-code-{{ $delivery['code'] }}"
                         >
                         <label class="custom-control-label text-body text-nowrap"
-                               for="shipping-code-{{ $delivery->code }}">
-                            {{ $delivery->name }}
+                               for="shipping-code-{{ $delivery['code'] }}">
+                            {{ $delivery['name'] }}
                         </label>
                     </div>
                 </td>
-                <td>{{ $delivery->info }}</td>
-                <td>{{ $delivery->price }}</td>
+                <td>{{ $delivery['price'] }} руб.</td>
             </tr>
         @endforeach
         </tbody>

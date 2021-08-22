@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\CdekWidget;
+namespace App\Services_off\CdekWidget;
 
 
 class AddressAction extends BaseAction

@@ -46,25 +46,26 @@ class ProductSeeder extends Seeder
                         IF(op.image != '', CONCAT('storage/', op.image), 'placeholder.png') as image,
                         op.status,
                         (
-                        SELECT
-                            name
-                        from
-                            oc_manufacturer om
-                        where
-                            op.manufacturer_id = om.manufacturer_id
-                        limit 1) as brand_name,
+                            SELECT
+                                name
+                            from
+                                oc_manufacturer om
+                            where
+                                op.manufacturer_id = om.manufacturer_id
+                            limit 1
+                        ) as brand_name,
                         (
-                        SELECT
-                            name
-                        from
-                            oc_category_description ocd
-                        join oc_product_to_category op2c on
-                            ocd.category_id = op2c.category_id
-                            and op2c.main_category = 1
-                        where
-                            op2c.product_id = op.product_id
-                        limit 1
-                                            ) as group_name,
+                            SELECT
+                                name
+                            from
+                                oc_category_description ocd
+                            join oc_product_to_category op2c on
+                                ocd.category_id = op2c.category_id
+                                and op2c.main_category = 1
+                            where
+                                op2c.product_id = op.product_id
+                            limit 1
+                        ) as group_name,
                         opd.name,
                         opd.meta_h1 as heading,
                         opd.meta_title,
