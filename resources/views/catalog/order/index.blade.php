@@ -136,9 +136,23 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-pvz" aria-labelledby="modal-pvz" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Выбор точек самовывоза CDEK</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="map" style="height: 70vh;">
+                </div>
+            </div>
+        </div>
+    </div>
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=3e3fce61-e18b-4afa-bda8-b519cbcc99cd"></script>
     <script>
         $.ajaxSetup({
             headers: {
@@ -147,6 +161,9 @@
         });
     </script>
     <script>
+        var postal_code = '';
+        var geoLocation = {};
+
         function formatSelected(suggestion) {
             if (suggestion.data.postal_code) {
                 return suggestion.data.postal_code + ', ' + suggestion.value;
@@ -155,16 +172,13 @@
             }
         }
 
-        function delivery(suggestion) {
-            var postal_code = suggestion.data.postal_code ?? '';
-
-            console.log(postal_code, suggestion)
+        function delivery(postal_code) {
+            $('#shipping-block').html('Идет обращение к службам доставки...');
             $.ajax({
                 method: 'GET',
                 url: '{{ route('order.deliveries') }}/' + postal_code,
             })
                 .done(function (response) {
-                    console.log(response);
                     $('#shipping-block').html(response);
                 });
         }
@@ -176,8 +190,99 @@
             /* Вызывается, когда пользователь выбирает одну из подсказок */
             onSelect: function (suggestion) {
                 console.log(suggestion);
-                delivery(suggestion);
+                postal_code = suggestion.data.postal_code ?? '';
+                if (postal_code === '') {
+                    $('#shipping-block').html('Индекс не найден, допишите адрес для уточнения.');
+                    return;
+                }
+                delivery(postal_code);
+                geoLocation.lat = suggestion.data.geo_lat;
+                geoLocation.lon = suggestion.data.geo_lon;
             }
         });
+
+        $('#modal-pvz').on('shown.bs.modal', function () {
+            ymaps.ready(init);
+        });
+
+        $('#modal-pvz').on('hidden.bs.modal', function (e) {
+            $('#map').html('');
+        })
+
+
+        function init() {
+            var myMap = new ymaps.Map('map', {
+                    center: [geoLocation.lat, geoLocation.lon],
+                    zoom: 10
+                }),
+                objectManager = new ymaps.ObjectManager({
+                    // Чтобы метки начали кластеризоваться, выставляем опцию.
+                    clusterize: true,
+                    // ObjectManager принимает те же опции, что и кластеризатор.
+                    gridSize: 32,
+                    clusterDisableClickZoom: true
+                });
+
+            // Чтобы задать опции одиночным объектам и кластерам,
+            // обратимся к дочерним коллекциям ObjectManager.
+            objectManager.objects.options.set('preset', 'islands#greenDotIcon');
+            objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
+            myMap.geoObjects.add(objectManager);
+
+            $.ajax({
+                method: 'POST',
+                url: '{{ route('cdek-api', 'deliverypoints') }}',
+                data: {
+                    postal_code: postal_code,
+                    type: 'PVZ',
+                    country_code: 'RU'
+                },
+            })
+                .done(function (response) {
+                    var points = [];
+                    $.each(response, function (i, item) {
+                        points.push(generatePoints(item));
+                    });
+                    objectManager.add({
+                        "type": "FeatureCollection",
+                        "features": points
+                    })
+                });
+        }
+
+        function generatePoints(item) {
+            var name = item.code + ' ' + item.name;
+            var balloonContentBody = '<h6 class="mb-2">Как добраться</h6>';
+
+            balloonContentBody += '<div>Адрес: ' + item.location.city + ', ' + item.location.address + '</div>';
+
+            if (item.nearest_metro_station) {
+                balloonContentBody += '<div>Метро: ' + item.nearest_metro_station + '</div>';
+            }
+            if (item.address_comment) {
+                balloonContentBody += '<div>' + item.address_comment + '</div>';
+            }
+/*
+            balloonContentBody += '<div class="mb-2"><a href="https://yandex.ru/maps/?rtext=~' + item.location.latitude + ',' + item.location.longitude + '&amp;rtt=auto&amp;z=6" target="_blank" rel="nofollow noopener noreferrer">Построить маршрут</a></div>';
+*/
+            balloonContentBody += '<h6 class="mb-2 mt-1">Режим работы</h6>';
+            balloonContentBody += '<div>' + item.work_time + '</div>';
+            /*balloonContentBody += '<h6>Контакты</h6>';
+            balloonContentBody += '<a href="mailto:' + item.email + '">' + item.email + '</a>';*/
+            balloonContentBody += '<div>Код пвз: ' + item.code + '</div>';
+            return {
+                type: 'Feature',
+                id: item.code,
+                geometry: {'type': 'Point', 'coordinates': [item.location.latitude, item.location.longitude]},
+                properties: {
+                    //balloonContentHeader: '',
+                    balloonContentBody: balloonContentBody,
+                    balloonContentFooter: '<button type="button" class="btn btn-info btn-block btn-xxs">Выбрать</button>',
+                    clusterCaption: '<strong>' + name + '</strong>',
+                    hintContent: '<strong>' + name + '</strong>'
+                }
+            }
+        }
     </script>
+
 @endpush

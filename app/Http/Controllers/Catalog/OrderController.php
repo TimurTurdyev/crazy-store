@@ -18,6 +18,7 @@ class OrderController extends Controller
 
     public function deliveries($postal_code, Request $request)
     {
+
         $client = new CdekClient((new Oauth())->authorize());
 
         $mode = [
@@ -83,6 +84,6 @@ class OrderController extends Controller
             return $item['price'] <= $min_value;
         });
 
-        return view('widget.deliveries', ['deliveries' => $cdek->merge($pochta)]);
+        return view('widget.deliveries', ['postal_code' => $postal_code, 'deliveries' => $cdek->merge($pochta)]);
     }
 }
