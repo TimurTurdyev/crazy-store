@@ -1,13 +1,13 @@
-@extends('layouts.app')
+@extends('admin.app')
 @section('header', $product->id ? 'Обновить товар': 'Создать товар')
 @section('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Список товаров</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.product.index') }}">Список товаров</a></li>
     <li class="breadcrumb-item active">{{ $product->id ? 'Обновить товар': 'Создать товар' }}</li>
 @endsection
 @section('content')
     @include('admin.master.message.success')
     <form class="row"
-          action="@if( $product->id ) {{ route('product.update', $product) }} @else {{ route('product.store') }} @endif"
+          action="@if( $product->id ) {{ route('admin.product.update', $product) }} @else {{ route('admin.product.store') }} @endif"
           method="post">
         @CSRF
         @if( $product->id )
@@ -95,7 +95,7 @@
         </div>
     </form>
     @if( $product->id )
-        <form id="product_destroy" action="{{ route('product.destroy', $product->id) }}" method="post">
+        <form id="product_destroy" action="{{ route('admin.product.destroy', $product->id) }}" method="post">
             @CSRF
             @method('DELETE')
         </form>
@@ -109,7 +109,7 @@
     @else
         <div class="card">
             <div class="card-body">
-                <a href="{{ route('variant.create', $product->id) }}" class="btn btn-default btn-lg">Добавить
+                <a href="{{ route('admin.variant.create', $product->id) }}" class="btn btn-default btn-lg">Добавить
                     вариант товара</a>
             </div>
         </div>

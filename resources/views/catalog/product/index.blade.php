@@ -48,7 +48,6 @@
                                 </div>
                             </div>
 
-                            <!-- Slider -->
                             <div class="flickity-nav mx-n2 mb-10 mb-md-0"
                                  data-flickity='{"asNavFor": "#productSlider", "contain": true, "wrapAround": false}'>
                                 @foreach($variant->photos as $photo)
@@ -61,18 +60,15 @@
                         </div>
                         <div class="col-12 col-md-6 pl-lg-10">
 
-                            <!-- Header -->
                             <div class="row mb-1">
                                 <div class="col">
 
-                                    <!-- Preheading -->
                                     <a class="text-muted"
                                        href="{{ route('catalog.brand', $product->brand) }}">{{ $product->brand->name }}</a>
 
                                 </div>
                                 <div class="col-auto">
 
-                                    <!-- Rating -->
                                     <div class="rating font-size-xs text-dark" data-value="4">
                                         <div class="rating-item">
                                             <i class="fas fa-star"></i>
@@ -99,10 +95,7 @@
                                 </div>
                             </div>
 
-                            <!-- Heading -->
                             <h3 class="mb-2">{{ $product->name }}</h3>
-
-                            <!-- Price -->
 
                             <div class="mb-7">
                                 @if( $selected_price->discount_price < $selected_price->price )
@@ -111,20 +104,20 @@
                                         <span id="selected_size_price">
                                             {{ $selected_price->price }}
                                         </span>
-                                        RUB
+                                        <i class="fas fa-ruble-sign"></i>
                                     </div>
                                     <div class="d-inline-block ml-1 font-size-h5 font-weight-bolder text-primary">
                                         <span id="selected_size_discount_price">
                                             {{ $selected_price->discount_price }}
                                         </span>
-                                        RUB
+                                        <i class="fas fa-ruble-sign"></i>
                                     </div>
                                 @else
                                     <div class="d-inline-block ml-1 font-size-h5 font-weight-bolder text-primary">
                                         <span id="selected_size_price">
                                             {{ $selected_price->price }}
                                         </span>
-                                        RUB
+                                        <i class="fas fa-ruble-sign"></i>
                                     </div>
                                 @endif
                                 <div class="d-inline-block font-size-sm ml-1">(<span
@@ -132,15 +125,14 @@
                                 </div>
                             </div>
 
-                            <!-- Form -->
                             <form action="{{ route('cart.add') }}" method="post">
                                 @CSRF
                                 <div class="form-group">
-
-                                    <!-- Label -->
-                                    <p class="mb-5">
-                                        Вариант: <strong>{{ $variant->short_name }}</strong>
-                                    </p>
+                                    @if( $variant->short_name )
+                                        <p class="mb-5">
+                                            Вариант: <strong>{{ $variant->short_name }}</strong>
+                                        </p>
+                                    @endif
                                     @if( $variants->count() > 1 )
                                         <div class="mb-8 ml-n1">
                                             @foreach( $variants as $item )

@@ -29,12 +29,12 @@ class SizeController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('size.index')->with('success', 'Вы успешно создали размер ' . $size->name);
+        return redirect()->route('admin.size.index')->with('success', 'Вы успешно создали размер ' . $size->name);
     }
 
     public function show(Size $size): RedirectResponse
     {
-        return redirect()->route('catalog', $size);
+        return redirect()->route('admin.catalog', $size);
     }
 
     public function edit(Size $size): View
@@ -48,12 +48,12 @@ class SizeController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('size.index')->with('success', 'Вы успешно обновили размер ' . $size->name);
+        return redirect()->route('admin.size.index')->with('success', 'Вы успешно обновили размер ' . $size->name);
     }
 
     public function destroy(Size $size): RedirectResponse
     {
         $size->delete();
-        return redirect()->route('size.index')->with('success', 'Вы успешно удалили размер ' . $size->name);
+        return redirect()->route('admin.size.index')->with('success', 'Вы успешно удалили размер ' . $size->name);
     }
 }

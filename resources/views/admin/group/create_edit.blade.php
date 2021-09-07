@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('admin.app')
 
 @section('content')
     <form class="row"
-          action="@if( $group->id ) {{ route('group.update', $group) }} @else {{ route('group.store') }} @endif"
+          action="@if( $group->id ) {{ route('admin.group.update', $group) }} @else {{ route('admin.group.store') }} @endif"
           method="post">
         @CSRF
         @if( $group->id )

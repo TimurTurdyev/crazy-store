@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.app')
 
 @section('content')
     @include('admin.master.message.success')
@@ -52,17 +52,17 @@
                             </div>
                         </td>
                         <td class="project-actions text-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('group.show', $group) }}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('admin.group.show', $group) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('group.edit', $group) }}">
+                            <a class="btn btn-info btn-sm" href="{{ route('admin.group.edit', $group) }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
                                     onclick="confirm('Удалить группу - {{ $group->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <form action="{{ route('group.destroy', $group) }}" method="post">
+                            <form action="{{ route('admin.group.destroy', $group) }}" method="post">
                                 @CSRF
                                 @method('DELETE')
                             </form>
@@ -78,7 +78,7 @@
                     {{ $groups->links() }}
                 </div>
                 <div>
-                    <a href="{{ route('group.create') }}" class="btn btn-success btn-sm">Создать</a>
+                    <a href="{{ route('admin.group.create') }}" class="btn btn-success btn-sm">Создать</a>
                 </div>
             </div>
         </div>

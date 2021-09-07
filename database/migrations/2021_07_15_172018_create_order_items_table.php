@@ -16,12 +16,14 @@ class CreateOrderItemsTable extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->string('product_code')->index();
-            $table->string('product_name');
-            $table->string('photo');
+            $table->bigInteger('product_id')->index();
+            $table->bigInteger('variant_id')->index();
+            $table->bigInteger('price_id')->index();
+            $table->string('name', 128);
             $table->mediumInteger('price_old');
             $table->mediumInteger('price');
             $table->smallInteger('quantity');
+            $table->string('photo');
         });
     }
 

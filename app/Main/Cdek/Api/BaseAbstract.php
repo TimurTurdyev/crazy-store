@@ -20,7 +20,9 @@ abstract class BaseAbstract
 
     #[Pure] public function __construct(Login $login, array $params = [])
     {
-        $this->params = $params;
+        foreach ($params as $k => $v) {
+            $this->params[$k] = $v;
+        }
 
         $this->api_url = $login->getApiUrl();
         $this->headers['Authorization'] = sprintf('Bearer %s', $login->getAccessToken());
@@ -39,7 +41,7 @@ abstract class BaseAbstract
 
     public function get(string $uri_path): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        return Http::withHeaders($this->headers)->get($this->api_url . $uri_path, $this->params);
+        return Http::withHeaders($this->headers)->get($this->api_url . $uri_path . '?' . http_build_query($this->params));
     }
 
     public function post(string $uri_path): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response

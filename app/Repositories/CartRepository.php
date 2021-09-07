@@ -8,19 +8,31 @@ use App\Models\VariantPrice;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class CartRepository implements CartInterface
 {
-    private string $cart_session;
+    private string $time_deleted;
+    private string $time_updated;
+
     private int|null $user_id;
+
+    private string $cache_key;
+    private string $cart_session;
+
     private static Collection $items;
     private array $message = [];
 
     public function __construct()
     {
         self::$items = collect();
-        Cart::where('user_id', 'IS NULL')->where('updated_at', '<', 'DATE_SUB(NOW(), INTERVAL 72 HOUR)')->delete();
+
+        $this->time_deleted = Cache::remember('cart-delete', 60 * 60, function () {
+            Cart::whereNull('user_id')->where('updated_at', '<', 'DATE_SUB(NOW(), INTERVAL 72 HOUR)')->delete();
+            return now()->toDayDateTimeString();
+        });
 
         if (session('cart') === null) {
             session()->put('cart', Str::uuid()->toString());
@@ -29,10 +41,15 @@ class CartRepository implements CartInterface
         $this->cart_session = session('cart');
         $this->user_id = Auth::id();
 
+        $this->cache_key = sprintf('cart.%s', $this->user_id ?: $this->cart_session);
+
         if ($this->user_id) {
-            Cart::where('session_id', $this->cart_session)
-                ->orWhere('user_id', $this->user_id)
-                ->update(['user_id' => $this->user_id, 'session_id' => $this->cart_session]);
+            $this->time_updated = Cache::remember('cart-delete', 30, function () {
+                Cart::where('session_id', $this->cart_session)
+                    ->orWhere('user_id', $this->user_id)
+                    ->update(['session_id' => $this->cart_session]);
+                return now()->toDayDateTimeString();
+            });
         }
     }
 
@@ -50,7 +67,7 @@ class CartRepository implements CartInterface
         });
     }
 
-    public function getProductSumIfNotDiscount()
+    public function getProductSumIfNotDiscount(): int
     {
         return $this->getItems()->sum(function ($cart) {
             if ($cart->price->discount_price < $cart->price->price) return 0;
@@ -111,15 +128,15 @@ class CartRepository implements CartInterface
         return $cart;
     }
 
-    public function clearCache()
+    public function clearCache(): void
     {
-        Cache::pull('cart.' . $this->cart_session);
+        Cache::pull($this->cache_key);
     }
 
     public function getItems(): Collection
     {
         if (self::$items->count() === 0) {
-            self::$items = Cache::remember('cart.' . $this->cart_session, 60 * 60, function () {
+            self::$items = Cache::remember($this->cache_key, 60 * 60, function () {
                 $items = collect();
                 foreach (Cart::where('session_id', $this->cart_session)->with(['variant.product', 'variant.prices', 'variant.photos'])->get() as $item) {
                     $variant = $item->variant;
@@ -188,7 +205,7 @@ class CartRepository implements CartInterface
         return $this->message[$name] ?? '';
     }
 
-    public function promoCodeRemove()
+    public function promoCodeRemove(): void
     {
         $promo = $this->promoCode();
         if ($promo) {
@@ -197,7 +214,7 @@ class CartRepository implements CartInterface
         session()->pull('promo');
     }
 
-    public function promoCode()
+    public function promoCode(): null|object
     {
         return session('promo');
     }
@@ -211,5 +228,21 @@ class CartRepository implements CartInterface
     private function messageCount($count): string
     {
         return sprintf('Кол-во на складе: %s шт.!', $count);
+    }
+
+    public function destroyCart(): void
+    {
+        Cart::where('session_id', $this->cart_session)->delete();
+        $this->clearCache();
+    }
+
+    public function getTimeDeleted(): string
+    {
+        return $this->cart_deleted;
+    }
+
+    public function getTimeUpdated(): string
+    {
+        return $this->cart_updated;
     }
 }

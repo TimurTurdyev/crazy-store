@@ -38,12 +38,12 @@ class ProductController extends Controller
 
         $product->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('product.edit', $product)->with('success', 'Вы успешно создали товар ' . $product->name);
+        return redirect()->route('admin.product.edit', $product)->with('success', 'Вы успешно создали товар ' . $product->name);
     }
 
     public function show(Product $product): RedirectResponse
     {
-        return redirect()->route('catalog', $product);
+        return redirect()->route('admin.catalog', $product);
     }
 
     public function edit(Product $product): View
@@ -66,12 +66,12 @@ class ProductController extends Controller
 
         $product->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('product.edit', $product)->with('success', 'Вы успешно обновили товар ' . $product->name);
+        return redirect()->route('admin.product.edit', $product)->with('success', 'Вы успешно обновили товар ' . $product->name);
     }
 
     public function destroy(Product $product): RedirectResponse
     {
         $product->delete();
-        return redirect()->route('product.index')->with('success', 'Вы успешно удалили товар ' . $product->name);
+        return redirect()->route('admin.product.index')->with('success', 'Вы успешно удалили товар ' . $product->name);
     }
 }

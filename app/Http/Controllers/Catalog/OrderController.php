@@ -3,86 +3,44 @@
 namespace App\Http\Controllers\Catalog;
 
 use App\Http\Controllers\Controller;
-use App\Main\Cdek\Client as CdekClient;
-use App\Main\Cdek\Oauth;
-use App\Main\Pochta\Client as PochtaClient;
+use App\Http\Requests\Catalog\OrderRequest;
+use App\Main\DeliveryService;
+use App\Models\Order;
 use App\Repositories\CartInterface;
+use App\Repositories\OrderInterface;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(CartInterface $cart): \Illuminate\Contracts\View\View
+    public function create(CartInterface $cart): \Illuminate\Contracts\View\View
     {
-        return view('catalog.order.index', compact('cart'));
+        return view('catalog.order.create', compact('cart'));
     }
 
-    public function deliveries($postal_code, Request $request)
+    public function store(OrderRequest $request, OrderInterface $order): \Illuminate\Http\RedirectResponse
     {
-        $client = new CdekClient((new Oauth())->authorize());
+        $newOrder = $order->storeOrderDetails($request->all());
+        return redirect()->route('order.completed', $newOrder);
+    }
 
-        $mode = [
-            3 => ['name' => '', 'code' => '', 'sum' => 0,],
-            4 => ['name' => '', 'code' => '', 'sum' => 0,]
-        ];
+    public function completed(Order $order): \Illuminate\Contracts\View\View
+    {
+        return view('catalog.order.completed', compact('order'));
+    }
 
-        $cdek = $client->tariffs([
-            'type' => 1,
-            'currency' => 1,
-            'lang' => 'rus',
-            'from_location' => ['postal_code' => config('cdek.postal_code')],
-            'to_location' => ['postal_code' => $postal_code],
-            'packages' => [
-                ['height' => 10, 'length' => 10, 'weight' => 500, 'width' => 10]
-            ]
-        ])
-            ->collect('tariff_codes')
-            ->whereIn('delivery_mode', array_keys($mode))
-            ->map(function ($item) use (&$mode) {
-                $value = $mode[$item['delivery_mode']];
+    public function deliveries($postal_code, Request $request): \Illuminate\Contracts\View\View
+    {
+        $deliveries = (new DeliveryService($postal_code))
+            ->cdek()
+            ->pochta()
+            ->getDeliveries();
 
-                if ($value['sum'] === 0 || $value['sum'] > $item['delivery_sum']) {
-                    $mode[$item['delivery_mode']] = [
-                        'code' => $item['tariff_code'],
-                        'sum' => $item['delivery_sum']
-                    ];
-                }
+        if ($request->get('dd')) {
+            dd($deliveries->toArray());
+        }
 
-                return [
-                    'group' => 'Курьерская служба CDEK',
-                    'code' => $item['tariff_code'],
-                    'name' => $item['delivery_mode'] === 4 ? 'CDEK - Пункт выдачи' : 'CDEk - Курьер',
-                    'name_hidden' => $item['tariff_name'],
-                    'type' => $item['delivery_mode'] === 4 ? 'cdek.pvz' : 'cdek.courier',
-                    'price' => $item['delivery_sum'],
-                    'mode' => $item['delivery_mode'],
-                ];
-            })
-            ->filter(function ($item, $key) use ($mode) {
-                return $item['code'] === $mode[$item['mode']]['code'];
-            });
+        $request->session()->put('deliveries', $deliveries);
 
-        $pochtaStandart = (new PochtaClient())->tariffStandart(['from' => config('cdek.postal_code'), 'to' => $postal_code])->json();
-        $pochta1Class = (new PochtaClient())->tariff1Class(['from' => config('cdek.postal_code'), 'to' => $postal_code])->json();
-
-        $min_value = 0;
-        $pochta = collect([$pochtaStandart, $pochta1Class])->filter(function ($item) {
-            return $item['paynds'] ?? false;
-        })->map(function ($item) use (&$min_value) {
-            $value = $item['paynds'] / 100;
-            $min_value = min($value, $min_value ?: $value);
-
-            return [
-                'group' => 'Почта России',
-                'code' => $item['id'],
-                'name' => 'Почтовое отправление',
-                'name_hidden' => $item['name'],
-                'type' => 'pochta',
-                'price' => $value,
-            ];
-        })->filter(function ($item) use ($min_value) {
-            return $item['price'] <= $min_value;
-        });
-
-        return view('widget.deliveries', ['deliveries' => $cdek->merge($pochta)]);
+        return view('widget.deliveries', compact('postal_code', 'deliveries'));
     }
 }

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('admin.app')
 
 @section('content')
     <form class="row"
-          action="@if( isset($size->id) ) {{ route('size.update', $size) }} @else {{ route('size.store') }} @endif"
+          action="@if( isset($size->id) ) {{ route('admin.size.update', $size) }} @else {{ route('admin.size.store') }} @endif"
           method="post">
         @CSRF
         @isset( $size->id )

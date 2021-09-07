@@ -32,7 +32,7 @@ class VariantPrice extends Model
             return ($discountPrice ?: 0) > $this->price ? $this->price : $discountPrice;
         }
 
-        return $this->price;
+        return $this->price ?? 0;
     }
 
     public function size(): \Illuminate\Database\Eloquent\Relations\BelongsTo
