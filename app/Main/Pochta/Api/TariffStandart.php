@@ -8,7 +8,7 @@ class TariffStandart extends BaseAbstract
         'object' => 27030,
         'from' => '',
         'to' => '',
-        'weight' => 1000,
+        'weight' => 500,
         'pack' => 10
     ];
 

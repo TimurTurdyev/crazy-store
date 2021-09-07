@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.app')
 
 @section('content')
     @include('admin.master.message.success')
@@ -31,17 +31,17 @@
                             {{ $size->name }}
                         </td>
                         <td class="project-actions text-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('category.show', $size) }}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('admin.category.show', $size) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('category.edit', $size) }}">
+                            <a class="btn btn-info btn-sm" href="{{ route('admin.category.edit', $size) }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
                                     onclick="confirm('Удалить категорию - {{ $size->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <form action="{{ route('category.destroy', $size) }}" method="post">
+                            <form action="{{ route('admin.category.destroy', $size) }}" method="post">
                                 @CSRF
                                 @method('DELETE')
                             </form>
@@ -57,7 +57,7 @@
                     {{ $sizes->links() }}
                 </div>
                 <div>
-                    <a href="{{ route('size.create') }}" class="btn btn-success btn-sm">Создать</a>
+                    <a href="{{ route('admin.size.create') }}" class="btn btn-success btn-sm">Создать</a>
                 </div>
             </div>
         </div>

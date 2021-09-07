@@ -51,7 +51,7 @@
         </div>
         @if( $item->prices->count() )
             <div class="font-weight-bold text-muted">
-                {{ $item->prices->min('price') }} Руб
+                {{ $item->prices->min('price') }} <i class="fas fa-ruble-sign"></i>
             </div>
         @endif
     </div>

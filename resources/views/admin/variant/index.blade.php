@@ -1,5 +1,5 @@
 <form class="row"
-      action="@if( isset($variant->id) ) {{ route('variant.update',[$variant->product_id, $variant->id]) }} @else {{ route('variant.store', $product->id) }} @endif"
+      action="@if( isset($variant->id) ) {{ route('admin.variant.update',[$variant->product_id, $variant->id]) }} @else {{ route('admin.variant.store', $product->id) }} @endif"
       method="post">
     @CSRF
     @isset( $variant->id )
@@ -178,7 +178,7 @@
 </form>
 
 @isset( $loop )
-    <form id="variant_destroy{{ $loop->index }}" action="{{ route('variant.destroy', [$variant->product_id, $variant->id]) }}" method="post">
+    <form id="variant_destroy{{ $loop->index }}" action="{{ route('admin.variant.destroy', [$variant->product_id, $variant->id]) }}" method="post">
         @CSRF
         @method('DELETE')
     </form>

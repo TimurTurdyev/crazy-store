@@ -30,8 +30,10 @@ class ProductController extends Controller
             $product->status === 0 || (!$variant || $variant->status === 0),
             '404');
 
-        if (!$selected_price = $variant->prices->firstWhere('quantity', '>', 0)) {
-            $selected_price = new VariantPrice();
+        $selected_price = $variant->prices->firstWhere('quantity', '>', 0);
+
+        if ($selected_price === null) {
+            $selected_price = $variant->prices->first();
         }
 
         return view('catalog.product.index', compact('product', 'variants', 'variant', 'selected_price'));

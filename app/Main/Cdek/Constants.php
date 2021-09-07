@@ -102,7 +102,7 @@ class Constants
     /**
      * Статус: Принят на склад отправителя
      */
-    public const STATUS_TAKEIN = 'RECEIVED_AT_SENDER_WAREHOUSE';
+    public const STATUS_TAKE_IN = 'RECEIVED_AT_SENDER_WAREHOUSE';
 
     /**
      * Статус: Выдан на отправку в городе отправителе

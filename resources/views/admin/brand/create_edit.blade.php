@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('admin.app')
 
 @section('content')
     <form class="row"
-          action="@if( $brand->id )  {{ route('brand.update', $brand) }} @else {{ route('brand.store') }} @endif"
+          action="@if( $brand->id )  {{ route('admin.brand.update', $brand) }} @else {{ route('admin.brand.store') }} @endif"
           method="post">
         @CSRF
         @if( $brand->id )

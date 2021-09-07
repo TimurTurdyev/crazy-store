@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
 use App\Models\Group;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -34,12 +35,14 @@ class CategoryController extends Controller
 
         $category->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('category.index')->with('success', 'Вы успешно создали категорию ' . $category->name);
+        Cache::pull('categories');
+
+        return redirect()->route('admin.category.index')->with('success', 'Вы успешно создали категорию ' . $category->name);
     }
 
     public function show(Category $category): RedirectResponse
     {
-        return redirect()->route('catalog', $category);
+        return redirect()->route('admin.catalog', $category);
     }
 
     public function edit(Category $category): View
@@ -69,12 +72,17 @@ class CategoryController extends Controller
             $category->groups()->detach();
         }
 
-        return redirect()->route('category.index')->with('success', 'Вы успешно обновили категорию ' . $category->name);
+        Cache::pull('categories');
+
+        return redirect()->route('admin.category.index')->with('success', 'Вы успешно обновили категорию ' . $category->name);
     }
 
     public function destroy(Category $category): RedirectResponse
     {
         $category->delete();
-        return redirect()->route('category.index')->with('success', 'Вы успешно удалили категорию ' . $category->name);
+
+        Cache::pull('categories');
+
+        return redirect()->route('admin.category.index')->with('success', 'Вы успешно удалили категорию ' . $category->name);
     }
 }

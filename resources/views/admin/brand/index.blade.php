@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.app')
 
 @section('content')
     @include('admin.master.message.success')
@@ -55,17 +55,17 @@
                             </div>
                         </td>
                         <td class="project-actions text-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('brand.show', $brand) }}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('admin.brand.show', $brand) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('brand.edit', $brand) }}">
+                            <a class="btn btn-info btn-sm" href="{{ route('admin.brand.edit', $brand) }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
                                     onclick="confirm('Удалить бренд - {{ $brand->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <form action="{{ route('brand.destroy', $brand) }}" method="post">
+                            <form action="{{ route('admin.brand.destroy', $brand) }}" method="post">
                                 @CSRF
                                 @method('DELETE')
                             </form>
@@ -81,7 +81,7 @@
                     {{ $brands->links() }}
                 </div>
                 <div>
-                    <a href="{{ route('brand.create') }}" class="btn btn-success btn-sm">Создать</a>
+                    <a href="{{ route('admin.brand.create') }}" class="btn btn-success btn-sm">Создать</a>
                 </div>
             </div>
         </div>

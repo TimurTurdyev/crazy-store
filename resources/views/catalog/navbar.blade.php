@@ -97,11 +97,26 @@
 
             <!-- Nav -->
             <ul class="navbar-nav flex-row">
-                <li class="nav-item">
-                    <a class="nav-link" href="account-orders.html">
-                        <i class="fe fe-user"></i>
-                    </a>
-                </li>
+                @auth
+                    @if(auth()->user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                                <i class="fas fa-users-cog"></i>
+                            </a>
+                        </li>
+                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('customer.orders') }}">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </a>
+                    </li>
+                @else
+                    <li class="nav-item ml-lg-n4">
+                        <a class="nav-link" href="{{ route('login') }}">
+                            <i class="fe fe-user"></i>
+                        </a>
+                    </li>
+                @endauth
                 <li class="nav-item ml-lg-n4">
                     <a class="nav-link" href="account-wishlist.html">
                         <i class="fe fe-heart"></i>

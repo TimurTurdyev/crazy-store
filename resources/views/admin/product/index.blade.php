@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.app')
 @section('header', 'Список товаров')
 @section('breadcrumbs')
     <li class="breadcrumb-item active">Список товаров</li>
@@ -44,14 +44,14 @@
                         </td>
                         <td>
                             @if($product->group_id)
-                                <a href="{{ route('group.edit', $product->group_id) }}">{{ $product->group->name }}</a>
+                                <a href="{{ route('admin.group.edit', $product->group_id) }}">{{ $product->group->name }}</a>
                             @else
                                 ---
                             @endif
                         </td>
                         <td>
                             @if($product->brand_id)
-                                <a href="{{ route('brand.edit', $product->brand_id) }}">{{ $product->brand->name }}</a>
+                                <a href="{{ route('admin.brand.edit', $product->brand_id) }}">{{ $product->brand->name }}</a>
                             @else
                                 ---
                             @endif
@@ -64,17 +64,17 @@
                             </div>
                         </td>
                         <td class="project-actions text-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('product.show', $product) }}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('admin.product.show', $product) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('product.edit', $product) }}">
+                            <a class="btn btn-info btn-sm" href="{{ route('admin.product.edit', $product) }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <button type="button" class="btn btn-danger btn-sm"
                                     onclick="confirm('Удалить товар - {{ $product->name }}?') ? $(this).next().submit() : '';">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <form action="{{ route('product.destroy', $product) }}" method="post">
+                            <form action="{{ route('admin.product.destroy', $product) }}" method="post">
                                 @CSRF
                                 @method('DELETE')
                             </form>
@@ -90,7 +90,7 @@
                     {{ $products->links() }}
                 </div>
                 <div>
-                    <a href="{{ route('product.create') }}" class="btn btn-success btn-sm">Создать</a>
+                    <a href="{{ route('admin.product.create') }}" class="btn btn-success btn-sm">Создать</a>
                 </div>
             </div>
         </div>

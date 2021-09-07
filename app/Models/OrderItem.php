@@ -11,6 +11,12 @@ class OrderItem extends Model
 
     protected $table = 'order_items';
     protected $guarded = ['id'];
+    protected $fillable = ['order_id', 'product_id', 'variant_id', 'price_id', 'name', 'photo', 'price_old', 'price', 'quantity'];
 
     public $timestamps = false;
+
+    public function variant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Variant::class, 'variant_id', 'id');
+    }
 }

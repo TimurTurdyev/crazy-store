@@ -22,13 +22,13 @@
                             <div class="ml-auto text-right">
                                 @if($cart_item->price->discount_price < $cart_item->price->price)
                                     <div class="d-inline-block text-gray-350 text-decoration-line-through">
-                                        {{ $cart_item->price->price }} р.
+                                        {{ $cart_item->price->price }} <i class="fas fa-ruble-sign"></i>
                                     </div>
                                     <div class="d-inline-block ml-1">
-                                        {{ $cart_item->price->discount_price }} р.
+                                        {{ $cart_item->price->discount_price }} <i class="fas fa-ruble-sign"></i>
                                     </div>
                                 @else
-                                    {{ $cart_item->price->discount_price }} р.
+                                    {{ $cart_item->price->discount_price }} <i class="fas fa-ruble-sign"></i>
                                 @endif
                             </div>
                         </div>
@@ -178,17 +178,17 @@
                     <li class="list-group-item d-flex">
                         <span>Сумма</span>
                         @if($cart->getProductDiscountTotal() !== $cart->getProductPriceTotal())
-                            <span class="ml-auto font-size-sm">(<s>{{ $cart->getProductPriceTotal() }}</s>) / {{ $cart->getProductDiscountTotal() }} руб.</span>
+                            <span class="ml-auto font-size-sm">(<s>{{ $cart->getProductPriceTotal() }}</s>) / {{ $cart->getProductDiscountTotal() }} <i class="fas fa-ruble-sign"></i></span>
                         @else
-                            <span class="ml-auto font-size-sm">{{ $cart->getProductDiscountTotal() }} руб.</span>
+                            <span class="ml-auto font-size-sm">{{ $cart->getProductDiscountTotal() }} <i class="fas fa-ruble-sign"></i></span>
                         @endif
                     </li>
                     <li class="list-group-item d-flex">
                         <span>Промокод</span>
-                        <span class="ml-auto font-size-sm">{{ $cart->promoCode()?->discount ?? 0 }} руб.</span>
+                        <span class="ml-auto font-size-sm">{{ $cart->promoCode()?->discount ?? 0 }} <i class="fas fa-ruble-sign"></i></span>
                     </li>
                     <li class="list-group-item d-flex font-size-lg font-weight-bold">
-                        <span>Итого</span> <span class="ml-auto font-size-sm">{{ $cart->getProductDiscountTotal() + $cart->promoCode()?->discount ?? 0 }} руб.</span>
+                        <span>Итого</span> <span class="ml-auto font-size-sm">{{ $cart->getProductDiscountTotal() + $cart->promoCode()?->discount ?? 0 }} <i class="fas fa-ruble-sign"></i></span>
                     </li>
                     <li class="list-group-item font-size-sm text-center text-gray-500">
                         Точная стоимость доставки будет рассчитана после оформления заказа *
@@ -197,7 +197,7 @@
             </div>
         </div>
 
-        <a class="btn btn-block btn-dark mb-2" href="{{ route('order.index') }}">Перейти к оформлению</a>
+        <a class="btn btn-block btn-dark mb-2" href="{{ route('order.create') }}">Перейти к оформлению</a>
     </div>
 
 </div>

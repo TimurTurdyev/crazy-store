@@ -20,7 +20,9 @@ abstract class BaseAbstract
 
     #[Pure] public function __construct(Login $login, array $params = [])
     {
-        $this->params = $params;
+        foreach ($params as $k => $v) {
+            $this->params[$k] = $v;
+        }
 
         $this->api_url = $login->getApiUrl();
         $this->headers['Authorization'] = sprintf('Bearer %s', $login->getAccessToken());

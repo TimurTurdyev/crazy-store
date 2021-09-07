@@ -31,12 +31,12 @@ class BrandController extends Controller
 
         $brand->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('brand.index')->with('success', 'Вы успешно создали бренд ' . $brand->name);
+        return redirect()->route('admin.brand.index')->with('success', 'Вы успешно создали бренд ' . $brand->name);
     }
 
     public function show(Brand $brand): RedirectResponse
     {
-        return redirect()->route('brand', $brand);
+        return redirect()->route('admin.brand', $brand);
     }
 
     public function edit(Brand $brand): View
@@ -53,12 +53,12 @@ class BrandController extends Controller
 
         $brand->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('brand.index')->with('success', 'Вы успешно обновили бренд ' . $brand->name);
+        return redirect()->route('admin.brand.index')->with('success', 'Вы успешно обновили бренд ' . $brand->name);
     }
 
     public function destroy(Brand $brand): RedirectResponse
     {
         $brand->delete();
-        return redirect()->route('brand.index')->with('success', 'Вы успешно удалили бренд ' . $brand->name);
+        return redirect()->route('admin.brand.index')->with('success', 'Вы успешно удалили бренд ' . $brand->name);
     }
 }

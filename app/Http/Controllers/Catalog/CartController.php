@@ -42,7 +42,7 @@ class CartController extends Controller
 
     public function promoRemove(CartInterface $cart)
     {
-        $cart->promoRemove();
+        $cart->promoCodeRemove();
         return $this->index($cart);
     }
 

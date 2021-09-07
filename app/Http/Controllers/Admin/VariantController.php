@@ -51,7 +51,7 @@ class VariantController extends Controller
             }
         }
 
-        return redirect()->route('product.edit', $product)->with('success', 'Вы успешно создали вариант ' . $variant->short_name);
+        return redirect()->route('admin.product.edit', $product)->with('success', 'Вы успешно создали вариант ' . $variant->short_name);
     }
 
     public function show($id): RedirectResponse
@@ -104,13 +104,13 @@ class VariantController extends Controller
             VariantPhoto::where('variant_id', $variant->id)->whereNotIn('id', $photos_exist)->delete();
         }
 
-        return redirect()->route('product.edit', $product)->with('success', 'Вы успешно обновили вариант ' . $variant->short_name);
+        return redirect()->route('admin.product.edit', $product)->with('success', 'Вы успешно обновили вариант ' . $variant->short_name);
     }
 
     public function destroy(Product $product, Variant $variant): RedirectResponse
     {
         $variant->delete();
 
-        return redirect()->route('product.edit', $product);
+        return redirect()->route('admin.product.edit', $product);
     }
 }

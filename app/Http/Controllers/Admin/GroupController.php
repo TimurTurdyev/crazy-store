@@ -31,12 +31,12 @@ class GroupController extends Controller
 
         $group->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('group.index')->with('success', 'Вы успешно создали группу товаров ' . $group->name);
+        return redirect()->route('admin.group.index')->with('success', 'Вы успешно создали группу товаров ' . $group->name);
     }
 
     public function show(Group $group): RedirectResponse
     {
-        return redirect()->route('catalog', $group);
+        return redirect()->route('admin.catalog', $group);
     }
 
     public function edit(Group $group): View
@@ -53,12 +53,12 @@ class GroupController extends Controller
 
         $group->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('group.index')->with('success', 'Вы успешно обновили группу товаров ' . $group->name);
+        return redirect()->route('admin.group.index')->with('success', 'Вы успешно обновили группу товаров ' . $group->name);
     }
 
     public function destroy(Group $group): RedirectResponse
     {
         $group->delete();
-        return redirect()->route('group.index')->with('success', 'Вы успешно удалили группу товаров ' . $group->name);
+        return redirect()->route('admin.group.index')->with('success', 'Вы успешно удалили группу товаров ' . $group->name);
     }
 }

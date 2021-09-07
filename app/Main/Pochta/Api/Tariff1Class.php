@@ -8,7 +8,7 @@ class Tariff1Class extends BaseAbstract
         'object' => 47030,
         'from' => '',
         'to' => '',
-        'weight' => 1000,
+        'weight' => 500,
     ];
 
     public function apply(): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response

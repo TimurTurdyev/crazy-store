@@ -29,7 +29,7 @@ class BrandController extends Controller
         $products = Variant::filter(new ProductFilters($params))
             ->with(['prices', 'photos'])
             ->paginate(12)
-            ->withQueryString();;
+            ->withQueryString();
 
         return view('catalog.brand.index', compact('brand', 'filter', 'products'));
     }
