@@ -7,7 +7,7 @@
             <h3 class="card-title mb-0">Список</h3>
         </div>
         <div class="card-body p-0">
-            <table class="table table-striped projects">
+            <table class="table table-striped projects table-sm">
                 <thead>
                 <tr>
                     <th style="width: 1%">#</th>
@@ -16,7 +16,7 @@
                     <th>Почта</th>
                     <th>Клиент</th>
                     <th style="width: 5rem;">Итого</th>
-                    <th>Доставка</th>
+                    <th style="width: 15rem;">Доставка</th>
                     <th>Оплата</th>
                     <th style="width: 10rem;">Дата создания</th>
                     <th style="width: 10rem;">Дата обновления</th>

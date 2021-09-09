@@ -2,6 +2,8 @@
 
 namespace App\Filters;
 
+use Illuminate\Support\Facades\DB;
+
 class ProductFilters extends QueryFilter
 {
     protected function category($categoryIds)
@@ -24,5 +26,12 @@ class ProductFilters extends QueryFilter
     protected function size($sizeIds)
     {
         $this->builder->whereIn('variant_prices.size_id', $this->paramToArray($sizeIds));
+    }
+
+    protected function name($name)
+    {
+        if ($name = (string)$name) {
+            $this->builder->where(DB::raw("CONCAT(products.name, ' ', variants.short_name)"), 'like', '%' . $name . '%');
+        }
     }
 }

@@ -107,7 +107,7 @@ class OrderRepository implements OrderInterface
 
         if ($value) {
             $delivery->code = (string)$value['code'];
-            $delivery->name = (string)$params['name'];
+            $delivery->name = (string)$value['name'];
             $delivery->price = (int)$value['price'];
 
             if (Str::contains($params['delivery_code'], 'cdek.pvz') && !empty($params['pvz_address'])) {
