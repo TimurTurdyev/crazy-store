@@ -19,6 +19,54 @@
         </div>
         <div class="row">
             <div class="col-sm-6">
+                <p class="lead">Информация</p>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="checkoutBillingFirstName">Имя *</label>
+                            <input type="text"
+                                   class="form-control form-control-sm"
+                                   id="checkoutBillingFirstName"
+                                   name="firstname" placeholder="Имя"
+                                   required=""
+                                   value="{{ $order->firstname }}">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="checkoutBillingLastName">Фамилия *</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="checkoutBillingLastName"
+                                   name="lastname"
+                                   placeholder="Фамилия"
+                                   equired=""
+                                   value="{{ $order->lastname }}">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="checkoutBillingEmail">Email *</label>
+                            <input type="email"
+                                   class="form-control form-control-sm"
+                                   id="checkoutBillingEmail"
+                                   name="email"
+                                   placeholder="Email"
+                                   required=""
+                                   value="{{ $order->email }}">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="checkoutBillingPhone">Телефон *</label>
+                            <input type="tel"
+                                   class="form-control form-control-sm"
+                                   id="checkoutBillingPhone"
+                                   name="phone"
+                                   placeholder="Телефон"
+                                   required="" value="{{ $order->phone }}">
+                        </div>
+                    </div>
+                </div>
                 <p class="lead">Товары</p>
                 <ul class="list-group list-group-lg list-group-flush-x mb-6">
                     @foreach( $order->items as $item )
@@ -101,53 +149,8 @@
                 </ul>
             </div>
             <div class="col-sm-6">
-                <p class="lead">Информация</p>
+                <p class="lead">Способ доставки</p>
                 <div class="row">
-                    <div class="col-12 col-md-6">
-                        <div class="form-group">
-                            <label for="checkoutBillingFirstName">Имя *</label>
-                            <input type="text"
-                                   class="form-control form-control-sm"
-                                   id="checkoutBillingFirstName"
-                                   name="firstname" placeholder="Имя"
-                                   required=""
-                                   value="{{ $order->firstname }}">
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="form-group">
-                            <label for="checkoutBillingLastName">Фамилия *</label>
-                            <input type="text" class="form-control form-control-sm"
-                                   id="checkoutBillingLastName"
-                                   name="lastname"
-                                   placeholder="Фамилия"
-                                   equired=""
-                                   value="{{ $order->lastname }}">
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="form-group">
-                            <label for="checkoutBillingEmail">Email *</label>
-                            <input type="email"
-                                   class="form-control form-control-sm"
-                                   id="checkoutBillingEmail"
-                                   name="email"
-                                   placeholder="Email"
-                                   required=""
-                                   value="{{ $order->email }}">
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="form-group">
-                            <label for="checkoutBillingPhone">Телефон *</label>
-                            <input type="tel"
-                                   class="form-control form-control-sm"
-                                   id="checkoutBillingPhone"
-                                   name="phone"
-                                   placeholder="Телефон"
-                                   required="" value="{{ $order->phone }}">
-                        </div>
-                    </div>
                     <div class="col-12 col-md-8">
                         <div class="form-group">
                             <label for="form-address">Адрес *</label>
@@ -172,10 +175,7 @@
                                    value="{{ $order->post_code }}">
                         </div>
                     </div>
-                </div>
-                <p class="lead">Способ доставки</p>
-                <div class="row">
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-6">
                         <div class="form-group">
                             <label for="form-delivery_name">Доставка *</label>
                             <input type="text"
@@ -188,7 +188,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <div class="form-group">
                             <label for="form-delivery_code">Код доставки *</label>
                             <input type="text"
@@ -202,7 +202,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <div class="form-group">
                             <label for="form-delivery_value">Сумма доставки *</label>
                             <input type="text"
@@ -234,8 +234,9 @@
                     cache: false,
                     success: function (json) {
                         response($.map(json, function (item) {
+                            var label = item['name'] + ' / ' + item.data.price + 'р. - ' + item.data.stock + 'шт.';
                             return {
-                                label: item['name'],
+                                label: label,
                                 value: item['value'],
                                 itemId: itemId,
                                 data: item['data']

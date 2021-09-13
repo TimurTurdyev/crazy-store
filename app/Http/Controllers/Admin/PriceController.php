@@ -14,14 +14,13 @@ class PriceController extends Controller
     {
         $prices = [];
 
-        $products = Variant::filter(new ProductFilters($request->only(['name'])))
-            ->where('variant_prices.quantity', '>=', 0)
-            ->with(['prices.size', 'photos'])
+        $products = Variant::filter(new ProductFilters($request->only(['name', 'status', 'stock'])))
+            ->with(['prices', 'photos'])
             ->limit(12)
             ->get();
 
         foreach ($products as $variant) {
-            foreach ($variant->prices->where('quantity', '>', 0) as $price) {
+            foreach ($variant->prices as $price) {
                 $name = rtrim(rtrim($variant->variant_name, ', ') . ', ' . (string)$price?->size?->name, ', ');
 
                 $photo = $variant->photos->first();

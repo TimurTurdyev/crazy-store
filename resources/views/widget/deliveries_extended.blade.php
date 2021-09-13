@@ -17,35 +17,28 @@
                                            value="{{ $delivery['code'] }}"
                                            id="delivery-code-{{ $loop->index }}-{{ $delivery['code'] }}"
                                            data-price="{{ $delivery['price'] }}"
-                                           data-name="{{ $delivery['name'] }}"
+                                           data-name="{{ $name }}"
                                     >
-                                    <label class="custom-control-label text-body text-nowrap"
+                                    <label class="custom-control-label font-weight-normal text-body text-nowrap"
                                            for="delivery-code-{{ $loop->index }}-{{ $delivery['code'] }}">
                                         {{ $delivery['name'] }} -
                                         {{ $delivery['price'] }} руб.
 
                                     </label>
                                 </div>
-
-                                <div>
-                                    <small>{{ $delivery['description'] }}</small>
-                                </div>
                                 @continue
                             @endif
 
-                            <label for="field-pvz">
+                            <label for="field-pvz" class="font-weight-normal">
                                 {{ $delivery['name'] }} -
                                 {{ $delivery['price'] }} руб.
                             </label>
                             <button type="button"
-                                    class="btn btn-info btn-xxs float-end"
+                                    class="btn btn-info btn-xs float-end"
                                     data-toggle="modal"
                                     data-target="#modal-pvz"
                                     data-code="{{ $delivery['code'] }}">Выбрать
                             </button>
-                            <div>
-                                <small>{{ $delivery['description'] }}</small>
-                            </div>
                             <div class="pvz-block mb-2" hidden>
                                 <div class="custom-control custom-radio mb-2">
                                     <input type="radio"
@@ -53,10 +46,10 @@
                                            name="widget_delivery_code"
                                            value="{{ $delivery['code'] }}"
                                            data-price="{{ $delivery['price'] }}"
-                                           data-name="{{ $delivery['name'] }}"
+                                           data-name="{{ $name }}"
                                            id="delivery-code-{{ $loop->index }}-{{ $delivery['code'] }}"
                                     >
-                                    <label class="custom-control-label text-body text-nowrap"
+                                    <label class="custom-control-label font-weight-normal text-body text-nowrap"
                                            for="delivery-code-{{ $loop->index }}-{{ $delivery['code'] }}"
                                     >
                                         До пункта выдачи:

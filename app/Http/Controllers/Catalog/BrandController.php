@@ -17,16 +17,22 @@ class BrandController extends Controller
     {
         abort_if($brand->status === 0, 404);
 
-        $params = array_merge($request->all(), ['brand' => $brand->id]);
+        $request_params = array_merge(
+            [
+                'stock' => 'in',
+                'status' => 'on'
+            ],
+            array_merge($request->all(), ['brand' => $brand->id])
+        );
 
         $filter = collect([
             'groups' => $brand->load('groups')->getRelation('groups'),
             'sizes' => Size::filter(
-                new SizeFilters($params)
+                new SizeFilters($request_params)
             )->get(),
         ]);
 
-        $products = Variant::filter(new ProductFilters($params))
+        $products = Variant::filter(new ProductFilters($request_params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();

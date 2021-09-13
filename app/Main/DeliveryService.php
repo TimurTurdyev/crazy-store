@@ -105,9 +105,8 @@ class DeliveryService
                 return [
                     'group' => 'Курьерская служба CDEK',
                     'code' => $code,
-                    'name' => $name,
+                    'name' => sprintf('%s - %s', $item['tariff_name'], sprintf('От %s до %s дней', $item['period_min'], $item['period_max'])),
                     'price' => $item['delivery_sum'],
-                    'description' => sprintf('%s - %s', $item['tariff_name'], sprintf('От %s до %s дней', $item['period_min'], $item['period_max']))
                 ];
             })->sortBy('price');
 
@@ -160,9 +159,8 @@ class DeliveryService
             return [
                 'group' => 'Почта России',
                 'code' => sprintf('pochta.%d', $item['id']),
-                'name' => 'Почтовое отправление',
+                'name' => $item['name'],
                 'price' => $value,
-                'description' => $item['name']
             ];
         })->sortBy('price');
 

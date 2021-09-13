@@ -23,19 +23,25 @@ class GroupController extends Controller
 
         $categories = $group->load('categories')->getRelation('categories');
 
-        $params = array_merge($request->all(), ['group' => $group->id]);
+        $request_params = array_merge(
+            [
+                'stock' => 'in',
+                'status' => 'on'
+            ],
+            array_merge($request->all(), ['group' => $group->id])
+        );
 
         $filter = collect([
             'categories' => $categories,
             'brands' => Brand::filter(
-                new BrandFilters($params)
+                new BrandFilters($request_params)
             )->get(),
             'sizes' => Size::filter(
-                new SizeFilters($params)
+                new SizeFilters($request_params)
             )->get(),
         ]);
 
-        $products = Variant::filter(new ProductFilters($params))
+        $products = Variant::filter(new ProductFilters($request_params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();;
