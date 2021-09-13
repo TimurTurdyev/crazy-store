@@ -29,7 +29,6 @@ class VariantController extends Controller
 
     public function store(Product $product, VariantRequest $request): RedirectResponse
     {
-
         $variant = Variant::create([
             'product_id' => $product->id,
             'short_name' => $request->short_name,

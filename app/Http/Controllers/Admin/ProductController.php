@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\PriceFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
+use App\Http\Resources\Admin\ProductsFilterToOrderResource;
 use App\Models\Brand;
 use App\Models\Group;
 use App\Models\Product;
 use App\Models\Size;
+use App\Models\VariantPrice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 

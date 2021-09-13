@@ -13,7 +13,7 @@
                         К сожалению, нам не удалось найти страницу, которую вы искали.
                     </p>
 
-                    <a class="btn btn-dark" href="{{ route('category.index') }}">
+                    <a class="btn btn-dark" href="{{ route('home') }}">
                         На главную
                     </a>
 

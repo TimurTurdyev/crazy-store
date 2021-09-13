@@ -6,6 +6,8 @@
     <ul class="list-group list-group-flush">
         @foreach( $deliveries as $delivery )
             <li class="list-group-item">
+                <input type="hidden" name="delivery_price" value="{{ $delivery['price'] }}">
+                <input type="hidden" name="delivery_name" value="{{ $delivery['name'] }}">
                 @if(Str::is('cdek.pvz.*', $delivery['code']) === false)
                     <div class="custom-control custom-radio">
                         <input type="radio"

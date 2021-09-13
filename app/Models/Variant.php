@@ -54,9 +54,6 @@ class Variant extends Model
                 ->join('variant_prices', 'variants.id', '=', 'variant_prices.variant_id')
                 ->join('products', 'variants.product_id', '=', 'products.id')
                 ->join('groups', 'products.group_id', '=', 'groups.id')
-                ->where('variant_prices.quantity', '>', 0)
-                ->where('products.status', '=', 1)
-                ->where('variants.status', '=', 1)
                 ->groupBy(['products.id', 'variants.id'])
         );
     }

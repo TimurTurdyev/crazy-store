@@ -2,6 +2,8 @@
 
 namespace App\Filters;
 
+use Illuminate\Support\Facades\DB;
+
 class ProductFilters extends QueryFilter
 {
     protected function category($categoryIds)
@@ -12,8 +14,7 @@ class ProductFilters extends QueryFilter
 
     protected function group($groupIds = '')
     {
-        $this->builder
-            ->whereIn('products.group_id', $this->paramToArray($groupIds));
+        $this->builder->whereIn('products.group_id', $this->paramToArray($groupIds));
     }
 
     protected function brand($brandIds)
@@ -24,5 +25,31 @@ class ProductFilters extends QueryFilter
     protected function size($sizeIds)
     {
         $this->builder->whereIn('variant_prices.size_id', $this->paramToArray($sizeIds));
+    }
+
+    protected function name($value)
+    {
+        if (is_string($value)) {
+            $this->builder->leftJoin('sizes', 'variant_prices.size_id', '=', 'sizes.id');
+            $this->builder->where(DB::raw("REGEXP_REPLACE(CONCAT(products.name, '', variants.short_name, sizes.name), '[^[:alnum:]]', '')"), 'like', '%' . preg_replace('/[^[:alnum:]]/u', '', $value) . '%');
+        }
+    }
+
+    protected function stock($value = 'in')
+    {
+        if ($value === 'out') {
+            $this->builder->where('variant_prices.quantity', '<', 1);
+        } else {
+            $this->builder->where('variant_prices.quantity', '>', 0);
+        }
+    }
+
+    protected function status($value = 'on')
+    {
+        if ($value === 'off') {
+            $this->builder->where('variants.status', '=', 0);
+        } else {
+            $this->builder->where('variants.status', '=', 1);
+        }
     }
 }

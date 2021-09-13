@@ -3,8 +3,6 @@
 namespace App\Main\Pochta\Api;
 
 use Illuminate\Support\Facades\Http;
-use App\Main\Cdek\Login;
-use JetBrains\PhpStorm\Pure;
 
 abstract class BaseAbstract
 {

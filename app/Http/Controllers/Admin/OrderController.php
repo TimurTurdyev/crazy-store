@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Main\DeliveryService;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(Order $order): \Illuminate\Contracts\View\View
     {
-        $orders = Order::paginate(12)->withQueryString();
+        $orders = $order->orderByDesc('id')->paginate(12)->withQueryString();
         return view('admin.order.index', compact('orders'));
     }
 
@@ -19,9 +20,9 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Order $order)
     {
-        return view('admin.order.index', compact('orders'));
+        return view('admin.order.index', compact('order'));
     }
 
     /**
@@ -66,7 +67,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
@@ -78,5 +79,21 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function deliveries($postal_code, Request $request): \Illuminate\Contracts\View\View
+    {
+        $deliveries = (new DeliveryService($postal_code))
+            ->cdekExtended()
+            ->pochtaExtended()
+            ->getDeliveries();
+
+        if ($request->get('dd')) {
+            dd($deliveries->toArray());
+        }
+
+        $request->session()->put('deliveries', $deliveries);
+
+        return view('widget.deliveries_extended', compact('postal_code', 'deliveries'));
     }
 }

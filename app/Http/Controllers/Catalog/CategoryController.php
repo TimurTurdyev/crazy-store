@@ -21,22 +21,27 @@ class CategoryController extends Controller
 
         $groups = $category->load('groups')->getRelation('groups');
 
-        $params = array_merge(['group' => $groups->pluck('id')->join('.')], $request->all());
+        $request_params = array_merge([
+            'group' => $groups->pluck('id')->join('.'),
+            'stock' => 'in',
+            'status' => 'on',
+        ], $request->all());
+
 
         $filter = collect([
             'groups' => $groups,
             'brands' => Brand::filter(
-                new BrandFilters($params)
+                new BrandFilters($request_params)
             )->get(),
             'sizes' => Size::filter(
-                new SizeFilters($params)
+                new SizeFilters($request_params)
             )->get(),
         ]);
 
-        $products = Variant::filter(new ProductFilters($params))
+        $products = Variant::filter(new ProductFilters($request_params))
             ->with(['prices', 'photos'])
             ->paginate(12)
-            ->withQueryString();;
+            ->withQueryString();
 
         return view('catalog.category.index', compact('category', 'filter', 'products'));
     }
