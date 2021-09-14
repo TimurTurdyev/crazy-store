@@ -6,7 +6,7 @@ use App\Main\Tinkoff\Constants;
 use App\Main\Tinkoff\Interfaces\ParamsInterface;
 use App\Models\Order;
 
-class OrderAdapter implements ParamsInterface
+class OrderTinkoffAdapter implements ParamsInterface
 {
     private array $params;
     private Order $order;
@@ -17,13 +17,13 @@ class OrderAdapter implements ParamsInterface
 
         $this->params = [
             'OrderId' => $this->order->id,
-            'Amount' => $this->order->total,
+            'Amount' => $this->order->total * 100,
             'Description' => sprintf('Оплата заказа №%s', $this->order->id),
         ];
 
-        $this->setData();   // 1
-        $this->setReceipt();// 2
-        $this->setItems();  // 3
+        $this->data();          // 1
+        $this->receipt();       // 2
+        $this->receiptItems();  // 3
     }
 
     public function getParams(): array
@@ -31,7 +31,7 @@ class OrderAdapter implements ParamsInterface
         return $this->params;
     }
 
-    private function setData(): void
+    private function data(): void
     {
         if ($this->order->email) {
             $this->params['DATA']['Email'] = $this->order->email;
@@ -41,10 +41,10 @@ class OrderAdapter implements ParamsInterface
         }
     }
 
-    private function setReceipt(): void
+    private function receipt(): void
     {
         $this->params['Receipt'] = [
-            'Taxation' => Constants::VAT['none'],
+            'Taxation' => Constants::TAXATION['usn_income'],
         ];
 
         if (!empty($this->params['DATA'])) {
@@ -52,12 +52,12 @@ class OrderAdapter implements ParamsInterface
         }
     }
 
-    private function setItems(): void
+    private function receiptItems(): void
     {
-        $receiptItem = [];
+        $receiptItems = [];
 
         foreach ($this->order->items as $item) {
-            $receiptItem[] = [
+            $receiptItems[] = [
                 'Name' => $item->name,
                 'Price' => $item->price * 100,
                 'Quantity' => $item->quantity,
@@ -68,10 +68,22 @@ class OrderAdapter implements ParamsInterface
             ];
         }
 
+        if ($this->order->promo_value) {
+            $receiptItems[] = [
+                'Name' => sprintf('Промокод - %s', $this->order->promo_code),
+                'Price' => $this->order->promo_value * 100,
+                'Quantity' => 1,
+                'Amount' => $this->order->promo_value * 100,
+                'PaymentMethod' => Constants::PAYMENT['full_prepayment'],
+                'PaymentObject' => Constants::ENTITY['service'],
+                'Tax' => Constants::VAT['none'],
+            ];
+        }
+
         if ($this->order->delivery_code) {
             $delivery = $this->order->getDeliveryAttribute();
 
-            $receiptItem[] = [
+            $receiptItems[] = [
                 'Name' => $delivery['name'],
                 'Price' => $delivery['value'] * 100,
                 'Quantity' => 1,
@@ -82,8 +94,8 @@ class OrderAdapter implements ParamsInterface
             ];
         }
 
-        if ($receiptItem) {
-            $this->params['Receipt']['Items'] = $receiptItem;
+        if (count($receiptItems)) {
+            $this->params['Receipt']['Items'] = $receiptItems;
         }
     }
 }

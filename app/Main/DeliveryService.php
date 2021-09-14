@@ -3,8 +3,8 @@
 namespace App\Main;
 
 use App\Main\Cdek\Oauth;
-use App\Main\Cdek\Client as CdekClient;
-use App\Main\Pochta\Client as PochtaClient;
+use App\Main\Cdek\CdekClient;
+use App\Main\Pochta\PochtaClient;
 use Illuminate\Support\Collection;
 
 class DeliveryService

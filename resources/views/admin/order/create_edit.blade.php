@@ -71,13 +71,13 @@
                 <ul class="list-group list-group-lg list-group-flush-x mb-6">
                     @foreach( $order->items as $item )
                         <li class="list-group-item product{{ $item->id }}">
-                            <input type="hidden" name="price[{{ $item->id }}][photo]"
+                            <input type="hidden" name="prices[{{ $item->id }}][photo]"
                                    value="{{ $item->photo }}">
-                            <input type="hidden" name="price[{{ $item->id }}][product_id]"
+                            <input type="hidden" name="prices[{{ $item->id }}][product_id]"
                                    value="{{ $item->product_id }}">
-                            <input type="hidden" name="price[{{ $item->id }}][variant_id]"
+                            <input type="hidden" name="prices[{{ $item->id }}][variant_id]"
                                    value="{{ $item->variant_id }}">
-                            <input type="hidden" name="price[{{ $item->id }}][price_id]"
+                            <input type="hidden" name="prices[{{ $item->id }}][price_id]"
                                    value="{{ $item->price_id }}">
                             <div class="row align-items-center">
                                 <div class="col-3">
@@ -90,7 +90,7 @@
                                         </div>
                                         <input type="text"
                                                class="form-control form-control-sm"
-                                               name="price[{{ $item->id }}][name]"
+                                               name="prices[{{ $item->id }}][name]"
                                                required=""
                                                value="{{ $item->name }}" data-item="{{ $item->id }}">
                                     </div>
@@ -100,7 +100,7 @@
                                                 <label>Старая цена *</label>
                                                 <input type="number"
                                                        class="form-control form-control-sm"
-                                                       name="price[{{ $item->id }}][price_old]"
+                                                       name="prices[{{ $item->id }}][price_old]"
                                                        required=""
                                                        value="{{ $item->price_old }}">
                                             </div>
@@ -110,7 +110,7 @@
                                                 <label>Цена *</label>
                                                 <input type="number"
                                                        class="form-control form-control-sm"
-                                                       name="price[{{ $item->id }}][price]"
+                                                       name="prices[{{ $item->id }}][price]"
                                                        required=""
                                                        value="{{ $item->price }}">
                                             </div>
@@ -120,7 +120,7 @@
                                                 <label>Кол-во *</label>
                                                 <input type="number"
                                                        class="form-control form-control-sm"
-                                                       name="price[{{ $item->id }}][quantity]"
+                                                       name="prices[{{ $item->id }}][quantity]"
                                                        required=""
                                                        value="{{ $item->quantity }}">
                                             </div>
@@ -216,12 +216,57 @@
                     </div>
                 </div>
                 <div id="delivery-block"></div>
+
+                <p class="lead">Способ оплаты</p>
+                <div class="form-group">
+                    <label for="form-payment_code">Варианты *</label>
+                    <select name="payment_code" id="form-payment_code" class="form-control form-control-sm">
+                        <option value="">-- Выберите --</option>
+                        @foreach( $order->payments as $code => $name )
+                            @if( $order->payment_code === $code)
+                                <option value="{{ $code }}" selected>{{ $name }}</option>
+                            @else
+                                <option value="{{ $code }}">{{ $name }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+                <div id="histories"></div>
             </div>
         </div>
     </form>
 @endsection
 
 @push('scripts')
+    <script>
+        function handleHistoryMessage(params) {
+            var url = '{{ route('admin.order.history', $order) }}';
+            $.ajax({
+                url: url + (params ? '?' + params : ''),
+                dataType: 'html',
+                cache: false,
+                success: function (response) {
+                    $('#histories').html(response);
+                }
+            });
+        }
+
+        setTimeout(function (){
+            handleHistoryMessage();
+        }, 1000);
+
+        $('#histories').on('click', 'a', function (event) {
+            event.preventDefault();
+            var link = $(this).attr('href');
+            handleHistoryMessage(link.replace(/http.+[?&]/gi, ''));
+        });
+
+        $('#histories').on('click', '.btn-success', function (event) {
+            event.preventDefault();
+            var params = $('#histories').find('input[type="hidden"], input:checked, textarea').serialize();
+            handleHistoryMessage(params);
+        });
+    </script>
     <script src="{{ asset('main/autocomplete.js') }}"></script>
     <script>
         // Category
@@ -258,7 +303,7 @@
                 var itemId = item['itemId'];
 
                 for (var key in item.data) {
-                    var entity = $('input[name="price\[' + itemId + '\]\[' + key + '\]"]');
+                    var entity = $('input[name="prices\[' + itemId + '\]\[' + key + '\]"]');
                     if ($(entity).is('input')) {
                         $(entity).val(item.data[key]);
                     }
@@ -286,7 +331,7 @@
     </div>
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/js/jquery.suggestions.min.js"></script>
-    <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=3e3fce61-e18b-4afa-bda8-b519cbcc99cd"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=3e3fce61-e18b-4afa-bda8-b519cbcc99cd" defer></script>
     <script>
         var postal_code = '';
         var geoLocation = {};

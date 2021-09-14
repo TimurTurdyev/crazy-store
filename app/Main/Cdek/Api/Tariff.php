@@ -5,7 +5,7 @@ namespace App\Main\Cdek\Api;
 use App\Main\Cdek\Login;
 use JetBrains\PhpStorm\Pure;
 
-class TariffApi extends BaseAbstract
+class Tariff extends CdekAbstract
 {
     private static string $uri_path = 'calculator/tariff';
     public array $params = [

@@ -58,6 +58,13 @@ class Order extends Model
         ];
     }
 
+    public function getPaymentsAttribute() {
+        return [
+            'sber.card' => 'Оплата на карту сбербанка',
+            'tinkoff.pay' => 'Онлайн оплата'
+        ];
+    }
+
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -66,5 +73,10 @@ class Order extends Model
     public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function histories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(OrderHistory::class);
     }
 }

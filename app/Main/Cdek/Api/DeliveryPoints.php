@@ -2,7 +2,7 @@
 
 namespace App\Main\Cdek\Api;
 
-class DeliveryPointsApi extends BaseAbstract
+class DeliveryPoints extends CdekAbstract
 {
     private static string $uri_path = 'deliverypoints';
 

@@ -2,11 +2,11 @@
 
 namespace App\Main\Cdek;
 
-use App\Main\Cdek\Api\DeliveryPointsApi;
-use App\Main\Cdek\Api\TariffApi;
-use App\Main\Cdek\Api\TariffsApi;
+use App\Main\Cdek\Api\DeliveryPoints;
+use App\Main\Cdek\Api\Tariff;
+use App\Main\Cdek\Api\Tariffs;
 
-class Client
+class CdekClient
 {
     private Login $login;
 
@@ -17,16 +17,16 @@ class Client
 
     public function deliverypoints(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        return (new DeliveryPointsApi($this->login, $params))->apply();
+        return (new DeliveryPoints($this->login, $params))->apply();
     }
 
     public function tariff(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        return (new TariffApi($this->login, $params))->apply();
+        return (new Tariff($this->login, $params))->apply();
     }
 
     public function tariffs(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        return (new TariffsApi($this->login, $params))->apply();
+        return (new Tariffs($this->login, $params))->apply();
     }
 }
