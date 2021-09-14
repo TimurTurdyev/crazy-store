@@ -6,10 +6,13 @@ use App\Main\Tinkoff\Constants;
 use App\Main\Tinkoff\Interfaces\ParamsInterface;
 use Illuminate\Support\Facades\Http;
 
-abstract class BaseAbstract
+abstract class TinkoffAbstract
 {
     protected string $api_url;
+    protected string $entity = '';
+
     protected array $params;
+
     private array $headers = [
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
@@ -24,20 +27,26 @@ abstract class BaseAbstract
         $this->params['Token'] = $this->genToken();
     }
 
+    public function test(): TinkoffAbstract
+    {
+        $this->api_url = Constants::API_TEST_URL;
+        return $this;
+    }
+
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    public function setHeaders(array $headers): BaseAbstract
+    public function setHeaders(array $headers): TinkoffAbstract
     {
         $this->headers = $headers;
         return $this;
     }
 
-    public function test(): BaseAbstract
+    public function setEntity(string $entity): TinkoffAbstract
     {
-        $this->api_url = Constants::API_TEST_URL;
+        $this->entity = $entity;
         return $this;
     }
 
@@ -58,9 +67,19 @@ abstract class BaseAbstract
         return hash('sha256', $token);
     }
 
-    public function post(string $uri_path): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
+    public function getParams(): array
     {
-        return Http::withHeaders($this->headers)->post($this->api_url . $uri_path, $this->params);
+        return $this->params;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->api_url . $this->entity;
+    }
+
+    public function send(): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
+    {
+        return Http::withHeaders($this->headers)->post($this->getUrl(), $this->getParams());
     }
 
     abstract public function apply();

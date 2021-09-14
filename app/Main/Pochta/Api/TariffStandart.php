@@ -2,7 +2,7 @@
 
 namespace App\Main\Pochta\Api;
 
-class TariffStandart extends BaseAbstract
+class TariffStandart extends PochtaAbstract
 {
     public array $params = [
         'object' => 27030,

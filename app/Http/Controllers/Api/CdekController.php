@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Main\Cdek\Client;
+use App\Main\Cdek\CdekClient;
 use App\Main\Cdek\Oauth;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class CdekController extends Controller
 {
     public function index($method, Request $request): \Illuminate\Http\JsonResponse
     {
-        $client = new Client((new Oauth())->authorize());
+        $client = new CdekClient((new Oauth())->authorize());
 
         if (!method_exists($client, $method)) {
             return response()->json(['method not exist'], 500);

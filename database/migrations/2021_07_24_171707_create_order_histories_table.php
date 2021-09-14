@@ -17,7 +17,7 @@ class CreateOrderHistoriesTable extends Migration
             $table->id();
             $table->foreignId('order_id')->references('id')->on('orders')->cascadeOnDelete();
             $table->boolean('notify')->default(0);
-            $table->text('comment');
+            $table->text('message');
             $table->timestamps();
         });
     }

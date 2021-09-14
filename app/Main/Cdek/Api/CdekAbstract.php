@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use App\Main\Cdek\Login;
 use JetBrains\PhpStorm\Pure;
 
-abstract class BaseAbstract
+abstract class CdekAbstract
 {
     protected string $api_url = '';
 
@@ -33,7 +33,7 @@ abstract class BaseAbstract
         return $this->headers;
     }
 
-    public function setHeaders(array $headers): BaseAbstract
+    public function setHeaders(array $headers): CdekAbstract
     {
         $this->headers = $headers;
         return $this;

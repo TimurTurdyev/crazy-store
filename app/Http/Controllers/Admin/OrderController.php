@@ -96,4 +96,20 @@ class OrderController extends Controller
 
         return view('widget.deliveries_extended', compact('postal_code', 'deliveries'));
     }
+
+    public function history(Order $order, Request $request)
+    {
+        $request_data = $request->validate([
+            'history.notify' => 'nullable|boolean',
+            'history.message' => 'nullable|string'
+        ]);
+
+        if (isset($request_data['history']) && !empty($request_data['history']['message'])) {
+            $order->histories()->create($request_data['history']);
+        }
+
+        $histories = $order->histories()->orderByDesc('id')->paginate(5)->withQueryString();
+
+        return view('admin.order.history', compact('histories'));
+    }
 }

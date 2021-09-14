@@ -4,7 +4,7 @@ namespace App\Main\Pochta\Api;
 
 use Illuminate\Support\Facades\Http;
 
-abstract class BaseAbstract
+abstract class PochtaAbstract
 {
     protected string $api_url = 'https://tariff.pochta.ru/v2/calculate/tariff?json';
 
@@ -29,7 +29,7 @@ abstract class BaseAbstract
         return $this->headers;
     }
 
-    public function setHeaders(array $headers): BaseAbstract
+    public function setHeaders(array $headers): PochtaAbstract
     {
         $this->headers = $headers;
         return $this;

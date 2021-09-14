@@ -2,7 +2,7 @@
 
 namespace App\Main\Cdek\Api;
 
-class TariffsApi extends BaseAbstract
+class Tariffs extends CdekAbstract
 {
     private static string $uri_path = 'calculator/tarifflist';
 

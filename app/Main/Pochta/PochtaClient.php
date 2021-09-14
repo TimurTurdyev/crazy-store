@@ -6,7 +6,7 @@ use App\Main\Pochta\Api\Tariff1Class;
 use App\Main\Pochta\Api\TariffStandart;
 use Illuminate\Support\Facades\Http;
 
-class Client
+class PochtaClient
 {
     public function tariffStandart(array $params): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
