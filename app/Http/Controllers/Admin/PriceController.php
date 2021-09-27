@@ -28,16 +28,6 @@ class PriceController extends Controller
                     'name' => $name,
                     'value' => $price->id,
                     'data' => [
-                        //        "id" => 12
-                        //        "order_id" => 7
-                        //        "product_id" => 253
-                        //        "variant_id" => 253
-                        //        "price_id" => 450
-                        //        "name" => "Боди с коротким рукавом Кот, 62"
-                        //        "price_old" => 320
-                        //        "price" => 320
-                        //        "quantity" => 1
-                        //        "photo" => "http://127.0.0.1:8000/storage/catalog/kogankids/902.jpg"
                         'product_id' => $variant->product_id,
                         'variant_id' => $variant->id,
                         'price_id' => $price->id,

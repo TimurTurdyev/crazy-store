@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Group;
+use App\Models\OrderItem;
 use App\Models\Product;
+use App\Observers\OrderItemObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -30,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         Paginator::useBootstrap();
 
         Relation::morphMap([

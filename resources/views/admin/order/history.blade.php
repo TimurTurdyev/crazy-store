@@ -2,8 +2,8 @@
     <div class="card-header">
         <h3 class="card-title">История заказа</h3>
         <div class="card-tools">
-            <span title="{{ $histories->count() }} сообщений"
-                  class="badge bg-success">{{ $histories->count() }}</span>
+            <span title="{{ $histories->total() }} сообщений"
+                  class="badge bg-success">{{ $histories->total() }}</span>
         </div>
     </div>
     <div class="card-body">
@@ -15,7 +15,7 @@
                         <span class="direct-chat-timestamp float-right">{{ $history->created_at }}</span>
                     </div>
                     <div class="direct-chat-text">
-                        {!! $history->message !!}
+                        {{ $history->message }}
                     </div>
                 </div>
             @endforeach

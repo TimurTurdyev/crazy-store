@@ -18,6 +18,8 @@ class VariantPrice extends Model
 
     protected $appends = ['stock', 'discount_price'];
 
+    protected $fillable = ['variant_id', 'size_id', 'price', 'cost', 'quantity', 'discount'];
+
     protected $casts = [
         'quantity' => 'integer',
         'discount' => 'integer',

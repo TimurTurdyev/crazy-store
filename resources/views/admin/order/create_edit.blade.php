@@ -2,7 +2,9 @@
 
 @section('content')
 
-    <form class="invoice p-3 mb-3" autocomplete="off"
+    <form class="invoice p-3 mb-3"
+          id="form-order"
+          autocomplete="off"
           action="@if( $order->id ) {{ route('admin.order.update', $order) }} @else {{ route('admin.order.store') }} @endif"
           method="post">
         @CSRF
@@ -67,88 +69,10 @@
                         </div>
                     </div>
                 </div>
-                <p class="lead">Товары</p>
-                <ul class="list-group list-group-lg list-group-flush-x mb-6">
-                    @foreach( $order->items as $item )
-                        <li class="list-group-item product{{ $item->id }}">
-                            <input type="hidden" name="prices[{{ $item->id }}][photo]"
-                                   value="{{ $item->photo }}">
-                            <input type="hidden" name="prices[{{ $item->id }}][product_id]"
-                                   value="{{ $item->product_id }}">
-                            <input type="hidden" name="prices[{{ $item->id }}][variant_id]"
-                                   value="{{ $item->variant_id }}">
-                            <input type="hidden" name="prices[{{ $item->id }}][price_id]"
-                                   value="{{ $item->price_id }}">
-                            <div class="row align-items-center">
-                                <div class="col-3">
-                                    <img src="{{ $item->photo }}" alt="{{ $item->name }}" class="img-fluid">
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <div>
-                                            <label>Имя *</label>
-                                        </div>
-                                        <input type="text"
-                                               class="form-control form-control-sm"
-                                               name="prices[{{ $item->id }}][name]"
-                                               required=""
-                                               value="{{ $item->name }}" data-item="{{ $item->id }}">
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Старая цена *</label>
-                                                <input type="number"
-                                                       class="form-control form-control-sm"
-                                                       name="prices[{{ $item->id }}][price_old]"
-                                                       required=""
-                                                       value="{{ $item->price_old }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Цена *</label>
-                                                <input type="number"
-                                                       class="form-control form-control-sm"
-                                                       name="prices[{{ $item->id }}][price]"
-                                                       required=""
-                                                       value="{{ $item->price }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Кол-во *</label>
-                                                <input type="number"
-                                                       class="form-control form-control-sm"
-                                                       name="prices[{{ $item->id }}][quantity]"
-                                                       required=""
-                                                       value="{{ $item->quantity }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex justify-content-between">
-                                        <p class="mb-0 font-size-sm text-muted">
-                                            На складе: <strong class="stock">2</strong> шт.
-                                        </p>
-                                        <a href="{{ route('admin.product.edit', $item->product_id) }}"
-                                           target="_blank"
-                                           rel="noopener noreferrer"
-                                           class="btn btn-xs btn-outline-secondary mb-2">
-                                            Перейти в товар
-                                        </a>
-                                        <button type="button" class="btn btn-xs btn-outline-danger mb-2"
-                                                onclick="$(this).closest('li').remove();">Удалить
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-            <div class="col-sm-6">
+                <div class="callout callout-info">
+                    <h6><i class="fas fa-info"></i> Комментарий:</h6>
+                    {{ $order->notes }}
+                </div>
                 <p class="lead">Способ доставки</p>
                 <div class="row">
                     <div class="col-12 col-md-8">
@@ -233,12 +157,36 @@
                 </div>
                 <div id="histories"></div>
             </div>
+            <div class="col-sm-6">
+                @include('admin.order.product_list')
+            </div>
         </div>
     </form>
 @endsection
 
 @push('scripts')
     <script>
+        $('#form-payment_code').on('change', function () {
+            $.ajax({
+                url: '{{ route('admin.order.update', $order) }}',
+                method: 'put',
+                data: $('#form-order').serialize(),
+                cache: false,
+                success: function (response) {
+                    if (response.code) {
+                        $.ajax({
+                            url: '{{ route('payment.instruction', $order) }}',
+                            method: 'get',
+                            cache: false,
+                            success: function (response) {
+                                $('textarea[name="history\[message\]"]').val(response.message);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
         function handleHistoryMessage(params) {
             var url = '{{ route('admin.order.history', $order) }}';
             $.ajax({
@@ -251,7 +199,7 @@
             });
         }
 
-        setTimeout(function (){
+        setTimeout(function () {
             handleHistoryMessage();
         }, 1000);
 
@@ -265,54 +213,6 @@
             event.preventDefault();
             var params = $('#histories').find('input[type="hidden"], input:checked, textarea').serialize();
             handleHistoryMessage(params);
-        });
-    </script>
-    <script src="{{ asset('main/autocomplete.js') }}"></script>
-    <script>
-        // Category
-        $('input[name*="\[name\]"]').autocomplete({
-            'source': function (request, response) {
-                var itemId = $(this).data('item');
-                $.ajax({
-                    url: '{{ route('admin.price.filter') }}?name=' + encodeURIComponent(request),
-                    dataType: 'json',
-                    cache: false,
-                    success: function (json) {
-                        response($.map(json, function (item) {
-                            var label = item['name'] + ' / ' + item.data.price + 'р. - ' + item.data.stock + 'шт.';
-                            return {
-                                label: label,
-                                value: item['value'],
-                                itemId: itemId,
-                                data: item['data']
-                            }
-                        }));
-                    }
-                });
-            },
-            //        "product_id" => 253
-            //        "variant_id" => 253
-            //        "price_id" => 450
-            //        "name" => "Боди с коротким рукавом Кот, 62"
-            //        "price_old" => 320
-            //        "price" => 320
-            //        "quantity" => 1
-            //        "photo" => "http://127.0.0.1:8000/storage/catalog/kogankids/902.jpg"
-            'select': function (item) {
-                console.log(item)
-                var itemId = item['itemId'];
-
-                for (var key in item.data) {
-                    var entity = $('input[name="prices\[' + itemId + '\]\[' + key + '\]"]');
-                    if ($(entity).is('input')) {
-                        $(entity).val(item.data[key]);
-                    }
-                }
-                var link = '{{ asset('admin/product') }}/' + item.data['product_id'] + '/edit';
-                $('.product' + itemId + ' a').attr('href', link);
-                $('.product' + itemId + ' img').attr('src', item.data['photo']);
-                $('.product' + itemId + ' .stock').text(item.data['stock']);
-            }
         });
     </script>
     <div class="modal fade" tabindex="-1" role="dialog" id="modal-pvz" aria-labelledby="modal-pvz" aria-hidden="true">

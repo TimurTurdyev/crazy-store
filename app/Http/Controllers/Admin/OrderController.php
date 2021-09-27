@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\OrderRequest;
 use App\Main\DeliveryService;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -58,16 +59,24 @@ class OrderController extends Controller
         return view('admin.order.create_edit', compact('order'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(OrderRequest $request, $id)
     {
+        $order = Order::findOrFail($id);
+        $data_update = $request->validated();
 
+        $sub_total = $order->items->sum('price');
+
+        $total = $sub_total + $order->promo_value + $order->delivery_value;
+
+        $data_update = array_merge($data_update, [
+            'item_count' => $order->items->count(),
+            'sub_total' => $sub_total,
+            'total' => $total,
+        ]);
+
+        $order->update($data_update);
+
+        return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items]);
     }
 
     /**
@@ -97,7 +106,7 @@ class OrderController extends Controller
         return view('widget.deliveries_extended', compact('postal_code', 'deliveries'));
     }
 
-    public function history(Order $order, Request $request)
+    public function history(Order $order, Request $request): \Illuminate\Contracts\View\View
     {
         $request_data = $request->validate([
             'history.notify' => 'nullable|boolean',
@@ -111,5 +120,10 @@ class OrderController extends Controller
         $histories = $order->histories()->orderByDesc('id')->paginate(5)->withQueryString();
 
         return view('admin.order.history', compact('histories'));
+    }
+
+    public function products(Order $order)
+    {
+
     }
 }

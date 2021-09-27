@@ -24,6 +24,10 @@ class Order extends Model
 
     protected $dates = ['created_at', 'updated_at'];
 
+    public function getNotesAttribute($value) {
+        return $value ?: 'Не указан';
+    }
+
     public function getStatusAttribute($value): string
     {
         if ($this->delivery_status === 'decline' || $this->payment_status === 'decline') {

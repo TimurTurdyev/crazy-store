@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PromoCode;
-use App\Models\VariantPrice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -67,9 +66,6 @@ class OrderRepository implements OrderInterface
 
         if ($order) {
             foreach ($this->cart->getItems() as $cart_item) {
-
-                VariantPrice::where('id', $cart_item->price_id)->decrement('quantity', $cart_item->quantity);
-
                 $orderItem = new OrderItem([
                     'product_id' => $cart_item->product_id,
                     'variant_id' => $cart_item->variant_id,
