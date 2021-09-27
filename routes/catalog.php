@@ -2,9 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Catalog\CartController;
-use App\Http\Controllers\Catalog\CheckoutController;
 use App\Http\Controllers\Catalog\OrderController;
-use App\Http\Controllers\Widget\CdekWidgetController;
 
 Route::get('/', function () {
     return view('catalog.home.index');
@@ -33,11 +31,9 @@ Route::prefix('order')->as('order.')->group(function () {
     Route::get('/deliveries/{postal_code?}', [OrderController::class, 'deliveries'])->name('deliveries');
 });
 
-Route::post('cdek-api/{method}', [\App\Http\Controllers\Api\CdekController::class, 'index'])->name('cdek-api');
+Route::get('order/{order}/payment/instruction', [\App\Http\Controllers\Catalog\PaymentController::class, 'instruction'])->name('payment.instruction');
 
-Route::prefix('checkout')->group(function () {
-    Route::get('/', [CheckoutController::class, 'index'])->name('checkout.cart');
-});
+Route::post('cdek-api/{method}', [\App\Http\Controllers\Api\CdekController::class, 'index'])->name('cdek-api');
 
 Route::group(['prefix' => 'customer', 'middleware' => ['auth'], 'as' => 'customer.'], function () {
     Route::get('orders', [\App\Http\Controllers\Catalog\CustomerController::class, 'orders'])->name('orders');

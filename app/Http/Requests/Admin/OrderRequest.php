@@ -24,7 +24,50 @@ class OrderRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'firstname' => [
+                'required',
+                'string',
+                'max:64'
+            ],
+            'lastname' => [
+                'required',
+                'string',
+                'max:64'
+            ],
+            'email' => [
+                'required',
+                'email:rfc,dns',
+                'max:128'
+            ],
+            'phone' => [
+                'required',
+                'string',
+                'max:32'
+            ],
+            'post_code' => [
+                'required',
+                'string'
+            ],
+            'delivery_code' => [
+                'required',
+                'string'
+            ],
+            'delivery_value' => [
+                'required',
+                'integer'
+            ],
+            'delivery_name' => [
+                'required',
+                'string'
+            ],
+            'notes' => [
+                'nullable',
+                'string',
+            ],
+            'payment_code' => [
+                'nullable',
+                'string'
+            ]
         ];
     }
 }
