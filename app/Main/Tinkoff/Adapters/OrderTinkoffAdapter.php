@@ -24,6 +24,7 @@ class OrderTinkoffAdapter implements ParamsInterface
         $this->data();          // 1
         $this->receipt();       // 2
         $this->receiptItems();  // 3
+//        dd($this->getParams());
     }
 
     public function getParams(): array
@@ -55,8 +56,10 @@ class OrderTinkoffAdapter implements ParamsInterface
     private function receiptItems(): void
     {
         $receiptItems = [];
+        $amount = 0;
 
         foreach ($this->order->items as $item) {
+            $amount += $item->price * $item->quantity * 100;
             $receiptItems[] = [
                 'Name' => $item->name,
                 'Price' => $item->price * 100,
@@ -68,16 +71,12 @@ class OrderTinkoffAdapter implements ParamsInterface
             ];
         }
 
-        if ($this->order->promo_value) {
-            $receiptItems[] = [
-                'Name' => sprintf('Промокод - %s', $this->order->promo_code),
-                'Price' => $this->order->promo_value * 100,
-                'Quantity' => 1,
-                'Amount' => $this->order->promo_value * 100,
-                'PaymentMethod' => Constants::PAYMENT['full_prepayment'],
-                'PaymentObject' => Constants::ENTITY['service'],
-                'Tax' => Constants::VAT['none'],
-            ];
+        if ($amount && ($promo_value = $this->order->promo_value * 100) < 0) {
+            $percent = 100 - (($amount + $promo_value) * 100) / $amount;
+            foreach ($receiptItems as &$item) {
+                $amount = $item['Amount'] - ($item['Amount'] * ($percent / 100));
+                $item['Amount'] = $amount;
+            }
         }
 
         if ($this->order->delivery_code) {
