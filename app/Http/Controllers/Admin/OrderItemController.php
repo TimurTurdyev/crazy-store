@@ -27,7 +27,7 @@ class OrderItemController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -38,7 +38,7 @@ class OrderItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\OrderItem  $orderItem
+     * @param \App\Models\OrderItem $orderItem
      * @return \Illuminate\Http\Response
      */
     public function show(OrderItem $orderItem)
@@ -49,7 +49,7 @@ class OrderItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\OrderItem  $orderItem
+     * @param \App\Models\OrderItem $orderItem
      * @return \Illuminate\Http\Response
      */
     public function edit(OrderItem $orderItem)
@@ -65,8 +65,11 @@ class OrderItemController extends Controller
         if ($request->prices) {
             $prices = [];
 
-            foreach ($request->prices as $price) {
-                $item = $order->items->firstWhere('price_id', $price['price_id']);
+            foreach ($request->prices as $id => $price) {
+
+                if ($price['quantity'] < 1) continue;
+
+                $item = $order->items->firstWhere('id', $id);
 
                 if ($item === null) {  // Если не нашли в заказе, то создадим и вычтем со склада
 
@@ -106,7 +109,7 @@ class OrderItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\OrderItem  $orderItem
+     * @param \App\Models\OrderItem $orderItem
      * @return \Illuminate\Http\Response
      */
     public function destroy(OrderItem $orderItem)

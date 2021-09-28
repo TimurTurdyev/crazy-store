@@ -67,6 +67,10 @@ class OrderRequest extends FormRequest
             'payment_code' => [
                 'nullable',
                 'string'
+            ],
+            'promo_value' => [
+                'nullable',
+                'integer'
             ]
         ];
     }

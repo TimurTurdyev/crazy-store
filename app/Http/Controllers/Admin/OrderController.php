@@ -59,24 +59,38 @@ class OrderController extends Controller
         return view('admin.order.create_edit', compact('order'));
     }
 
-    public function update(OrderRequest $request, $id)
+    public function update(OrderRequest $request, $id): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $order = Order::findOrFail($id);
-        $data_update = $request->validated();
 
-        $sub_total = $order->items->sum('price');
+        $sub_total = $order->items->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
 
-        $total = $sub_total + $order->promo_value + $order->delivery_value;
+        $promo_value = $request->get('promo_value', $order->promo_value);
 
-        $data_update = array_merge($data_update, [
+        if ($promo_value > 0) {
+            $promo_value = -($promo_value);
+            $request->merge(['promo_value' => $promo_value]);
+        }
+
+        $total = $sub_total + $promo_value + $order->delivery_value;
+
+        $data_update = array_merge($request->validated(), [
             'item_count' => $order->items->count(),
             'sub_total' => $sub_total,
             'total' => $total,
         ]);
 
+        $data_update['promo_value'] = $promo_value;
+
         $order->update($data_update);
 
-        return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items]);
+        if ($request->ajax()) {
+            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items]);
+        }
+
+        return redirect()->route('admin.order.edit', $order);
     }
 
     /**
@@ -120,10 +134,5 @@ class OrderController extends Controller
         $histories = $order->histories()->orderByDesc('id')->paginate(5)->withQueryString();
 
         return view('admin.order.history', compact('histories'));
-    }
-
-    public function products(Order $order)
-    {
-
     }
 }

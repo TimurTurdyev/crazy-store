@@ -14,8 +14,8 @@
         <div class="row">
             <div class="col-12">
                 <h4>
-                    #{{ $order->id }}
-                    <small class="float-right">Date: {{ $order->created_at }}</small>
+                    <small>#{{ $order->id }} / Date: {{ $order->created_at }}</small>
+                    <button type="submit" class="float-right btn btn-default mb-2">Сохранить</button>
                 </h4>
             </div>
         </div>
@@ -144,20 +144,55 @@
                 <p class="lead">Способ оплаты</p>
                 <div class="form-group">
                     <label for="form-payment_code">Варианты *</label>
-                    <select name="payment_code" id="form-payment_code" class="form-control form-control-sm">
-                        <option value="">-- Выберите --</option>
-                        @foreach( $order->payments as $code => $name )
-                            @if( $order->payment_code === $code)
-                                <option value="{{ $code }}" selected>{{ $name }}</option>
-                            @else
-                                <option value="{{ $code }}">{{ $name }}</option>
-                            @endif
-                        @endforeach
-                    </select>
+                    <div class="input-group">
+                        <select name="payment_code" class="form-control">
+                            <option value="">-- Выберите --</option>
+                            @foreach( $order->payments as $code => $name )
+                                @if( $order->payment_code === $code)
+                                    <option value="{{ $code }}" selected>{{ $name }}</option>
+                                @else
+                                    <option value="{{ $code }}">{{ $name }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-info btn-flat" id="form-payment_code">Применить</button>
+                        </span>
+                    </div>
                 </div>
                 <div id="histories"></div>
             </div>
             <div class="col-sm-6">
+                <p class="lead">Сумма заказа</p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th style="width:50%">Сумма:</th>
+                            <td id="sub_total">{{ $order->sub_total }}</td>
+                        </tr>
+                        <tr>
+                            <th>Промокод/Скидка(не больше суммы товара):</th>
+                            <td>
+                                <input type="text"
+                                       class="form-control form-control-sm"
+                                       id="promo_value"
+                                       name="promo_value"
+                                       placeholder="Скидка"
+                                       required=""
+                                       value="{{ $order->promo_value }}"></td>
+                        </tr>
+                        <tr>
+                            <th>Доставка:</th>
+                            <td id="delivery_value">{{ $order->delivery_value }}</td>
+                        </tr>
+                        <tr>
+                            <th>Итого:</th>
+                            <td id="total">{{ $order->total }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
                 @include('admin.order.product_list')
             </div>
         </div>
@@ -166,7 +201,7 @@
 
 @push('scripts')
     <script>
-        $('#form-payment_code').on('change', function () {
+        $('#form-payment_code').on('click', function () {
             $.ajax({
                 url: '{{ route('admin.order.update', $order) }}',
                 method: 'put',
@@ -174,6 +209,12 @@
                 cache: false,
                 success: function (response) {
                     if (response.code) {
+
+                        $('#sub_total').text(response.order.sub_total);
+                        $('#promo_value').val(response.order.promo_value);
+                        $('#delivery_value').text(response.order.delivery_value);
+                        $('#total').text(response.order.total);
+
                         $.ajax({
                             url: '{{ route('payment.instruction', $order) }}',
                             method: 'get',
