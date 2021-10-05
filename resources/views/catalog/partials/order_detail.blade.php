@@ -150,9 +150,18 @@
                     <p class="mb-7 mb-md-0 text-gray-500">
                         {{ $order->payment_name }}
                     </p>
+                    @foreach( $order->histories()->where('notify', 1)->orderByDesc('id')->get() as $history )
+                        <div class="messages">{{ $history->message }}</div>
+                    @endforeach
                 @endif
             </div>
         </div>
-
     </div>
 </div>
+@push('scripts')
+    <script>
+        $('.messages').each(function () {
+           $(this).html($(this).text().replace(/(https:\/\/.+\s?)/gi, "<a href='$1' target='_blank'>$1</a>"))
+        });
+    </script>
+@endpush

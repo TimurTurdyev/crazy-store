@@ -17,6 +17,8 @@ class CreateOrderHistoriesTable extends Migration
             $table->id();
             $table->foreignId('order_id')->references('id')->on('orders')->cascadeOnDelete();
             $table->boolean('notify')->default(0);
+            $table->string('code', 32)->nullable()->index();
+            $table->enum('status', ['pending', 'processing', 'completed', 'decline'])->default('pending');
             $table->text('message');
             $table->timestamps();
         });

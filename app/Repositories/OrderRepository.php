@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Order;
+use App\Models\OrderHistory;
 use App\Models\OrderItem;
 use App\Models\PromoCode;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,6 @@ use Illuminate\Support\Str;
 
 class OrderRepository implements OrderInterface
 {
-
     private CartInterface $cart;
 
     public function __construct(CartInterface $cart)
@@ -56,15 +56,22 @@ class OrderRepository implements OrderInterface
             'delivery_name' => $delivery->name,
 
             'payment_code' => $params['payment_code'] ?? null,
-            'payment_name' => $params['payment_name'] ?? null,
 
             'city' => $params['city'] ?? null,
             'address' => $params['address'] ?? null,
             'post_code' => $params['post_code'] ?? null,
-            'notes' => $params['notes'] ?? null,
         ]);
 
         if ($order) {
+            if (!empty($params['notes'])) {
+                $history = new OrderHistory([
+                    'order_id' => $order->id,
+                    'code' => 'message',
+                    'message' => $params['notes']
+                ]);
+
+                $history->save();
+            }
             foreach ($this->cart->getItems() as $cart_item) {
                 $orderItem = new OrderItem([
                     'product_id' => $cart_item->product_id,

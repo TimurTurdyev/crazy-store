@@ -5,7 +5,7 @@ namespace App\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-abstract class QueryFilter
+abstract class FilterAbstract
 {
     private array $params;
 
@@ -18,7 +18,7 @@ abstract class QueryFilter
         $this->params = $params;
     }
 
-    public function apply(Builder $builder)
+    public function apply(Builder $builder): Builder
     {
         $this->builder = $builder;
 
@@ -30,7 +30,7 @@ abstract class QueryFilter
         return $this->builder;
     }
 
-    protected function paramToArray($param)
+    protected function paramToArray($param): array
     {
         return explode($this->delimiter, $param);
     }

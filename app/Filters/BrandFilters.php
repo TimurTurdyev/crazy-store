@@ -2,7 +2,7 @@
 
 namespace App\Filters;
 
-class BrandFilters extends QueryFilter
+class BrandFilters extends FilterAbstract
 {
     protected function category($categoryIds)
     {

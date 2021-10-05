@@ -2,7 +2,7 @@
 
 namespace App\Filters;
 
-class SizeFilters extends QueryFilter
+class SizeFilters extends FilterAbstract
 {
     protected function brand($brandIds)
     {

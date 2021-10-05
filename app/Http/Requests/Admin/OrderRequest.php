@@ -24,6 +24,10 @@ class OrderRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_id' => [
+                'nullable',
+                'exists:App\Models\User,id'
+            ],
             'firstname' => [
                 'required',
                 'string',
@@ -35,29 +39,34 @@ class OrderRequest extends FormRequest
                 'max:64'
             ],
             'email' => [
-                'required',
+                'nullable',
                 'email:rfc,dns',
                 'max:128'
             ],
             'phone' => [
-                'required',
+                'nullable',
                 'string',
                 'max:32'
             ],
+            'address' => [
+                'nullable',
+                'string',
+                'max:128'
+            ],
             'post_code' => [
-                'required',
+                'nullable',
                 'string'
             ],
             'delivery_code' => [
-                'required',
+                'nullable',
                 'string'
             ],
             'delivery_value' => [
-                'required',
+                'nullable',
                 'integer'
             ],
             'delivery_name' => [
-                'required',
+                'nullable',
                 'string'
             ],
             'notes' => [

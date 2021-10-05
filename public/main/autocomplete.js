@@ -112,7 +112,7 @@
                 if (html) {
                     this.show();
                 } else {
-                    //this.hide();
+                    this.hide();
                 }
 
                 $dropdown.html(html);

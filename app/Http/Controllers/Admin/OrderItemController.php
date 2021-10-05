@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\OrderItemRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
@@ -11,53 +12,10 @@ class OrderItemController extends Controller
 {
     public function index(Order $order): \Illuminate\Contracts\View\View
     {
-        return view('admin.order.product', compact('order'));
+        return view('admin.order.product_edit', compact('order'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\OrderItem $orderItem
-     * @return \Illuminate\Http\Response
-     */
-    public function show(OrderItem $orderItem)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\OrderItem $orderItem
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(OrderItem $orderItem)
-    {
-
-    }
-
-    public function update(Request $request, Order $order): \Illuminate\Http\RedirectResponse
+    public function update(OrderItemRequest $request, Order $order): \Illuminate\Http\RedirectResponse
     {
         $sub_total = 0;
         $delete = $order->items;
