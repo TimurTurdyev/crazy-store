@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 
 class Order extends Model
 {
@@ -13,39 +15,44 @@ class Order extends Model
     protected $table = 'orders';
     protected $guarded = ['id'];
     protected $fillable = [
-        'order_code', 'status',
+        'order_code',
         'user_id', 'ip', 'firstname', 'lastname', 'email', 'phone',
-        'item_count', 'sub_total', 'promo_value', 'delivery_value', 'total', 'promo_code',
-        'delivery_code', 'delivery_status', 'delivery_name',
-        'payment_code', 'payment_status', 'payment_name',
-        'city', 'address', 'post_code', 'notes',
+        'item_count', 'sub_total', 'total',
+        'promo_code', 'promo_value',
+        'delivery_code', 'delivery_name', 'delivery_value',
+        'payment_code',
+        'city', 'address', 'post_code',
         'created_at', 'updated_at'
     ];
 
     protected $dates = ['created_at', 'updated_at'];
 
-    public function getNotesAttribute($value) {
-        return $value ?: 'Не указан';
-    }
-
-    public function getStatusAttribute($value): string
+    public function getNoteAttribute(): string
     {
-        if ($this->delivery_status === 'decline' || $this->payment_status === 'decline') {
-            return 'Отменен';
-        }
-
-        if ($this->delivery_status === 'processing' || $this->payment_status === 'processing') {
-            return 'В процессе';
-        }
-
-        if ($this->delivery_status === 'pending' || $this->payment_status === 'pending') {
-            return 'Создан';
-        }
-
-        return 'Завершен';
+        $note = $this->histories()->where('message')->first();
+        return $note ?: '---';
     }
 
-    public function getDeliveryAttribute(): array
+    #[ArrayShape(['pending' => "string", 'processing' => "string", 'completed' => "string", 'decline' => "string"])] public function getStatusesAttribute(): array
+    {
+        return [
+            'pending' => 'Ожидание',
+            'processing' => 'В процессе',
+            'completed' => 'Завершен',
+            'decline' => 'Отменен'
+        ];
+    }
+
+    #[ArrayShape(['message' => "string", 'delivery' => "string", 'payment' => "string"])] public function getCodesAttribute(): array
+    {
+        return [
+            'message' => 'Сообщение',
+            'delivery' => 'Доставка',
+            'payment' => 'Оплата'
+        ];
+    }
+
+    #[Pure] public function getDeliveryAttribute(): array
     {
         if (Str::contains($this->delivery_code, 'cdek.pvz')) {
             return [
@@ -62,7 +69,13 @@ class Order extends Model
         ];
     }
 
-    public function getPaymentsAttribute() {
+    #[Pure] public function getPaymentNameAttribute(): string
+    {
+        return $this->getPaymentsAttribute()[$this->payment_code] ?? '---';
+    }
+
+    #[ArrayShape(['sber.card' => "string", 'tinkoff.pay' => "string"])] public function getPaymentsAttribute(): array
+    {
         return [
             'sber.card' => 'Оплата на карту сбербанка',
             'tinkoff.pay' => 'Онлайн оплата'

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Filters\QueryFilter;
+use App\Filters\FilterAbstract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -39,7 +39,7 @@ class Variant extends Model
         return $this->hasMany(VariantPhoto::class)->orderBy('sort_order');
     }
 
-    public function scopeFilter(Builder $builder, QueryFilter $filters): Builder
+    public function scopeFilter(Builder $builder, FilterAbstract $filters): Builder
     {
         return $filters->apply(
             $builder

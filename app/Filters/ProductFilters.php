@@ -4,7 +4,7 @@ namespace App\Filters;
 
 use Illuminate\Support\Facades\DB;
 
-class ProductFilters extends QueryFilter
+class ProductFilters extends FilterAbstract
 {
     protected function category($categoryIds)
     {

@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GroupController;
@@ -7,10 +8,11 @@ use App\Http\Controllers\Admin\OrderItemController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VariantController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix'  =>  'admin', 'middleware' => ['auth', 'admin'], 'as' => 'admin.'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin'], 'as' => 'admin.'], function () {
 
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -27,4 +29,6 @@ Route::group(['prefix'  =>  'admin', 'middleware' => ['auth', 'admin'], 'as' => 
     Route::get('order/{order}/history', [OrderController::class, 'history'])->name('order.history');
     Route::get('price/filter', [PriceController::class, 'filter'])->name('price.filter');
     Route::get('/deliveries/{postal_code?}', [OrderController::class, 'deliveries'])->name('deliveries');
+    Route::resource('user', UserController::class)->names('user');
+    Route::get('customer/filter', [UserController::class, 'filter'])->name('user.filter');
 });

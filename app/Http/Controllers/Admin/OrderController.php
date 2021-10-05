@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\OrderHistoryFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderRequest;
 use App\Main\DeliveryService;
+use App\Main\Project\Order\HistoryProject;
+use App\Main\Project\Order\StatusProject;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -16,25 +21,22 @@ class OrderController extends Controller
         return view('admin.order.index', compact('orders'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Order $order)
+    public function create(): \Illuminate\Contracts\View\View
     {
-        return view('admin.order.index', compact('order'));
+        $order = new Order();
+        return view('admin.order.create_edit', compact('order'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(OrderRequest $request): \Illuminate\Http\RedirectResponse
     {
-        //
+        $order = new Order($request->validated());
+        $order->order_code = Str::uuid();
+        $order->item_count = 0;
+        $order->sub_total = 0;
+        $order->total = 0;
+        $order->save();
+
+        return redirect()->route('admin.order.edit', $order);
     }
 
     /**
@@ -48,21 +50,13 @@ class OrderController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
+    public function edit(Order $order): \Illuminate\Contracts\View\View
     {
         return view('admin.order.create_edit', compact('order'));
     }
 
-    public function update(OrderRequest $request, $id): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+    public function update(OrderRequest $request, Order $order): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
     {
-        $order = Order::findOrFail($id);
-
         $sub_total = $order->items->sum(function ($item) {
             return $item->quantity * $item->price;
         });
@@ -123,16 +117,29 @@ class OrderController extends Controller
     public function history(Order $order, Request $request): \Illuminate\Contracts\View\View
     {
         $request_data = $request->validate([
+            'history.code' => 'nullable|string',
             'history.notify' => 'nullable|boolean',
-            'history.message' => 'nullable|string'
+            'history.message' => 'nullable|string',
+            'history.status' => ['nullable', 'string', Rule::in(['pending', 'processing', 'complete', 'decline'])]
         ]);
 
-        if (isset($request_data['history']) && !empty($request_data['history']['message'])) {
-            $order->histories()->create($request_data['history']);
+        $request_data = $request_data['history'] ?? [];
+
+        if (!empty($request_data['message'])) {
+            if (empty($request_data['status'])) {
+                $request_data['status'] = 'pending';
+            }
+
+            $order->histories()->create($request_data);
         }
 
-        $histories = $order->histories()->orderByDesc('id')->paginate(5)->withQueryString();
+        $histories = $order->histories()
+            ->getModel()
+            ->filter(new OrderHistoryFilter($request_data))
+            ->orderByDesc('id')
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('admin.order.history', compact('histories'));
+        return view('admin.order.history', compact('request_data', 'order', 'histories'));
     }
 }

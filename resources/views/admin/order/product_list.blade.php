@@ -9,6 +9,7 @@
         </div>
     </div>
     <div class="card-body">
+
         @foreach( $order->items as $item )
             <div class="row align-items-center">
                 <div class="col-3">
