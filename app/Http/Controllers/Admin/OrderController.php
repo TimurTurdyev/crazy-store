@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Filters\OrderHistoryFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderRequest;
 use App\Main\DeliveryService;
-use App\Main\Project\Order\HistoryProject;
-use App\Main\Project\Order\StatusProject;
 use App\Models\Order;
+use App\Models\OrderTotal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -17,7 +15,7 @@ class OrderController extends Controller
 {
     public function index(Order $order): \Illuminate\Contracts\View\View
     {
-        $orders = $order->orderByDesc('id')->paginate(12)->withQueryString();
+        $orders = $order->orderByDesc('id')->with('histories')->paginate(12)->withQueryString();
         return view('admin.order.index', compact('orders'));
     }
 
@@ -31,9 +29,6 @@ class OrderController extends Controller
     {
         $order = new Order($request->validated());
         $order->order_code = Str::uuid();
-        $order->item_count = 0;
-        $order->sub_total = 0;
-        $order->total = 0;
         $order->save();
 
         return redirect()->route('admin.order.edit', $order);
@@ -57,31 +52,70 @@ class OrderController extends Controller
 
     public function update(OrderRequest $request, Order $order): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
     {
+        $order->update($request->validated());
+        $order->totals()->delete();
+
         $sub_total = $order->items->sum(function ($item) {
             return $item->quantity * $item->price;
         });
 
-        $promo_value = $request->get('promo_value', $order->promo_value);
+        $totals = collect();
 
-        if ($promo_value > 0) {
-            $promo_value = -($promo_value);
-            $request->merge(['promo_value' => $promo_value]);
+        if ($request_totals = $request->get('totals')) {
+            foreach ($request_totals as $total) {
+                if (in_array($total['code'], ['subtotal', 'total'])) {
+                    continue;
+                }
+                $totals->push(new OrderTotal($total));
+            }
         }
 
-        $total = $sub_total + $promo_value + $order->delivery_value;
+        if (!$totals->firstWhere('code', 'subtotal')) {
+            $totals->push(new OrderTotal([
+                'code' => 'subtotal',
+                'title' => 'Всего',
+                'value' => $sub_total,
+                'sort_order' => 0,
+            ]));
+        }
 
-        $data_update = array_merge($request->validated(), [
-            'item_count' => $order->items->count(),
-            'sub_total' => $sub_total,
-            'total' => $total,
-        ]);
+        if (!$totals->firstWhere('code', 'promo')) {
+            $totals->push(new OrderTotal([
+                'code' => 'promo',
+                'title' => 'Скидка',
+                'value' => 0,
+                'sort_order' => 1,
+            ]));
+        }
 
-        $data_update['promo_value'] = $promo_value;
+        if ($totals->firstWhere('code', 'promo')->value > 0) {
+            $totals->firstWhere('code', 'promo')->value = -(int)$totals->firstWhere('code', 'promo')->value;
+        }
 
-        $order->update($data_update);
+        if (!$totals->firstWhere('code', 'delivery')) {
+            $totals->push(new OrderTotal([
+                'code' => 'delivery',
+                'title' => 'Доставка',
+                'value' => 0,
+                'sort_order' => 10,
+            ]));
+        }
+
+        if (!$totals->firstWhere('code', 'total')) {
+            $totals->push(new OrderTotal([
+                'code' => 'total',
+                'title' => 'Итого',
+                'value' => $totals->sum('value'),
+                'sort_order' => 99,
+            ]));
+        }
+
+        $order->totals()->delete();
+        $order->totals()->saveMany($totals);
+
 
         if ($request->ajax()) {
-            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items]);
+            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items, 'totals' => $totals]);
         }
 
         return redirect()->route('admin.order.edit', $order);
@@ -116,30 +150,31 @@ class OrderController extends Controller
 
     public function history(Order $order, Request $request): \Illuminate\Contracts\View\View
     {
+
         $request_data = $request->validate([
-            'history.code' => 'nullable|string',
             'history.notify' => 'nullable|boolean',
             'history.message' => 'nullable|string',
-            'history.status' => ['nullable', 'string', Rule::in(['pending', 'processing', 'complete', 'decline'])]
+            'history.status' => ['nullable', 'integer', Rule::in(array_keys(config('main.order')))]
         ]);
 
         $request_data = $request_data['history'] ?? [];
 
-        if (!empty($request_data['message'])) {
-            if (empty($request_data['status'])) {
-                $request_data['status'] = 'pending';
-            }
-
-            $order->histories()->create($request_data);
+        if (empty($request_data['message'])) {
+            $request_data['message'] = '-';
         }
 
+        if (empty($request_data['status'])) {
+            $request_data['status'] = 0;
+        }
+
+        $order->histories()->create($request_data);
+
         $histories = $order->histories()
-            ->getModel()
-            ->filter(new OrderHistoryFilter($request_data))
-            ->orderByDesc('id')
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.order.history', compact('request_data', 'order', 'histories'));
+        $selected = $order->histories()->orderByDesc('id')->first()?->status;
+
+        return view('admin.order.history', compact('request_data', 'selected', 'order', 'histories'));
     }
 }

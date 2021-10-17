@@ -100,6 +100,7 @@
                 @if( $order->id )
                     @include('admin.order.payment')
                 @endif
+                <div class="histories"></div>
             </div>
             <div class="col-sm-6">
                 <p class="lead">Сумма заказа</p>
@@ -108,38 +109,27 @@
                         <tbody>
                         <tr>
                             <th style="width:50%">Публичная ссылка на заказ</th>
-                            <td><a href="{{ route('order.completed', $order->order_code) }}" target="_blank">{{ $order->order_code }}</a></td>
+                            <td><a href="{{ route('order.completed', $order->order_code) }}"
+                                   target="_blank">{{ $order->order_code }}</a></td>
                         </tr>
-                        <tr>
-                            <th style="width:50%">Сумма:</th>
-                            <td id="sub_total">{{ $order->sub_total }}</td>
-                        </tr>
-                        <tr>
-                            <th>Промокод/Скидка(не больше суммы товара):</th>
-                            <td>
-                                <input type="text"
-                                       class="form-control form-control-sm"
-                                       id="promo_value"
-                                       name="promo_value"
-                                       placeholder="Скидка"
-                                       required=""
-                                       value="{{ old('promo_value', $order->promo_value) }}"></td>
-                        </tr>
-                        <tr>
-                            <th style="width:50%">Доставка:</th>
-                            <td id="delivery_value">{{ $order->delivery_value }}</td>
-                        </tr>
-                        <tr>
-                            <th style="width:50%">Итого:</th>
-                            <td id="total">{{ $order->total }}</td>
-                        </tr>
+                        @foreach( $order->totals as $total )
+                            <tr>
+                                <th>
+                                    <input type="hidden" name="totals[{{ $total->sort_order }}][code]" value="{{ $total->code }}">
+                                    <input type="hidden" name="totals[{{ $total->sort_order }}][sort_order]" value="{{ $total->sort_order }}">
+                                    <input type="text" class="form-control" name="totals[{{ $total->sort_order }}][title]" value="{{ $total->title }}">
+                                </th>
+                                <td>
+                                    <input type="text" class="form-control {{ $total->code }}" name="totals[{{ $total->sort_order }}][value]" value="{{ $total->value }}" readonly>
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
                 @if( $order->id )
                     @include('admin.order.product_list')
                 @endif
-                <div class="histories" data-code="message"></div>
             </div>
         </div>
     </form>
@@ -147,6 +137,8 @@
 @push('scripts')
     <script src="{{ asset('main/autocomplete.js') }}"></script>
     <script>
+        $('input[name="totals[1][value]"]').attr('readonly', false);
+        $('input[name="totals[10][value]"]').attr('readonly', false);
         $('#form-search_user').autocomplete({
             'source': function (request, response) {
                 if (request === '') return;
@@ -185,7 +177,6 @@
 
         $('.histories').each(function () {
             var self = this;
-            var code = $(this).data('code');
 
             $(self).on('click', 'a', function (event) {
                 event.preventDefault();
@@ -200,7 +191,7 @@
             });
 
             setTimeout(function () {
-                handleHistoryMessage(self, 'history[code]=' + code);
+                handleHistoryMessage(self);
             }, 1000);
         });
     </script>

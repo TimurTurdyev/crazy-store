@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Order;
 use App\Models\OrderHistory;
 use App\Models\OrderItem;
+use App\Models\OrderTotal;
 use App\Models\PromoCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -20,16 +21,39 @@ class OrderRepository implements OrderInterface
 
     public function storeOrderDetails($params): null|Order
     {
-        $sub_total = $this->cart->getProductDiscountTotal();
-
-        $promo_discount = 0;
         $promo = $this->cart->promoCode();
 
-        if ($promo && (int)$promo->discount) {
-            $promo_discount = $promo->discount;
-        }
+        $totals = collect();
+
+        $totals->push(new OrderTotal([
+            'code' => 'subtotal',
+            'title' => 'Всего',
+            'value' => $this->cart->getProductDiscountTotal(),
+            'sort_order' => 0,
+        ]));
+
+        $totals->push(new OrderTotal([
+            'code' => 'promo',
+            'title' => 'Скидка(' . ($promo?->code ?? '-') . ')',
+            'value' => $promo?->discount ?? 0,
+            'sort_order' => 1,
+        ]));
 
         $delivery = $this->getDelivery($params);
+
+        $totals->push(new OrderTotal([
+            'code' => 'delivery',
+            'title' => $delivery->method,
+            'value' => $delivery->price,
+            'sort_order' => 10,
+        ]));
+
+        $totals->push(new OrderTotal([
+            'code' => 'total',
+            'title' => 'Итого',
+            'value' => $totals->sum('value'),
+            'sort_order' => 99,
+        ]));
 
         $order = Order::create([
             'user_id' => Auth::id(),
@@ -41,21 +65,8 @@ class OrderRepository implements OrderInterface
             'email' => $params['email'],
             'phone' => $params['phone'],
 
-            'item_count' => $this->cart->getCount(),
-
-            'sub_total' => $sub_total,
-            'promo_value' => $promo_discount,
-
-            'delivery_value' => $delivery->price,
-
-            'total' => $sub_total + $promo_discount + $delivery->price,
-
-            'promo_code' => $promo?->code,
-
-            'delivery_code' => $delivery->code,
-            'delivery_name' => $delivery->name,
-
             'payment_code' => $params['payment_code'] ?? null,
+            'payment_instruction' => '',
 
             'city' => $params['city'] ?? null,
             'address' => $params['address'] ?? null,
@@ -63,15 +74,19 @@ class OrderRepository implements OrderInterface
         ]);
 
         if ($order) {
+            $order->totals()->saveMany($totals);
+
             if (!empty($params['notes'])) {
                 $history = new OrderHistory([
                     'order_id' => $order->id,
-                    'code' => 'message',
+                    'status' => 0,
+                    'notify' => 1,
                     'message' => $params['notes']
                 ]);
 
                 $history->save();
             }
+
             foreach ($this->cart->getItems() as $cart_item) {
                 $orderItem = new OrderItem([
                     'product_id' => $cart_item->product_id,
@@ -101,20 +116,20 @@ class OrderRepository implements OrderInterface
     private function getDelivery($params): object
     {
         $delivery = (object)[
-            'code' => null,
-            'name' => null,
+            'method' => null,
             'price' => 0,
+            'code' => '',
         ];
 
         $value = session('deliveries', collect())->firstWhere('code', $params['delivery_code'] ?? 'not');
 
         if ($value) {
-            $delivery->code = (string)$value['code'];
-            $delivery->name = (string)$value['name'];
+            $delivery->method = (string)$value['name'];
             $delivery->price = (int)$value['price'];
+            $delivery->code = (int)$value['code'];
 
             if (Str::contains($params['delivery_code'], 'cdek.pvz') && !empty($params['pvz_address'])) {
-                $delivery->name = sprintf('ПВЗ[%s]: %s', (string)$params['pvz_code'], (string)$params['pvz_address']);
+                $delivery->method = sprintf('ПВЗ[%s]: %s', (string)$params['pvz_code'], (string)$params['pvz_address']);
             }
         }
 

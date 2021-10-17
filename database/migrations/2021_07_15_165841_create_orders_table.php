@@ -25,18 +25,8 @@ class CreateOrdersTable extends Migration
             $table->string('email', 128);
             $table->string('phone', 32);
 
-            $table->integer('item_count');
-            $table->integer('sub_total');
-            $table->integer('promo_value')->default(0);
-            $table->integer('delivery_value')->default(0);
-            $table->integer('total');
-
-            $table->string('promo_code', 64)->nullable()->index();
-
-            $table->string('delivery_code')->nullable()->index();
-            $table->string('delivery_name')->nullable();
-
-            $table->string('payment_code')->nullable()->index();
+            $table->string('payment_code', 64)->nullable()->index();
+            $table->string('payment_instruction', 512)->nullable()->index();
 
             $table->string('city', 128)->nullable();
             $table->string('address', 255)->nullable();

@@ -57,30 +57,14 @@ class OrderRequest extends FormRequest
                 'nullable',
                 'string'
             ],
-            'delivery_code' => [
-                'nullable',
-                'string'
-            ],
-            'delivery_value' => [
-                'nullable',
-                'integer'
-            ],
-            'delivery_name' => [
-                'nullable',
-                'string'
-            ],
-            'notes' => [
-                'nullable',
-                'string',
-            ],
             'payment_code' => [
                 'nullable',
                 'string'
             ],
-            'promo_value' => [
+            'payment_instruction' => [
                 'nullable',
-                'integer'
-            ]
+                'string'
+            ],
         ];
     }
 }

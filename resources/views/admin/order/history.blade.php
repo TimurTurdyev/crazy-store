@@ -3,12 +3,11 @@
     <div class="card-header">
         <div class="d-inline-flex input-group input-group-sm w-50">
             <div class="input-group-prepend">
-                <span class="input-group-text">{{ \Illuminate\Support\Str::upper($request_data['code'] ?? '--') }}</span>
+                <span class="input-group-text">Статус</span>
             </div>
             <select name="history[status]" class="form-control">
-                <option value="">-- Выберите --</option>
-                @foreach( $order->statuses as $code => $name )
-                    @if( isset($request_data['status']) && $request_data['status'] === $code)
+                @foreach( config('main.order') as $code => $name )
+                    @if( $selected === $code )
                         <option value="{{ $code }}" selected>{{ $name }}</option>
                     @else
                         <option value="{{ $code }}">{{ $name }}</option>
@@ -26,7 +25,8 @@
             @foreach( $histories as $history )
                 <div class="direct-chat-msg">
                     <div class="direct-chat-infos clearfix">
-                        <span class="direct-chat-name float-left">{{ $history->code_name }} | {{ $history->status_name }} | {{ $history->notify ? 'Уведомлен' : 'Скрыт' }}</span>
+                        <span
+                            class="direct-chat-name float-left">{{ config('main.order')[$history->status] ?? '' }} | {{ $history->notify ? 'Уведомлен' : 'Скрыт' }}</span>
                         <span class="direct-chat-timestamp float-right">{{ $history->created_at }}</span>
                     </div>
                     <div class="direct-chat-img"></div>

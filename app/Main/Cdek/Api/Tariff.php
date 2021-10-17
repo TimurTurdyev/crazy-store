@@ -31,7 +31,7 @@ class Tariff extends CdekAbstract
 
     public function apply(): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
     {
-        $this->params['from_location']['postal_code'] = config('cdek.postal_code', '');
+        $this->params['from_location']['postal_code'] = config('main.cdek.postal_code', '');
         return $this->post(static::$uri_path);
     }
 }

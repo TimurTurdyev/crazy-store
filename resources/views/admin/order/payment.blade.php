@@ -12,13 +12,17 @@
                 @endif
             @endforeach
         </select>
-        <span class="input-group-append">
-                            <button type="button" class="btn btn-info btn-flat"
-                                    id="form-payment_code">Применить</button>
-                        </span>
+        <div class="input-group-append">
+            <button type="button" class="btn btn-info btn-flat"
+                    id="form-payment_code">Применить
+            </button>
+        </div>
     </div>
 </div>
-<div class="histories" data-code="payment"></div>
+<div class="form-group">
+    <label for="form-payment_instruction">Инструкция по оплате</label>
+    <textarea id="form-payment_instruction" type="text" class="form-control" name="payment_instruction">{{ $order->payment_instruction }}</textarea>
+</div>
 @push('scripts')
     <script>
         $('#form-payment_code').on('click', function () {
@@ -29,18 +33,18 @@
                 cache: false,
                 success: function (response) {
                     if (response.code) {
-
-                        $('#sub_total').text(response.order.sub_total);
-                        $('#promo_value').val(response.order.promo_value);
-                        $('#delivery_value').text(response.order.delivery_value);
-                        $('#total').text(response.order.total);
+                        $.each(response.totals, function (i, item) {
+                            $('.form-control.' + item.code).val(item.value);
+                        });
 
                         $.ajax({
                             url: '{{ route('payment.instruction', $order) }}',
                             method: 'get',
                             cache: false,
                             success: function (response) {
-                                $('.histories[data-code="payment"] textarea[name="history\[message\]"]').val(response.message);
+                                $('textarea[name="payment_instruction"]').val(response.message);
+                                $('.histories select[name="history\[status\]"]').val(40);
+                                $('.histories input[name="history\[notify\]"]').prop('checked', true);
                             }
                         });
                     }

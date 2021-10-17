@@ -15,16 +15,18 @@ class OrderTinkoffAdapter implements ParamsInterface
     {
         $this->order = $order;
 
+        $total = $this->order->totals()->where('code', 'total')->first();
+
         $this->params = [
             'OrderId' => $this->order->id,
-            'Amount' => $this->order->total * 100,
+            'Amount' => $total->value * 100,
             'Description' => sprintf('Оплата заказа №%s', $this->order->id),
         ];
 
         $this->data();          // 1
         $this->receipt();       // 2
         $this->receiptItems();  // 3
-//        dd($this->getParams());
+//        dump($this->params);
     }
 
     public function getParams(): array
@@ -57,36 +59,37 @@ class OrderTinkoffAdapter implements ParamsInterface
     {
         $receiptItems = [];
         $amount = 0;
+        $promo = $this->order->totals()->where('code', 'promo')->first();
+        $delivery = $this->order->totals()->where('code', 'delivery')->first();
 
         foreach ($this->order->items as $item) {
-            $amount += $item->price * $item->quantity * 100;
+            $total = $item->price * $item->quantity * 100;
+            $amount += $total;
+
             $receiptItems[] = [
                 'Name' => $item->name,
                 'Price' => $item->price * 100,
                 'Quantity' => $item->quantity,
-                'Amount' => $item->price * $item->quantity * 100,
+                'Amount' => $total,
                 'PaymentMethod' => Constants::PAYMENT['full_prepayment'],
                 'PaymentObject' => Constants::ENTITY['commodity'],
                 'Tax' => Constants::VAT['none']
             ];
         }
 
-        if ($amount && ($promo_value = $this->order->promo_value * 100) < 0) {
-            $percent = 100 - (($amount + $promo_value) * 100) / $amount;
+        if ($amount && $promo && ($promo->value * 100) < 0) {
+            $percent = 100 - (($amount + ($promo->value * 100)) * 100) / $amount;
             foreach ($receiptItems as &$item) {
-                $amount = $item['Amount'] - ($item['Amount'] * ($percent / 100));
-                $item['Amount'] = $amount;
+                $item['Amount'] = $item['Amount'] - ($item['Amount'] * ($percent / 100));
             }
         }
 
-        if ($this->order->delivery_code) {
-            $delivery = $this->order->getDeliveryAttribute();
-
+        if ($delivery && $delivery->value) {
             $receiptItems[] = [
-                'Name' => $delivery['name'],
-                'Price' => $delivery['value'] * 100,
+                'Name' => $delivery->title,
+                'Price' => $delivery->value * 100,
                 'Quantity' => 1,
-                'Amount' => $delivery['value'] * 100,
+                'Amount' => $delivery->value * 100,
                 'PaymentMethod' => Constants::PAYMENT['full_prepayment'],
                 'PaymentObject' => Constants::ENTITY['service'],
                 'Tax' => Constants::VAT['none'],

@@ -64,8 +64,8 @@
     <div class="container">
 
         <!-- Brand -->
-        <a class="navbar-brand d-lg-none" href="overview.html">
-            Shopper.
+        <a class="navbar-brand d-lg-none" href="/">
+            CrazyKids.
         </a>
 
         <!-- Toggler -->
@@ -78,7 +78,7 @@
         <div class="collapse navbar-collapse" id="navbarFashionTopCollapse">
 
             <!-- Brand -->
-            <a class="navbar-brand d-none d-lg-block" href="overview.html">
+            <a class="navbar-brand d-none d-lg-block" href="/">
                 CrazyKids.
             </a>
 
