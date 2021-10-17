@@ -28,10 +28,12 @@ Route::prefix('order')->as('order.')->group(function () {
     Route::get('/create', [OrderController::class, 'create'])->name('create');
     Route::post('/store', [OrderController::class, 'store'])->name('store');
     Route::get('/completed/{order:order_code}', [OrderController::class, 'completed'])->name('completed');
+    Route::get('/histories/{order:order_code}', [OrderController::class, 'histories'])->name('histories');
     Route::get('/deliveries/{postal_code?}', [OrderController::class, 'deliveries'])->name('deliveries');
 });
 
 Route::get('order/{order}/payment/instruction', [\App\Http\Controllers\Catalog\PaymentController::class, 'instruction'])->name('payment.instruction');
+Route::post('order/{order:order_code}/payment/instruction/change', [\App\Http\Controllers\Catalog\PaymentController::class, 'change'])->name('payment.instruction.change');
 
 Route::post('cdek-api/{method}', [\App\Http\Controllers\Api\CdekController::class, 'index'])->name('cdek-api');
 

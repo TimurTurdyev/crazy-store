@@ -37,7 +37,7 @@
                         <h6 class="heading-xxxs text-muted">Сумма заказа:</h6>
 
                         <p class="mb-0 font-size-sm font-weight-bold">
-                            {{ $order->total }} <i class="fas fa-ruble-sign"></i>
+                            {{ $order->totals->last()?->value }} <i class="fas fa-ruble-sign"></i>
                         </p>
 
                     </div>
@@ -96,72 +96,70 @@
 
         <h6 class="mb-7">Сумма заказа</h6>
 
-        <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
-            <li class="list-group-item d-flex">
-                <span>Сумма</span>
-                <span class="ml-auto">{{ $order->sub_total }} <i
-                        class="fas fa-ruble-sign"></i></span>
-            </li>
-            <li class="list-group-item d-flex">
-                <span>Скидка</span>
-                <span class="ml-auto">{{ $order->promo_value }} <i
-                        class="fas fa-ruble-sign"></i></span>
-            </li>
-            <li class="list-group-item d-flex">
-                <span>Доставка</span>
-                <span class="ml-auto">{{ $order->delivery_value }} <i class="fas fa-ruble-sign"></i></span>
-            </li>
-            <li class="list-group-item d-flex font-size-lg font-weight-bold">
-                <span>Итого</span>
-                <span class="ml-auto">{{ $order->total }} <i class="fas fa-ruble-sign"></i></span>
-            </li>
+        <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x mb-5">
+            @foreach( $order->totals as $total )
+                <li class="list-group-item d-flex @if( $loop->last ) font-size-lg font-weight-bold @endif">
+                    <span>{{ $total->title }}</span>
+                    <span class="ml-auto">{{ $total->value }} <i
+                            class="fas fa-ruble-sign"></i></span>
+                </li>
+            @endforeach
         </ul>
+        <form
+              autocomplete="off"
+              action="{{ route('payment.instruction.change', $order) }}"
+              method="post">
+            @CSRF
+            <div id="payment_instruction" class="alert alert-info">{{ $order->payment_instruction }}</div>
+            <div class="form-group mb-2">
+                <div class="input-group">
+                    <select name="payment_code" class="form-control">
+                        @foreach( $order->payments as $code => $name )
+                            @if( $order->payment_code === $code)
+                                <option value="{{ $code }}" selected>{{ $name }}</option>
+                            @else
+                                <option value="{{ $code }}">{{ $name }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-info btn-flat"
+                                id="form-payment_code">Применить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
 
     </div>
 </div>
 
-<div class="card card-lg border">
-    <div class="card-body">
-
-        <h6 class="mb-7">Доставка и оплата</h6>
-
-        <div class="row">
-
-            <div class="col-12 col-md-6">
-
-                <p class="mb-4 font-weight-bold">
-                    Адрес доставки:
-                </p>
-
-                <p class="mb-7 mb-md-0 text-gray-500">
-                    {{ $order->firstname }} {{ $order->lastname }} <br>
-                    {{ $order->phone }} <br>
-                    {{ $order->delivery_name }}
-                </p>
-
-            </div>
-            <div class="col-12 col-md-6">
-
-                <p class="mb-4 font-weight-bold">
-                    Оплата:
-                </p>
-
-                @if( $order->payment_name )
-                    <p class="mb-7 mb-md-0 text-gray-500">
-                        {{ $order->payment_name }}
-                    </p>
-                    @foreach( $order->histories()->where('notify', 1)->orderByDesc('id')->get() as $history )
-                        <div class="messages">{{ $history->message }}</div>
-                    @endforeach
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
+<div id="histories"></div>
 @push('scripts')
     <script>
-        $('.messages').each(function () {
-           $(this).html($(this).text().replace(/(https:\/\/.+\s?)/gi, "<a href='$1' target='_blank'>$1</a>"))
+        function linkInit(message) {
+            return message.replace(/(https:\/\/.+\s?)/gi, "<a href='$1' target='_blank'>$1</a>");
+        }
+
+        $('#histories').on('click', 'a', function () {
+            event.preventDefault();
+            var params = $(this).attr('href').replace(/http.+?[?&]/gi, '');
+            histories(params);
         });
+
+        function histories(params) {
+            $.ajax({
+                url: '{{ route('order.histories', $order->order_code) }}' + (params ? '?' + params : ''),
+                method: 'get',
+                cache: false,
+                success: function (response) {
+                    $('#histories').html(response);
+                }
+            });
+        }
+
+        histories();
+        $('#payment_instruction').html(linkInit($('#payment_instruction').text()));
     </script>
 @endpush

@@ -22,7 +22,7 @@
 <!-- Theme CSS -->
     <link rel="stylesheet" href="{{ asset('catalog/css/theme.min.css') }}">
 
-    <title>Shopper</title>
+    <title>{{ config('main.home.title') }}</title>
 
 </head>
 <body>

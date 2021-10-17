@@ -28,6 +28,16 @@ class OrderController extends Controller
         return view('catalog.order.completed', compact('order'));
     }
 
+    public function histories(Order $order): \Illuminate\Contracts\View\View
+    {
+
+        $histories = $order->histories()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('catalog.partials.histories', compact('histories'));
+    }
+
     public function deliveries($postal_code, Request $request): \Illuminate\Contracts\View\View
     {
         $deliveries = (new DeliveryService($postal_code))

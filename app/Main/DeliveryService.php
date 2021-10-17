@@ -32,7 +32,7 @@ class DeliveryService
             'type' => 1,
             'currency' => 1,
             'lang' => 'rus',
-            'from_location' => ['postal_code' => config('cdek.postal_code')],
+            'from_location' => ['postal_code' => config('main.cdek.postal_code')],
             'to_location' => ['postal_code' => $this->postal_code],
             'packages' => [
                 ['height' => 20, 'length' => 20, 'weight' => 500, 'width' => 20]
@@ -85,7 +85,7 @@ class DeliveryService
             'type' => 1,
             'currency' => 1,
             'lang' => 'rus',
-            'from_location' => ['postal_code' => config('cdek.postal_code')],
+            'from_location' => ['postal_code' => config('main.cdek.postal_code')],
             'to_location' => ['postal_code' => $this->postal_code],
             'packages' => [
                 ['height' => 20, 'length' => 20, 'weight' => 500, 'width' => 20]
@@ -119,8 +119,8 @@ class DeliveryService
 
     public function pochta(): static
     {
-        $pochtaStandart = (new PochtaClient())->tariffStandart(['from' => config('cdek.postal_code'), 'to' => $this->postal_code])->json();
-        $pochta1Class = (new PochtaClient())->tariff1Class(['from' => config('cdek.postal_code'), 'to' => $this->postal_code])->json();
+        $pochtaStandart = (new PochtaClient())->tariffStandart(['from' => config('main.cdek.postal_code'), 'to' => $this->postal_code])->json();
+        $pochta1Class = (new PochtaClient())->tariff1Class(['from' => config('main.cdek.postal_code'), 'to' => $this->postal_code])->json();
 
         $min_value = 0;
         $pochta = collect([$pochtaStandart, $pochta1Class])->filter(function ($item) {
@@ -148,8 +148,8 @@ class DeliveryService
 
     public function pochtaExtended(): static
     {
-        $pochtaStandart = (new PochtaClient())->tariffStandart(['from' => config('cdek.postal_code'), 'to' => $this->postal_code])->json();
-        $pochta1Class = (new PochtaClient())->tariff1Class(['from' => config('cdek.postal_code'), 'to' => $this->postal_code])->json();
+        $pochtaStandart = (new PochtaClient())->tariffStandart(['from' => config('main.cdek.postal_code'), 'to' => $this->postal_code])->json();
+        $pochta1Class = (new PochtaClient())->tariff1Class(['from' => config('main.cdek.postal_code'), 'to' => $this->postal_code])->json();
 
         $pochta = collect([$pochtaStandart, $pochta1Class])->filter(function ($item) {
             return $item['paynds'] ?? false;

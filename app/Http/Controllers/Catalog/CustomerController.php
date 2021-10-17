@@ -11,7 +11,10 @@ class CustomerController extends Controller
 
     public function orders(Order $order, Request $request): \Illuminate\Contracts\View\View
     {
-        $orders = $order->where('user_id', auth()->id())->orderByDesc('id')->paginate(12)->withQueryString();
+        $orders = $order->where('user_id', auth()->id())
+            ->with('items')
+            ->orderByDesc('id')
+            ->paginate(12)->withQueryString();
         return view('catalog.customer.orders', compact('orders'));
     }
 

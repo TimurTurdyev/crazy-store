@@ -11,9 +11,9 @@
                 <th>Телефон</th>
                 <th>Почта</th>
                 <th>Клиент</th>
-                <th style="width: 5rem;">Итого</th>
-                <th style="width: 15rem;">Доставка</th>
                 <th>Оплата</th>
+                <th style="width: 15rem;">Доставка</th>
+                <th style="width: 5rem;">Итого</th>
                 <th style="width: 10rem;">Дата создания</th>
                 <th style="width: 10rem;">Дата обновления</th>
                 <th style="width: 10rem;">Действие</th>
@@ -31,12 +31,15 @@
                     <td>
                         {{ $order->firstname }} {{ $order->lastname }}
                     </td>
-                    <td>{{ $order->total }} р.</td>
-                    <td>
-                        {{ $order->delivery['name'] }} - {{ $order->delivery['value'] }} р.
-                        <div class="small">{{ $order->delivery['address'] }}</div>
-                    </td>
                     <td>{{ $order->payment_name }}</td>
+                    <td>
+                        @if( $delivery = $order->totals->firstWhere('sort_order', '10'))
+                            {{ $delivery->title }} - {{ $delivery->value }} р.
+                        @endif
+                    </td>
+                    <td>
+                        {{ $order->totals->firstWhere('code', 'total')?->value }}
+                    </td>
                     <td>{{ $order->created_at }}</td>
                     <td>{{ $order->updated_at }}</td>
 

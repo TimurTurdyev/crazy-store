@@ -23,20 +23,29 @@ class PaymentRepository implements PaymentInterface
 
     #[ArrayShape(['message' => "string"])] public function sber_card(): array
     {
+        $total = $this->order->totals()->where('code', 'total')->first();
         return [
-            'message' => sprintf(config('sber.text', ''), $this->order->total)
+            'message' => sprintf(config('main.sber.text', ''), $this->order->firstname, $total?->value)
         ];
     }
 
     #[ArrayShape(['message' => "string"])] public function tinkoff_pay(): array
     {
-        $tinkoff = new TinkoffClient($this->order);
+        $tinkoff = new TinkoffClient();
         $response = $tinkoff->setTest(true)->init($this->order)->collect();
+        $payment_url = $response->get('PaymentURL', '');
+        $total = $this->order->totals()->where('code', 'total')->first();
+
+        if ($payment_url === '') {
+            return [
+                'message' => 'Произошла ошибка в формировании ссылки на оплату',
+            ];
+        }
 
         return [
             'message' => sprintf(
                 'Сумма оплаты %s руб. Ссылка на онлайн оплату %s',
-                $this->order->total,
+                $total?->value,
                 $response->get('PaymentURL', ''),
             )
         ];

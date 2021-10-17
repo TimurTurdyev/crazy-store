@@ -17,39 +17,17 @@ class Order extends Model
     protected $fillable = [
         'order_code',
         'user_id', 'ip', 'firstname', 'lastname', 'email', 'phone',
-        'item_count', 'sub_total', 'total',
-        'promo_code', 'promo_value',
-        'delivery_code', 'delivery_name', 'delivery_value',
-        'payment_code',
+        'payment_code', 'payment_instruction',
         'city', 'address', 'post_code',
         'created_at', 'updated_at'
     ];
 
     protected $dates = ['created_at', 'updated_at'];
 
-    public function getNoteAttribute(): string
-    {
-        $note = $this->histories()->where('message')->first();
-        return $note ?: '---';
-    }
+    public function getStatusAttribute() {
+        $selected = $this->histories()->first()?->status;
 
-    #[ArrayShape(['pending' => "string", 'processing' => "string", 'completed' => "string", 'decline' => "string"])] public function getStatusesAttribute(): array
-    {
-        return [
-            'pending' => 'Ожидание',
-            'processing' => 'В процессе',
-            'completed' => 'Завершен',
-            'decline' => 'Отменен'
-        ];
-    }
-
-    #[ArrayShape(['message' => "string", 'delivery' => "string", 'payment' => "string"])] public function getCodesAttribute(): array
-    {
-        return [
-            'message' => 'Сообщение',
-            'delivery' => 'Доставка',
-            'payment' => 'Оплата'
-        ];
+        return config('main.order')[$selected] ?? '-';
     }
 
     #[Pure] public function getDeliveryAttribute(): array
@@ -57,15 +35,13 @@ class Order extends Model
         if (Str::contains($this->delivery_code, 'cdek.pvz')) {
             return [
                 'name' => 'CDEK ПВЗ',
-                'address' => $this->delivery_name,
-                'value' => $this->delivery_value,
+                'address' => $this->delivery_method,
             ];
         }
 
         return [
-            'name' => $this->delivery_name,
+            'name' => $this->delivery_method,
             'address' => $this->post_code ? $this->post_code . ', ' . $this->address : $this->address,
-            'value' => $this->delivery_value,
         ];
     }
 
@@ -94,6 +70,11 @@ class Order extends Model
 
     public function histories(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(OrderHistory::class);
+        return $this->hasMany(OrderHistory::class)->orderByDesc('id');
+    }
+
+    public function totals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(OrderTotal::class)->orderBy('sort_order');
     }
 }
