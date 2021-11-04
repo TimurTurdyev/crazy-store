@@ -18,15 +18,11 @@ class PaymentController extends Controller
     public function change(Order $order, Request $request, PaymentInterface $payment): \Illuminate\Http\RedirectResponse
     {
         $code = $request->get('payment_code', '');
-        $payments = array_keys($order->payments);
+        $payments = array_keys(config('main.payments'));
 
         abort_if(!in_array($code, $payments), 404);
 
         $order->payment_code = $code;
-
-        $message = $payment->message($order);
-
-        $order->payment_instruction = $message['message'];
 
         $order->save();
 

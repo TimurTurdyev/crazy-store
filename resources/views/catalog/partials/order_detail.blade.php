@@ -1,3 +1,44 @@
+@if( $order->payment_processing )
+    <form
+        autocomplete="off"
+        action="{{ route('payment.instruction.change', $order) }}"
+        method="post">
+        @CSRF
+        <div class="form-group mt-2 mb-2">
+            <div class="input-group">
+                <select name="payment_code" class="form-control">
+                    @foreach( config('main.payments') as $code => $title )
+                        @if( $order->payment_code === $code)
+                            <option value="{{ $code }}" selected>{{ $title }}</option>
+                        @else
+                            <option value="{{ $code }}">{{ $title }}</option>
+                        @endif
+                    @endforeach
+                </select>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-info btn-flat"
+                            id="form-payment_code">Применить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="payment_instruction" class="alert alert-info"></div>
+    @push('scripts')
+        <script>
+            if ($('#payment_instruction').length) {
+                $.ajax({
+                    url: '{{ route('payment.instruction', $order) }}',
+                    method: 'get',
+                    cache: false,
+                    success: function (response) {
+                        $('#payment_instruction').html(response.message);
+                    }
+                });
+            }
+        </script>
+    @endpush
+@endif
 <div class="card card-lg mb-5 border">
     <div class="card-body pb-0">
         <div class="card card-sm">
@@ -44,7 +85,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="card-footer">
         <h6 class="mb-7">Кол-во ({{ $order->items->count() }})</h6>
@@ -105,43 +145,12 @@
                 </li>
             @endforeach
         </ul>
-        <form
-              autocomplete="off"
-              action="{{ route('payment.instruction.change', $order) }}"
-              method="post">
-            @CSRF
-            <div id="payment_instruction" class="alert alert-info">{{ $order->payment_instruction }}</div>
-            <div class="form-group mb-2">
-                <div class="input-group">
-                    <select name="payment_code" class="form-control">
-                        @foreach( $order->payments as $code => $name )
-                            @if( $order->payment_code === $code)
-                                <option value="{{ $code }}" selected>{{ $name }}</option>
-                            @else
-                                <option value="{{ $code }}">{{ $name }}</option>
-                            @endif
-                        @endforeach
-                    </select>
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-info btn-flat"
-                                id="form-payment_code">Применить
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-
     </div>
 </div>
 
 <div id="histories"></div>
 @push('scripts')
     <script>
-        function linkInit(message) {
-            return message.replace(/(https:\/\/.+\s?)/gi, "<a href='$1' target='_blank'>$1</a>");
-        }
-
         $('#histories').on('click', 'a', function () {
             event.preventDefault();
             var params = $(this).attr('href').replace(/http.+?[?&]/gi, '');
@@ -160,6 +169,5 @@
         }
 
         histories();
-        $('#payment_instruction').html(linkInit($('#payment_instruction').text()));
     </script>
 @endpush

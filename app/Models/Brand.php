@@ -37,7 +37,11 @@ class Brand extends Model
             $builder
                 ->select(['brands.id', 'brands.name'])
                 ->join('products', 'brands.id', '=', 'products.brand_id')
+                ->join('variants', 'products.id', '=', 'variants.product_id')
+                ->join('variant_prices', 'variants.id', '=', 'variant_prices.variant_id')
                 ->where('products.status', '=', 1)
+                ->where('variants.status', '=', 1)
+                ->where('variant_prices.quantity', '>', 0)
                 ->groupBy(['brands.id', 'brands.name'])
         );
     }

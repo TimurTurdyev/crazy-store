@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Filters\UserFilterAbstract;
+use App\Filters\UserFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
@@ -30,9 +30,23 @@ class UserController extends Controller
         return redirect()->route('admin.user.index')->with('success', 'Вы успешно обновили размер ' . $user->firstname);
     }
 
+    public function destroy(User $user): RedirectResponse
+    {
+        $user->delete();
+
+        return redirect()->route('admin.user.index')->with('success', 'Вы успешно удалили пользователя ' . $user->firstname);
+    }
+
+    public function startSession(User $user): RedirectResponse
+    {
+        session()->put('customer_id', $user->id);
+
+        return redirect()->route('customer.orders');
+    }
+
     public function filter(Request $request): \Illuminate\Http\JsonResponse
     {
-        $users = User::filter(new UserFilterAbstract($request->only(['all_fields'])))
+        $users = User::filter(new UserFilter($request->only(['all_fields'])))
             ->limit(12)
             ->get();
 

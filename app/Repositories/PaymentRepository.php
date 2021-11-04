@@ -13,19 +13,19 @@ class PaymentRepository implements PaymentInterface
     public function message(Order $order): array
     {
         $this->order = $order;
-        $method_name = str_replace('.', '_', $this->order->payment_code);
 
-        if (method_exists($this, $method_name)) {
-            return $this->{$method_name}();
+        if (method_exists($this, $this->order->payment_code)) {
+            return $this->{$this->order->payment_code}();
         }
-        return [];
+
+        return ['message' => 'Выберите подходящий способ оплаты!'];
     }
 
     #[ArrayShape(['message' => "string"])] public function sber_card(): array
     {
         $total = $this->order->totals()->where('code', 'total')->first();
         return [
-            'message' => sprintf(config('main.sber.text', ''), $this->order->firstname, $total?->value)
+            'message' => sprintf(config('main.sber_card.text', ''), $this->order->firstname, $total?->value)
         ];
     }
 
@@ -42,11 +42,12 @@ class PaymentRepository implements PaymentInterface
             ];
         }
 
+        $payment_url = sprintf('<a href="%s">Перейти к оплате</a>', $payment_url);
         return [
             'message' => sprintf(
                 'Сумма оплаты %s руб. Ссылка на онлайн оплату %s',
                 $total?->value,
-                $response->get('PaymentURL', ''),
+                $payment_url,
             )
         ];
     }

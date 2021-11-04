@@ -6,11 +6,15 @@ return [
         'secure' => env('cdek_secure', ''),
         'postal_code' => env('cdek_postal_code', ''),
     ],
-    'sber' => [
+    'payments' => [
+        'sber_card' => 'Оплата на карту сбербанка',
+        'tinkoff_pay' => 'Онлайн оплата'
+    ],
+    'sber_card' => [
         'card' => env('sber_card'),
         'text' => env('sber_text'),
     ],
-    'tinkoff' => [
+    'tinkoff_pay' => [
         'terminal_key' => env('tinkoff_terminal_key', ''),
         'secret_key' => env('tinkoff_terminal_key', ''),
     ],
@@ -28,6 +32,8 @@ return [
         '42' => 'Оплачено',
         '99' => 'Доставлено',
     ],
+    'payment_processing' => '40',
+    'payment_completed' => '42',
     'home' => [
         'title' => env('home_title'),
         'description' => env('home_description'),

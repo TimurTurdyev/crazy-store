@@ -25,7 +25,7 @@
                 @foreach( $users as $user )
                     <tr>
                         <td>{{ $user->id }}</td>
-                        <td>{{ $user->firstname }} {{ $user->lastname }}</td>
+                        <td><a href="{{ route('admin.user.start_session', $user->id) }}">{{ $user->firstname }} {{ $user->lastname }}</a></td>
                         <td>{{ $user->phone }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->created_at }}</td>

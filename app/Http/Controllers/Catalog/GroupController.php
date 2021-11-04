@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Filters\BrandFilters;
+use App\Filters\BrandFilter;
 use App\Filters\ProductFilter;
-use App\Filters\ProductFilters;
-use App\Filters\SizeFilters;
+use App\Filters\SizeFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Group;
 use App\Models\Size;
 use App\Models\Variant;
-use App\Repositories\FilterRepository;
 use Illuminate\Http\Request;
 
 
 class GroupController extends Controller
 {
-    public function index(Group $group, Request $request)
+    public function index(Group $group, Request $request): \Illuminate\Contracts\View\View
     {
         abort_if($group->status === 0, 404);
 
@@ -34,14 +32,14 @@ class GroupController extends Controller
         $filter = collect([
             'categories' => $categories,
             'brands' => Brand::filter(
-                new BrandFilters($request_params)
+                new BrandFilter($request_params)
             )->get(),
             'sizes' => Size::filter(
-                new SizeFilters($request_params)
+                new SizeFilter($request_params)
             )->get(),
         ]);
 
-        $products = Variant::filter(new ProductFilters($request_params))
+        $products = Variant::filter(new ProductFilter($request_params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();;

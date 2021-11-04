@@ -4,7 +4,7 @@ namespace App\Filters;
 
 use Illuminate\Support\Facades\DB;
 
-class UserFilterAbstract extends FilterAbstract
+class UserFilter extends FilterAbstract
 {
     protected function all_fields($value)
     {

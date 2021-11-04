@@ -18,7 +18,7 @@ class ProductController extends Controller
 {
     public function index(): View
     {
-        $products = Product::paginate(20);
+        $products = Product::with('brand')->paginate(20)->withQueryString();
         return view('admin.product.index', compact('products'));
     }
 

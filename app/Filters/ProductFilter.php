@@ -4,12 +4,20 @@ namespace App\Filters;
 
 use Illuminate\Support\Facades\DB;
 
-class ProductFilters extends FilterAbstract
+class ProductFilter extends FilterAbstract
 {
     protected function category($categoryIds)
     {
         $this->builder->join('category_group', 'groups.id', '=', 'category_group.group_id');
         $this->builder->whereIn('category_group.category_id', $this->paramToArray($categoryIds));
+    }
+
+    protected function discount($value = '') {
+        if ($value === 'yes') {
+            $this->builder->where('variant_prices.discount', '>', 0);
+        } else {
+            $this->builder->where('variant_prices.discount', '=', 0);
+        }
     }
 
     protected function group($groupIds = '')

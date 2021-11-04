@@ -26,7 +26,6 @@ class CreateOrdersTable extends Migration
             $table->string('phone', 32);
 
             $table->string('payment_code', 64)->nullable()->index();
-            $table->string('payment_instruction', 512)->nullable()->index();
 
             $table->string('city', 128)->nullable();
             $table->string('address', 255)->nullable();

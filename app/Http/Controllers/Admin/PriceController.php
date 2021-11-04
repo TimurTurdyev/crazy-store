@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Filters\ProductFilters;
+use App\Filters\ProductFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Variant;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class PriceController extends Controller
     {
         $prices = [];
 
-        $products = Variant::filter(new ProductFilters($request->only(['name', 'status', 'stock'])))
+        $products = Variant::filter(new ProductFilter($request->only(['name', 'status', 'stock'])))
             ->with(['prices', 'photos'])
             ->limit(12)
             ->get();

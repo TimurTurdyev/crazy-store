@@ -1,5 +1,5 @@
 <ul class="nav nav-vertical" id="filterNav">
-    @if( ($categories = $filter->get('categories', collect()))->count() )
+    @if( ($categories = $filter->get('categories', collect()))->count() > 1 )
         <li class="nav-item">
             <a class="nav-link dropdown-toggle font-size-lg text-reset border-bottom mb-6"
                data-toggle="collapse" href="#groupCollapse">
@@ -22,7 +22,7 @@
         </li>
     @endempty
 
-    @if( ($groups = $filter->get('groups', collect()))->count() )
+    @if( ($groups = $filter->get('groups', collect()))->count() > 1 )
         @php
             $params = request()->get('group') ?? [];
 
@@ -58,7 +58,7 @@
         </li>
     @endempty
 
-    @if( ($brands = $filter->get('brands', collect()))->count() )
+    @if( ($brands = $filter->get('brands', collect()))->count() > 1 )
         @php
             $params = request()->get('brand') ?? [];
 
@@ -97,7 +97,7 @@
         </li>
     @endif
 
-    @if( ($sizes = $filter->get('sizes', collect()))->count() )
+    @if( ($sizes = $filter->get('sizes', collect()))->count() > 1 )
         @php
             $params = request()->get('size') ?? [];
 

@@ -13,16 +13,16 @@
                     <th style="width: 1%">
                         #
                     </th>
-                    <th style="width: 20%">
+                    <th>
                         Название
                     </th>
-                    <th>
+                    <th class="text-center">
                         Кол-во товаров
                     </th>
-                    <th style="width: 8%" class="text-center">
+                    <th class="text-center">
                         Статус
                     </th>
-                    <th>
+                    <th class="text-right">
                         Действие
                     </th>
                 </tr>
@@ -36,14 +36,9 @@
                         <td>
                             {{ $group->name }}
                         </td>
-                        <td>
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-
-                                </li>
-                            </ul>
+                        <td class="text-center">
+                            {{ $group->products_count }}
                         </td>
-                        <td></td>
                         <td>
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" disabled="disabled"

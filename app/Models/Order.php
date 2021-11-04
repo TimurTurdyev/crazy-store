@@ -17,45 +17,34 @@ class Order extends Model
     protected $fillable = [
         'order_code',
         'user_id', 'ip', 'firstname', 'lastname', 'email', 'phone',
-        'payment_code', 'payment_instruction',
+        'payment_code',
         'city', 'address', 'post_code',
         'created_at', 'updated_at'
     ];
 
     protected $dates = ['created_at', 'updated_at'];
 
-    public function getStatusAttribute() {
+    public function getStatusAttribute()
+    {
         $selected = $this->histories()->first()?->status;
 
-        return config('main.order')[$selected] ?? '-';
+        return config('main.order.' . $selected, '-');
     }
 
-    #[Pure] public function getDeliveryAttribute(): array
+    public function getPaymentProcessingAttribute(): bool
     {
-        if (Str::contains($this->delivery_code, 'cdek.pvz')) {
-            return [
-                'name' => 'CDEK ПВЗ',
-                'address' => $this->delivery_method,
-            ];
+        $selected = $this->histories()->first();
+
+        if ($selected === null || config('main.payment_processing') == $selected->status) {
+            return true;
         }
 
-        return [
-            'name' => $this->delivery_method,
-            'address' => $this->post_code ? $this->post_code . ', ' . $this->address : $this->address,
-        ];
+        return false;
     }
 
-    #[Pure] public function getPaymentNameAttribute(): string
+    public function getPaymentNameAttribute(): string
     {
-        return $this->getPaymentsAttribute()[$this->payment_code] ?? '---';
-    }
-
-    #[ArrayShape(['sber.card' => "string", 'tinkoff.pay' => "string"])] public function getPaymentsAttribute(): array
-    {
-        return [
-            'sber.card' => 'Оплата на карту сбербанка',
-            'tinkoff.pay' => 'Онлайн оплата'
-        ];
+        return config('main.payments.' . $this->payment_code, '-');
     }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

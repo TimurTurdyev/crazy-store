@@ -30,5 +30,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin'], 'as' => 'a
     Route::get('price/filter', [PriceController::class, 'filter'])->name('price.filter');
     Route::get('/deliveries/{postal_code?}', [OrderController::class, 'deliveries'])->name('deliveries');
     Route::resource('user', UserController::class)->names('user');
+    Route::get('customer/{user}/start-session', [UserController::class, 'startSession'])->name('user.start_session');
     Route::get('customer/filter', [UserController::class, 'filter'])->name('user.filter');
 });

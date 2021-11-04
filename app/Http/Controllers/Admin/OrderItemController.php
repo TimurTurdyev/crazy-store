@@ -53,13 +53,24 @@ class OrderItemController extends Controller
             $item->delete();
         }
 
-        $total = $sub_total + $order->promo_value + $order->delivery_value;
+        $promo_value = 0;
 
-        $order->update([
-            'item_count' => $order->items->count(),
-            'sub_total' => $sub_total,
-            'total' => $total,
-        ]);
+        if ($promo = $order->totals->firstWhere('code', 'promo')) {
+            $promo_value = $promo->value;
+        }
+
+        $delivery_value = 0;
+
+        if ($delivery = $order->totals->firstWhere('code', 'delivery')) {
+            $delivery_value = $delivery->value;
+        }
+
+        // Todo
+        /*$total = $sub_total + $promo_value + $delivery_value;
+
+        foreach ($order->totals as $total) {
+
+        }*/
 
         return redirect()->route('admin.order.edit', $order);
     }

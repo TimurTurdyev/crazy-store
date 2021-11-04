@@ -31,6 +31,9 @@ class OrderController extends Controller
         $order->order_code = Str::uuid();
         $order->save();
 
+        $totals = $this->getTotals($order, $request);
+        $order->totals()->saveMany($totals);
+
         return redirect()->route('admin.order.edit', $order);
     }
 
@@ -55,11 +58,25 @@ class OrderController extends Controller
         $order->update($request->validated());
         $order->totals()->delete();
 
+        $totals = $this->getTotals($order, $request);
+
+        $order->totals()->saveMany($totals);
+
+
+        if ($request->ajax()) {
+            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items, 'totals' => $totals]);
+        }
+
+        return redirect()->route('admin.order.edit', $order);
+    }
+
+    private function getTotals($order, $request): \Illuminate\Support\Collection
+    {
+        $totals = collect();
+
         $sub_total = $order->items->sum(function ($item) {
             return $item->quantity * $item->price;
         });
-
-        $totals = collect();
 
         if ($request_totals = $request->get('totals')) {
             foreach ($request_totals as $total) {
@@ -110,15 +127,7 @@ class OrderController extends Controller
             ]));
         }
 
-        $order->totals()->delete();
-        $order->totals()->saveMany($totals);
-
-
-        if ($request->ajax()) {
-            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items, 'totals' => $totals]);
-        }
-
-        return redirect()->route('admin.order.edit', $order);
+        return $totals;
     }
 
     /**
@@ -159,15 +168,14 @@ class OrderController extends Controller
 
         $request_data = $request_data['history'] ?? [];
 
-        if (empty($request_data['message'])) {
-            $request_data['message'] = '-';
-        }
-
         if (empty($request_data['status'])) {
             $request_data['status'] = 0;
         }
 
-        $order->histories()->create($request_data);
+        if (!empty($request_data['status'])) {
+            $request_data['message'] = $request_data['message'] ?: '-';
+            $order->histories()->create($request_data);
+        }
 
         $histories = $order->histories()
             ->paginate(20)

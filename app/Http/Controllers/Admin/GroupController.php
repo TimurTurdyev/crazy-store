@@ -12,7 +12,7 @@ class GroupController extends Controller
 {
     public function index(): View
     {
-        $groups = Group::paginate(20);
+        $groups = Group::withCount(['products'])->paginate(20);
         return view('admin.group.index', compact('groups'));
     }
 

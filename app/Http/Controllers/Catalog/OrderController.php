@@ -32,6 +32,7 @@ class OrderController extends Controller
     {
 
         $histories = $order->histories()
+            ->where('notify', 1)
             ->paginate(20)
             ->withQueryString();
 

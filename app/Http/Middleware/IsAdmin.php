@@ -16,7 +16,7 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (!$request->user()?->is_admin) {
+        if (!$request->user()?->isAdmin()) {
             return redirect('/');
         }
         return $next($request);
