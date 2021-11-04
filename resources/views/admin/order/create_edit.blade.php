@@ -107,20 +107,27 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tbody>
-                        <tr>
-                            <th style="width:50%">Публичная ссылка на заказ</th>
-                            <td><a href="{{ route('order.completed', $order->order_code) }}"
-                                   target="_blank">{{ $order->order_code }}</a></td>
-                        </tr>
+                        @if( $order->order_code )
+                            <tr>
+                                <th style="width:50%">Публичная ссылка на заказ</th>
+                                <td><a href="{{ route('order.completed', $order->order_code) }}"
+                                       target="_blank">{{ $order->order_code }}</a></td>
+                            </tr>
+                        @endif
                         @foreach( $order->totals as $total )
                             <tr>
                                 <th>
-                                    <input type="hidden" name="totals[{{ $total->sort_order }}][code]" value="{{ $total->code }}">
-                                    <input type="hidden" name="totals[{{ $total->sort_order }}][sort_order]" value="{{ $total->sort_order }}">
-                                    <input type="text" class="form-control" name="totals[{{ $total->sort_order }}][title]" value="{{ $total->title }}">
+                                    <input type="hidden" name="totals[{{ $total->sort_order }}][code]"
+                                           value="{{ $total->code }}">
+                                    <input type="hidden" name="totals[{{ $total->sort_order }}][sort_order]"
+                                           value="{{ $total->sort_order }}">
+                                    <input type="text" class="form-control"
+                                           name="totals[{{ $total->sort_order }}][title]" value="{{ $total->title }}">
                                 </th>
                                 <td>
-                                    <input type="text" class="form-control {{ $total->code }}" name="totals[{{ $total->sort_order }}][value]" value="{{ $total->value }}" readonly>
+                                    <input type="text" class="form-control {{ $total->code }}"
+                                           name="totals[{{ $total->sort_order }}][value]" value="{{ $total->value }}"
+                                           readonly>
                                 </td>
                             </tr>
                         @endforeach
@@ -162,7 +169,7 @@
                 $('#form-user_id').val(item['value']);
             }
         });
-
+        @if( $order->id )
         function handleHistoryMessage(block, params) {
             var url = '{{ route('admin.order.history', $order) }}';
             $.ajax({
@@ -194,6 +201,7 @@
                 handleHistoryMessage(self);
             }, 1000);
         });
+        @endif
     </script>
 
     <style>

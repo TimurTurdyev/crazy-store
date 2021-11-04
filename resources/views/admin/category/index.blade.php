@@ -40,15 +40,21 @@
                             {{ $category->name }}
                         </td>
                         <td>
+                            @php($products_count = 0)
                             <ul class="list-inline">
-                                @foreach( $category->load('groups')->groups as $item )
+                                @foreach( $category->groups as $item )
+                                    @php
+                                        $products_count += $item->products()->count()
+                                    @endphp
                                 <li class="list-inline-item">
                                     {{ $item->name }}
                                 </li>
                                 @endforeach
                             </ul>
                         </td>
-                        <td></td>
+                        <td>
+                            {{ $products_count }}
+                        </td>
                         <td>
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" disabled="disabled"

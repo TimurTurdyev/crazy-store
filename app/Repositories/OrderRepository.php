@@ -66,7 +66,6 @@ class OrderRepository implements OrderInterface
             'phone' => $params['phone'],
 
             'payment_code' => $params['payment_code'] ?? null,
-            'payment_instruction' => '',
 
             'city' => $params['city'] ?? null,
             'address' => $params['address'] ?? null,

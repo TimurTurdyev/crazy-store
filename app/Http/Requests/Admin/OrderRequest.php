@@ -61,10 +61,6 @@ class OrderRequest extends FormRequest
                 'nullable',
                 'string'
             ],
-            'payment_instruction' => [
-                'nullable',
-                'string'
-            ],
         ];
     }
 }

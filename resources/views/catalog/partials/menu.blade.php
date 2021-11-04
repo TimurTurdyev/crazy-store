@@ -30,7 +30,7 @@
                     @endforeach
                 @endif
                 <li class="nav-item">
-                    <a class="nav-link text-primary" href="index-fashion.html#!">Sale %</a>
+                    <a class="nav-link text-primary" href="{{ route('sale') }}">Sale %</a>
                 </li>
             </ul>
         </div>

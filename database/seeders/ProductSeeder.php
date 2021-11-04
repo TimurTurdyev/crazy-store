@@ -171,13 +171,13 @@ class ProductSeeder extends Seeder
     {
         return DB::connection('crazy_old')->select("
                                                         SELECT
-                                                               IF(image != '', CONCAT('storage/', image), 'placeholder.png') as path
+                                                               IF(image != '', CONCAT('storage/', image), 'images/placeholder.png') as path
                                                         FROM oc_product_image
                                                         WHERE product_id = '" . (int)$product_id . "' ORDER BY sort_order ASC
                                                         ");
     }
 
-    protected function getCharacterOffsetOfDifference($str1, $str2, $encoding = 'UTF-8')
+    protected function getCharacterOffsetOfDifference($str1, $str2, $encoding = 'UTF-8'): bool|int
     {
         return mb_strlen(
             mb_strcut(

@@ -2,7 +2,7 @@
 
 namespace App\Filters;
 
-class SizeFilters extends FilterAbstract
+class SizeFilter extends FilterAbstract
 {
     protected function brand($brandIds)
     {
@@ -18,5 +18,13 @@ class SizeFilters extends FilterAbstract
     protected function group($groupIds = '')
     {
         $this->builder->whereIn('products.group_id', $this->paramToArray($groupIds));
+    }
+
+    protected function discount($value = '') {
+        if ($value === 'yes') {
+            $this->builder->where('variant_prices.discount', '>', 0);
+        } else {
+            $this->builder->where('variant_prices.discount', '=', 0);
+        }
     }
 }

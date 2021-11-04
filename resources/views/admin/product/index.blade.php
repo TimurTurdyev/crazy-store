@@ -7,7 +7,7 @@
     @include('admin.master.message.success')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title mb-0">Список</h3>
+            <h3 class="card-title mb-0">Список ({{ $products->total() }})</h3>
         </div>
         <div class="card-body p-0">
             <table class="table table-striped projects">

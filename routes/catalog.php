@@ -8,6 +8,7 @@ Route::get('/', function () {
     return view('catalog.home.index');
 })->name('home');
 
+Route::get('sale', [App\Http\Controllers\Catalog\SaleController::class, 'index'])->name('sale');
 Route::get('catalog/{category}', [App\Http\Controllers\Catalog\CategoryController::class, 'index'])->name('catalog');
 Route::get('group/{group}', [App\Http\Controllers\Catalog\GroupController::class, 'index'])->name('catalog.group');
 

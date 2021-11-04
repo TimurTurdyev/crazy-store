@@ -23,7 +23,7 @@ abstract class TinkoffAbstract
         $this->api_url = Constants::API_URL;
 
         $this->params = $params->getParams();
-        $this->params['TerminalKey'] = config('main.tinkoff.terminal_key', '');
+        $this->params['TerminalKey'] = config('main.tinkoff_pay.terminal_key', '');
         $this->params['Token'] = $this->genToken();
     }
 
@@ -54,7 +54,7 @@ abstract class TinkoffAbstract
     {
         $token = '';
 
-        $array_values = array_merge($this->params, ['Password' => config('main.tinkoff.secret_key', '')]);
+        $array_values = array_merge($this->params, ['Password' => config('main.tinkoff_pay.secret_key', '')]);
 
         ksort($array_values);
 

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Filters\ProductFilters;
-use App\Filters\SizeFilters;
+use App\Filters\ProductFilter;
+use App\Filters\SizeFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Size;
@@ -28,11 +28,11 @@ class BrandController extends Controller
         $filter = collect([
             'groups' => $brand->load('groups')->getRelation('groups'),
             'sizes' => Size::filter(
-                new SizeFilters($request_params)
+                new SizeFilter($request_params)
             )->get(),
         ]);
 
-        $products = Variant::filter(new ProductFilters($request_params))
+        $products = Variant::filter(new ProductFilter($request_params))
             ->with(['prices', 'photos'])
             ->paginate(12)
             ->withQueryString();

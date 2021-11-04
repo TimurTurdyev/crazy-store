@@ -18,7 +18,7 @@ class OrderItemObserver
      */
     public function created(OrderItem $orderItem)
     {
-        //VariantPrice::where('id', $orderItem->price_id)->decrement('quantity', $orderItem->quantity);
+        VariantPrice::where('id', $orderItem->price_id)->decrement('quantity', $orderItem->quantity);
     }
 
     /**
