@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderItemRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Illuminate\Http\Request;
+use App\Repositories\TotalsRepository;
 
 class OrderItemController extends Controller
 {
@@ -17,7 +17,6 @@ class OrderItemController extends Controller
 
     public function update(OrderItemRequest $request, Order $order): \Illuminate\Http\RedirectResponse
     {
-        $sub_total = 0;
         $delete = $order->items;
 
         if ($request->prices) {
@@ -36,14 +35,12 @@ class OrderItemController extends Controller
                     );
 
                     $item->save();
-                    $sub_total += $item->quantity * $item->price;
                     continue;
                 }
 
                 $prices[] = $item->id;
 
                 $item->update($price);
-                $sub_total += $item->quantity * $item->price;
             }
 
             $delete = $delete->whereNotIn('id', $prices);
@@ -53,36 +50,9 @@ class OrderItemController extends Controller
             $item->delete();
         }
 
-        $promo_value = 0;
-
-        if ($promo = $order->totals->firstWhere('code', 'promo')) {
-            $promo_value = $promo->value;
-        }
-
-        $delivery_value = 0;
-
-        if ($delivery = $order->totals->firstWhere('code', 'delivery')) {
-            $delivery_value = $delivery->value;
-        }
-
-        // Todo
-        /*$total = $sub_total + $promo_value + $delivery_value;
-
-        foreach ($order->totals as $total) {
-
-        }*/
+        $totals = new TotalsRepository($order, $order->totals->toArray());
+        $totals->apply();
 
         return redirect()->route('admin.order.edit', $order);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\OrderItem $orderItem
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(OrderItem $orderItem)
-    {
-        //
     }
 }

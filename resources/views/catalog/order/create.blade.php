@@ -9,10 +9,11 @@
             <div class="row">
                 <div class="col-12 text-center">
                     <h3 class="mb-4">Оформление</h3>
-
-                    <p class="mb-10">
-                        Уже есть аккаунт? <a class="font-weight-bold text-reset" href="checkout.html#!">Войти</a>
-                    </p>
+                    @if( auth()->guest() )
+                        <p class="mb-10">
+                            Уже есть аккаунт? <a class="font-weight-bold text-reset" href="{{ route('login') }}">Войти</a>
+                        </p>
+                    @endif
                 </div>
             </div>
             <div class="row">

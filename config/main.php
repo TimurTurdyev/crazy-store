@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'cdek' =>  [
+    'cdek' => [
         'account' => env('cdek_account', ''),
         'secure' => env('cdek_secure', ''),
         'postal_code' => env('cdek_postal_code', ''),
@@ -34,10 +34,12 @@ return [
     ],
     'payment_processing' => '40',
     'payment_completed' => '42',
+    'order_returned' => '1',
     'home' => [
         'title' => env('home_title'),
         'description' => env('home_description'),
     ],
     'email' => env('email', ''),
     'phone' => env('phone', ''),
+    'cooperate' => sprintf('Crazy-kids.ru©2016-%s All rights reserved.', date('Y'))
 ];

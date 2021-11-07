@@ -29,11 +29,6 @@ class CartRepository implements CartInterface
     {
         self::$items = collect();
 
-        $this->time_deleted = Cache::remember('cart-delete', 60 * 60, function () {
-            Cart::whereNull('user_id')->where('updated_at', '<', 'DATE_SUB(NOW(), INTERVAL 72 HOUR)')->delete();
-            return now()->toDayDateTimeString();
-        });
-
         if (session('cart') === null) {
             session()->put('cart', Str::uuid()->toString());
         }
@@ -41,16 +36,12 @@ class CartRepository implements CartInterface
         $this->cart_session = session('cart');
         $this->user_id = Auth::id();
 
-        $this->cache_key = sprintf('cart.%s', $this->user_id ?: $this->cart_session);
+        $this->cache_key = sprintf('cart.%s', $this->cart_session);
 
-        if ($this->user_id) {
-            $this->time_updated = Cache::remember('cart-delete', 30, function () {
-                Cart::where('session_id', $this->cart_session)
-                    ->orWhere('user_id', $this->user_id)
-                    ->update(['session_id' => $this->cart_session]);
-                return now()->toDayDateTimeString();
-            });
-        }
+        $this->time_deleted = Cache::remember('cart-delete', 60 * 60, function () {
+            Cart::whereNull('user_id')->where('updated_at', '<', 'DATE_SUB(NOW(), INTERVAL 72 HOUR)')->delete();
+            return now()->toDayDateTimeString();
+        });
     }
 
     public function getProductPriceTotal(): int
@@ -138,6 +129,13 @@ class CartRepository implements CartInterface
         if (self::$items->count() === 0) {
             self::$items = Cache::remember($this->cache_key, 60 * 60, function () {
                 $items = collect();
+
+                if ($this->user_id) {
+                    Cart::where('session_id', $this->cart_session)
+                        ->orWhere('user_id', $this->user_id)
+                        ->update(['session_id' => $this->cart_session]);
+                }
+
                 foreach (Cart::where('session_id', $this->cart_session)->with(['variant.product', 'variant.prices', 'variant.photos'])->get() as $item) {
                     $variant = $item->variant;
                     $photo_path = $variant->photos->first()?->path;
@@ -166,6 +164,7 @@ class CartRepository implements CartInterface
                         'message' => $message
                     ]);
                 }
+
                 return $items;
             });
         }

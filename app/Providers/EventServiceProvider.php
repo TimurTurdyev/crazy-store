@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\OrderHistory;
 use App\Models\OrderItem;
+use App\Observers\OrderHistoryObserver;
 use App\Observers\OrderItemObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -30,5 +32,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         OrderItem::observe(OrderItemObserver::class);
+        OrderHistory::observe(OrderHistoryObserver::class);
     }
 }

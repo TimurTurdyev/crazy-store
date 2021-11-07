@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Size;
 use App\Models\Variant;
-use App\Repositories\FilterRepository;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller

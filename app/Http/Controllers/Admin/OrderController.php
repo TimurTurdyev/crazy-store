@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderRequest;
 use App\Main\DeliveryService;
 use App\Models\Order;
-use App\Models\OrderTotal;
+use App\Repositories\TotalsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -56,78 +56,15 @@ class OrderController extends Controller
     public function update(OrderRequest $request, Order $order): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $order->update($request->validated());
-        $order->totals()->delete();
 
-        $totals = $this->getTotals($order, $request);
-
-        $order->totals()->saveMany($totals);
-
+        $totals = new TotalsRepository($order, $request->get('totals', []));
+        $totals->apply();
 
         if ($request->ajax()) {
-            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items, 'totals' => $totals]);
+            return response()->json(['code' => 201, 'order' => $order, 'items' => $order->items, 'totals' => $totals->getTotals()]);
         }
 
         return redirect()->route('admin.order.edit', $order);
-    }
-
-    private function getTotals($order, $request): \Illuminate\Support\Collection
-    {
-        $totals = collect();
-
-        $sub_total = $order->items->sum(function ($item) {
-            return $item->quantity * $item->price;
-        });
-
-        if ($request_totals = $request->get('totals')) {
-            foreach ($request_totals as $total) {
-                if (in_array($total['code'], ['subtotal', 'total'])) {
-                    continue;
-                }
-                $totals->push(new OrderTotal($total));
-            }
-        }
-
-        if (!$totals->firstWhere('code', 'subtotal')) {
-            $totals->push(new OrderTotal([
-                'code' => 'subtotal',
-                'title' => 'Всего',
-                'value' => $sub_total,
-                'sort_order' => 0,
-            ]));
-        }
-
-        if (!$totals->firstWhere('code', 'promo')) {
-            $totals->push(new OrderTotal([
-                'code' => 'promo',
-                'title' => 'Скидка',
-                'value' => 0,
-                'sort_order' => 1,
-            ]));
-        }
-
-        if ($totals->firstWhere('code', 'promo')->value > 0) {
-            $totals->firstWhere('code', 'promo')->value = -(int)$totals->firstWhere('code', 'promo')->value;
-        }
-
-        if (!$totals->firstWhere('code', 'delivery')) {
-            $totals->push(new OrderTotal([
-                'code' => 'delivery',
-                'title' => 'Доставка',
-                'value' => 0,
-                'sort_order' => 10,
-            ]));
-        }
-
-        if (!$totals->firstWhere('code', 'total')) {
-            $totals->push(new OrderTotal([
-                'code' => 'total',
-                'title' => 'Итого',
-                'value' => $totals->sum('value'),
-                'sort_order' => 99,
-            ]));
-        }
-
-        return $totals;
     }
 
     /**

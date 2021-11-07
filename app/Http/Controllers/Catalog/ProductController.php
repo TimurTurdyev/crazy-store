@@ -5,13 +5,12 @@ namespace App\Http\Controllers\Catalog;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Variant;
-use App\Models\VariantPrice;
 use Illuminate\Http\Request;
 
 
 class ProductController extends Controller
 {
-    public function index(Product $product, Request $request)
+    public function index(Product $product, Request $request): \Illuminate\Contracts\View\View
     {
         session()->put('cart_id', uniqid());
 

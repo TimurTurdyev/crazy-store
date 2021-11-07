@@ -140,7 +140,7 @@
 
                     <!-- Copyright -->
                     <p class="mb-3 mb-md-0 font-size-xxs text-muted">
-                        © 2019 All rights reserved. Designed by Unvab.
+                        {{ config('main.cooperate') }}
                     </p>
 
                 </div>
