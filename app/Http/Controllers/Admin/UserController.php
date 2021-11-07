@@ -27,14 +27,14 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
-        return redirect()->route('admin.user.index')->with('success', 'Вы успешно обновили размер ' . $user->firstname);
+        return redirect()->route('admin.user.index')->with('status', 'Вы успешно обновили размер ' . $user->firstname);
     }
 
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();
 
-        return redirect()->route('admin.user.index')->with('success', 'Вы успешно удалили пользователя ' . $user->firstname);
+        return redirect()->route('admin.user.index')->with('status', 'Вы успешно удалили пользователя ' . $user->firstname);
     }
 
     public function startSession(User $user): RedirectResponse

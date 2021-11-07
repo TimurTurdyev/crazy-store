@@ -9,9 +9,9 @@
                         <div class="card-body">
 
                             <h6 class="mb-7">Вход / <a href="{{ route('register') }}">Регистрация</a></h6>
+                            @include('admin.master.message.success')
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
-                                {{ $errors }}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
@@ -24,8 +24,9 @@
                                                    placeholder="Email *"
                                                    required
                                                    name="email"
-                                                   value="{{ old('login.email') }}"
+                                                   value="{{ old('email') }}"
                                             >
+                                            @include('admin.master.message.error', ['name' => 'email'])
                                         </div>
 
                                     </div>
@@ -40,6 +41,7 @@
                                                    placeholder="Пароль *"
                                                    name="password"
                                                    required>
+                                            @include('admin.master.message.error', ['name' => 'password'])
                                         </div>
 
                                     </div>
@@ -55,8 +57,8 @@
                                     </div>
                                     <div class="col-12 col-md-auto">
                                         <div class="form-group">
-                                            <a class="font-size-sm text-reset" data-toggle="modal"
-                                               href="auth.html#modalPasswordReset">Забыли пароль?</a>
+                                            <a class="font-size-sm text-reset"
+                                               href="{{ route('password.request') }}">Забыли пароль?</a>
                                         </div>
 
                                     </div>

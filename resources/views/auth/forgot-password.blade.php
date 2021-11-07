@@ -1,36 +1,48 @@
-<x-guest-layout>
-    <x-auth-card>
-        <x-slot name="logo">
-            <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-            </a>
-        </x-slot>
+@extends('catalog.index')
+@section('content')
+    <section class="bg-light py-12" style="margin-top: -1rem;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-3">
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+                    <div class="card card-lg mb-10 mb-md-0">
+                        <div class="card-body">
+                            <h6 class="mb-7"><a href="{{ route('login') }}">Вход</a> / <a href="{{ route('register') }}">Регистрация</a></h6>
+                            @include('admin.master.message.success')
+                            <form method="POST" action="{{ route('password.email') }}">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="sr-only" for="login-email">
+                                                Email *
+                                            </label>
+                                            <input class="form-control form-control-sm"
+                                                   id="login-email"
+                                                   type="email"
+                                                   placeholder="Email *"
+                                                   required
+                                                   name="email"
+                                                   value="{{ old('email') }}"
+                                            >
+                                            @include('admin.master.message.error', ['name' => 'email'])
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-sm btn-dark" type="submit">
+                                            Сбросить
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
+    </section>
+@endsection
 
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-        <!-- Validation Errors -->
-        <x-auth-validation-errors class="mb-4" :errors="$errors" />
-
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-
-            <!-- Email Address -->
-            <div>
-                <x-label for="email" :value="__('Email')" />
-
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
-            </div>
-        </form>
-    </x-auth-card>
-</x-guest-layout>

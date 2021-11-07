@@ -37,7 +37,7 @@ class CategoryController extends Controller
 
         Cache::pull('categories');
 
-        return redirect()->route('admin.category.index')->with('success', 'Вы успешно создали категорию ' . $category->name);
+        return redirect()->route('admin.category.index')->with('status', 'Вы успешно создали категорию ' . $category->name);
     }
 
     public function show(Category $category): RedirectResponse
@@ -74,7 +74,7 @@ class CategoryController extends Controller
 
         Cache::pull('categories');
 
-        return redirect()->route('admin.category.index')->with('success', 'Вы успешно обновили категорию ' . $category->name);
+        return redirect()->route('admin.category.index')->with('status', 'Вы успешно обновили категорию ' . $category->name);
     }
 
     public function destroy(Category $category): RedirectResponse
@@ -83,6 +83,6 @@ class CategoryController extends Controller
 
         Cache::pull('categories');
 
-        return redirect()->route('admin.category.index')->with('success', 'Вы успешно удалили категорию ' . $category->name);
+        return redirect()->route('admin.category.index')->with('status', 'Вы успешно удалили категорию ' . $category->name);
     }
 }

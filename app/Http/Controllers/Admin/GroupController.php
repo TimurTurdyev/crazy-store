@@ -31,7 +31,7 @@ class GroupController extends Controller
 
         $group->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('admin.group.index')->with('success', 'Вы успешно создали группу товаров ' . $group->name);
+        return redirect()->route('admin.group.index')->with('status', 'Вы успешно создали группу товаров ' . $group->name);
     }
 
     public function show(Group $group): RedirectResponse
@@ -53,12 +53,12 @@ class GroupController extends Controller
 
         $group->description()->updateOrCreate(['id' => $request->description['id'] ?? 0], $request->description);
 
-        return redirect()->route('admin.group.index')->with('success', 'Вы успешно обновили группу товаров ' . $group->name);
+        return redirect()->route('admin.group.index')->with('status', 'Вы успешно обновили группу товаров ' . $group->name);
     }
 
     public function destroy(Group $group): RedirectResponse
     {
         $group->delete();
-        return redirect()->route('admin.group.index')->with('success', 'Вы успешно удалили группу товаров ' . $group->name);
+        return redirect()->route('admin.group.index')->with('status', 'Вы успешно удалили группу товаров ' . $group->name);
     }
 }
