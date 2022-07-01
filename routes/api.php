@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });*/
+Route::post('cdek-api/{method}', [\App\Http\Controllers\Api\CdekController::class, 'index']);
+
